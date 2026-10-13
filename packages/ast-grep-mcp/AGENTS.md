@@ -32,6 +32,7 @@ src/
 - `rewrite` may only reference metavariables captured by the pattern; empty replacement deletes the match.
 - Byte-counted limits: pattern 16 KiB, rewrite/inlineRules 64 KiB (UTF-8 bytes, not chars); runner caps: JSON record 1 MiB, stderr 64 KiB, MCP payload 4 MiB.
 - Matches: `maxMatches` 1-500, default 50. Timeout: default and max 300000 ms.
+- Idle exit: default 600000 ms; precedence explicit option > `OMO_AST_GREP_IDLE_TIMEOUT_MS` > default (`src/mcp.ts`).
 
 ## ANTI-PATTERNS
 

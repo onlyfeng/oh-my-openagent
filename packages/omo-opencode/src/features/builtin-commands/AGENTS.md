@@ -1,19 +1,19 @@
 # src/features/builtin-commands/ -- Built-in Slash Commands
 
-**Generated:** 2026-07-17 / 7d664b96b
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Registry of built-in commands shipped inside the plugin. Each command is a template literal with title, description, and instructions. Registered via `createBuiltinCommandDefinitions()` factory in `commands.ts`. Loaded by `claude-code-command-loader`.
+Registry of built-in commands shipped inside the plugin. Each command is a template literal with title, description, and instructions. Built by the private `createBuiltinCommandDefinitions()` in `commands.ts`; the public entry is `loadBuiltinCommands()`. Definitions use the `CommandDefinition` type from `claude-code-command-loader`.
 
 ## FILE CATALOG
 
 | File | Purpose |
 |------|---------|
-| `commands.ts` | `createBuiltinCommandDefinitions()` factory + `loadBuiltinCommands()` filter |
+| `commands.ts` | private `createBuiltinCommandDefinitions()` + exported `loadBuiltinCommands()` filter |
 | `index.ts` | Barrel exports |
 | `types.ts` | `BuiltinCommandName` union type + `BuiltinCommandConfig` |
-| `templates/` | One `.ts` file per command |
+| `templates/` | One `.ts` file per command; `refactor-sections/` splits the refactor prompt |
 
 ## TEMPLATES
 
@@ -37,4 +37,4 @@ Phase 6 of config loading (`command-config-handler.ts`) merges built-ins with us
 
 ## TESTS
 
-Co-located `.test.ts` files in `templates/` cover `goal` and `stop-continuation` logic.
+`commands.test.ts` (registry + team-mode addenda) and `init-deep-migration.test.ts` at the root; `templates/goal.test.ts` and `templates/stop-continuation.test.ts` cover those templates.

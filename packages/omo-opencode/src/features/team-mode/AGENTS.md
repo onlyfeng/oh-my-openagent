@@ -1,6 +1,6 @@
 # team-mode — Parallel Multi-Agent Coordination
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -32,16 +32,16 @@ Full schema: [`src/config/schema/team-mode.ts`](../../config/schema/team-mode.ts
 
 ## 12 TEAM_* TOOLS
 
-Registered via [`src/plugin/tool-registry.ts`](../../plugin/tool-registry.ts) `teamModeToolsRecord` only when enabled.
+Registered via [`src/plugin/tool-registry-team-tools.ts`](../../plugin/tool-registry-team-tools.ts) `createTeamModeToolsRecord()` (spread by `tool-registry.ts`) only when enabled; factories wired in `tool-registry-factories.ts`.
 
 | Tool | Source File | Purpose |
 |------|-------------|---------|
-| `team_create` | `tools/lifecycle.ts` | Spawn team + member sessions from named or inline TeamSpec |
-| `team_delete` | `tools/lifecycle.ts` | Tear down state, mailbox, tasklist, worktrees, optional tmux |
-| `team_shutdown_request` | `tools/lifecycle.ts` | Member or lead requests its own shutdown |
-| `team_approve_shutdown` | `tools/lifecycle.ts` | Lead acks shutdown |
-| `team_reject_shutdown` | `tools/lifecycle.ts` | Lead rejects shutdown with reason |
-| `team_send_message` | `tools/messaging.ts` | Send to member name or `*` broadcast |
+| `team_create` | `tools/lifecycle-create-tool.ts` (+ `lifecycle-inline-spec.ts`) | Spawn team + member sessions from named or inline TeamSpec |
+| `team_delete` | `tools/lifecycle-shutdown-tools.ts` | Tear down state, mailbox, tasklist, worktrees, optional tmux |
+| `team_shutdown_request` | `tools/lifecycle-shutdown-tools.ts` | Member or lead requests its own shutdown |
+| `team_approve_shutdown` | `tools/lifecycle-shutdown-tools.ts` | Lead acks shutdown |
+| `team_reject_shutdown` | `tools/lifecycle-shutdown-tools.ts` | Lead rejects shutdown with reason |
+| `team_send_message` | `tools/messaging.ts` (+ `messaging-live-delivery*.ts`, `messaging-fallback-wake.ts`) | Send to member name or `*` broadcast |
 | `team_task_create` | `tools/tasks.ts` | Create task on shared list |
 | `team_task_list` | `tools/tasks.ts` | List tasks (filter by status / owner) |
 | `team_task_update` | `tools/tasks.ts` | Claim / complete / delete (atomic file lock) |
@@ -51,7 +51,7 @@ Registered via [`src/plugin/tool-registry.ts`](../../plugin/tool-registry.ts) `t
 
 ## ELIGIBLE AGENTS
 
-[`AGENT_ELIGIBILITY_REGISTRY`](types.ts) in `types.ts` — three verdict tiers, each with its own rejection message:
+`AGENT_ELIGIBILITY_REGISTRY` lives in `packages/team-core/src/types.ts` (re-exported by local `types.ts`); three verdict tiers, each with its own rejection message:
 
 | Verdict | Agents | Notes |
 |---------|--------|-------|
@@ -79,13 +79,12 @@ Hard-reject agents throw at TeamSpec parse with a specific message ("Agent 'X' i
 
 ```
 team-mode/
-├── index.ts                    # barrel and adapter exports
-├── types.ts                    # OpenCode-facing re-exports/wrappers for team-core schemas plus AGENT_ELIGIBILITY_REGISTRY
+├── index.ts                    # barrel (types + team-worktree) and installs setTeamCoreLogger(log)
+├── types.ts                    # re-export of @oh-my-opencode/team-core/types (schemas + AGENT_ELIGIBILITY_REGISTRY)
 ├── deps.ts                     # checkTeamModeDependencies (git, tmux availability)
-├── member-parser.ts            # member validation against eligibility registry
+├── member-parser.ts            # re-export of team-core member-parser (eligibility validation)
 ├── member-guidance.ts          # auto-injected guidance per member kind
-├── member-session-resolution.ts
-├── member-session-routing.ts
+├── member-session-resolution.ts / member-session-routing.ts
 ├── resolve-caller-team-lead.ts # determine if a session is acting as lead
 ├── team-session-registry.ts    # spawn-race-safe sessionID → team/member lookups
 ├── team-registry/              # adapter shim over team-core team spec loading
@@ -98,7 +97,8 @@ team-mode/
 ├── team-tasklist/              # adapter shim over team-core CRUD + claiming + dependencies
 ├── team-worktree/              # adapter shim over team-core git worktree primitives
 ├── team-layout-tmux/           # adapter shim over team-core optional pane layout
-└── tools/                      # 12 team_* tool implementations + tests
+├── test-support/               # createLaunchConcurrencyProbe for integration + runtime tests
+└── tools/                      # 12 team_* tools: lifecycle-*, messaging-*, query, tasks (23 files)
 ```
 
 ## STORAGE LAYOUT
@@ -138,11 +138,11 @@ team-mode/
 
 | Where | What |
 |-------|------|
-| [`src/index.ts`](../../index.ts) (entry) | `checkTeamModeDependencies()` + `ensureBaseDirs()` if `team_mode.enabled` |
-| [`src/plugin/tool-registry.ts`](../../plugin/tool-registry.ts) `teamModeToolsRecord` | Registers 12 `team_*` tools |
+| [`src/testing/create-plugin-module.ts`](../../testing/create-plugin-module.ts) | Lazy-imports `checkTeamModeDependencies()` + `ensureBaseDirs()` if `team_mode.enabled` |
+| [`src/plugin/tool-registry-team-tools.ts`](../../plugin/tool-registry-team-tools.ts) | Registers 12 `team_*` tools |
 | [`create-transform-hooks.ts`](../../plugin/hooks/create-transform-hooks.ts) | Conditionally builds `teamModeStatusInjector` (`team-mode-status-injector` hook) and `teamMailboxInjector` (`team-mailbox-injector` hook) — both Transform tier |
 | [`create-tool-guard-hooks.ts`](../../plugin/hooks/create-tool-guard-hooks.ts) | Conditionally builds `teamToolGating` (`team-tool-gating` hook) — Tool Guard tier |
-| [`src/plugin/event.ts`](../../plugin/event.ts) | Registers 4 team-session-event handlers from `src/hooks/team-session-events/`: `team-idle-wake-hint`, `team-lead-orphan-handler`, `team-member-error-handler`, `team-member-status-handler` |
+| [`src/plugin/event-team-handlers.ts`](../../plugin/event-team-handlers.ts) | Registers 4 team-session-event handlers from `src/hooks/team-session-events/`: `team-idle-wake-hint`, `team-lead-orphan-handler`, `team-member-error-handler`, `team-member-status-handler` |
 | [`src/cli/doctor/checks/team-mode.ts`](../../cli/doctor/checks/team-mode.ts) | Doctor check for team-mode prerequisites |
 | [`skills-loader-core/src/features/builtin-skills/skills/team-mode.ts`](../../../../skills-loader-core/src/features/builtin-skills/skills/team-mode.ts) | Built-in skill documenting the 12 tools — gated on `team_mode.enabled` |
 
@@ -150,14 +150,14 @@ team-mode/
 
 | Task | Location |
 |------|----------|
-| Add new team tool | `tools/` + register in [`src/plugin/tool-registry.ts`](../../plugin/tool-registry.ts) `teamModeToolsRecord` |
-| Modify member eligibility | `types.ts` `AGENT_ELIGIBILITY_REGISTRY` |
-| Change storage format | `types.ts` Zod schemas |
-| Add worktree behavior | `team-worktree/manager.ts` |
-| Modify tmux layout | `team-layout-tmux/layout.ts` |
-| Task lifecycle changes | `team-tasklist/` |
-| Mailbox protocol changes | `team-mailbox/` |
-| Recover orphaned runs | `team-state-store/resume.ts` |
+| Add new team tool | `tools/` + `createTeamModeToolsRecord` in [`src/plugin/tool-registry-team-tools.ts`](../../plugin/tool-registry-team-tools.ts) |
+| Modify member eligibility | `packages/team-core/src/types.ts` `AGENT_ELIGIBILITY_REGISTRY` |
+| Change storage format | `packages/team-core/src/types.ts` Zod schemas |
+| Add worktree behavior | `packages/team-core/` worktree module (`team-worktree/` here is a shim) |
+| Modify tmux layout | `packages/team-core/` layout module (`team-layout-tmux/` here is a shim) |
+| Task lifecycle changes | `packages/team-core/` tasklist (`team-tasklist/` shim) |
+| Mailbox protocol changes | `packages/team-core/` mailbox (`team-mailbox/` shim) |
+| Recover orphaned runs | `team-state-store/resume.ts` (shim; tests `resume.test.ts`) |
 
 ## ANTI-PATTERNS
 

@@ -5,18 +5,19 @@ description: Conditional factory wrappers that apply overrides, model resolution
 
 # src/agents/builtin-agents/ -- Conditional Factory Layer
 
-**Generated:** 2026-05-18
+**Generated:** 2026-05-18 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Conditional factory layer beneath the 11 raw `createXXXAgent` factories in `src/agents/`. Each `maybeCreateXXXConfig` wrapper decides whether an agent registers, resolves its model via the 4-step pipeline, applies user overrides, filters skills, and returns the final `AgentConfig` -- or `undefined` if the agent is disabled or requirements are not met. Outputs feed `createPluginInterface`.
+Conditional factory layer beneath the 10 raw factories in the `agentSources` registry of `src/agents/builtin-agents.ts` (Prometheus is built separately by `plugin-handlers/prometheus-agent-config-builder.ts`). Each `maybeCreateXXXConfig` wrapper decides whether an agent registers, resolves its model, applies user overrides, filters skills, and returns the final `AgentConfig` -- or `undefined` if the agent is disabled or requirements are not met. `createBuiltinAgents()` collects them into a `Record<string, AgentConfig>` consumed by `plugin-handlers/agent-config-handler.ts`.
 
 ## FILE CATALOG
 
 | File | Purpose |
 |------|---------|
-| `agent-overrides.ts` | Applies user overrides: category expansion, `deepMerge` of model/temp/prompt/permissions, `file://` prompt resolution |
-| `model-resolution.ts` | 4-step pipeline wrapper: `resolveModelPipeline` (override → category → provider fallback → system default) + `getFirstFallbackModel` |
+| `agent-overrides.ts` | `applyCategoryOverride`, `mergeAgentConfig`, `applyOverrides`: category expansion, `deepMerge` of model/temp/prompt/permissions, `file://` prompt resolution; `reasoning` wins over deprecated `variant`, which is kept only when `reasoning` is absent |
+| `agent-overrides.test.ts` | Override merge and reasoning/variant precedence tests |
+| `model-resolution.ts` | `applyModelResolution` (override -> category -> provider fallback -> system default) + `getFirstFallbackModel` |
 | `resolve-file-uri.ts` | Converts `file://` paths to absolute paths, bounds them to project root, reads content for prompt append |
 | `resolve-file-uri.test.ts` | Tests for URI decoding, path expansion, project-root bounds, missing-file handling |
 | `environment-context.ts` | Appends `createEnvContext()` block to agent prompt unless `disableOmoEnv` is set |
@@ -30,4 +31,4 @@ Conditional factory layer beneath the 11 raw `createXXXAgent` factories in `src/
 
 ## PIPELINE FIT
 
-Phase 3 of `plugin-handlers/config-handler.ts` invokes these factories. The resulting `AgentConfig` array feeds `createPluginInterface`. Returns `undefined` for disabled agents or unmet model requirements.
+Phase 3 of the config pipeline (`plugin-handlers/agent-config-handler.ts`) calls `createBuiltinAgents()`, which invokes these factories. It reads model and provider state from caches and `fetchAvailableModels`; NEVER call OpenCode client APIs here, because it runs inside the config handler and a client call deadlocks plugin init (#1301). Returns `undefined` per agent for disabled agents or unmet model requirements.

@@ -6,13 +6,13 @@
 
 Hand-authored, cross-harness skill bundle shared between the OpenCode and Codex editions. Mostly authored skill data, with skill-owned scripts/assets when required and no transform inside the package. `index.mjs` exports `sharedSkillsRootPath()` returning the absolute path to `skills/`; it probes `SKILLS_PROBE_SPECIFIERS` (`./skills/`, `../skills/`, `../../skills/`) nearest-first and returns the first that exists, falling back to the sibling path. The three levels cover `dist/index.js` (sibling), `dist/cli/index.js` (parent), and the Codex marketplace layout `plugins/omo/dist/cli/` (grandparent). Package: `@oh-my-opencode/shared-skills` (`files`: `index.mjs`, `index.d.ts`, `skills`).
 
-## SKILLS (17 under `skills/<name>/`)
+## SKILLS (18 under `skills/<name>/`)
 
 `programming`, `debugging`, `frontend`, `visual-qa`, `ast-grep`, `coding-agent-sessions`, `data-scientist`, `git-master`, `refactor`, `review-work`, `ulw-execute`, `ulw-plan`, `ulw-research`, `init-deep`, `remove-ai-slops`, `lsp-setup`, `ultimate-browsing`, `browser`.
 
 `browser` carries a staged runtime: `stage-omowright-runtime.mjs` bundles the root `omowright` devDependency (one ESM file plus its `page-bundle.js` and a digest manifest) into `skills/browser/runtime/omowright/` at build/prepack time (`materialize-shared-upstreams.mjs` calls it). The directory is gitignored and packed through the skill's `.npmignore`; `--check` is the freshness gate. Every shipped browser instruction (visual-qa, debugging, frontend, review-work, ulw-*, ultimate-browsing Tier 2, the ultrawork directives) routes to that runtime through the skill's `scripts/omowright.mjs` loader.
 
-`ultimate-browsing` is the one skill carrying a real sub-project: `skills/ultimate-browsing/engine/` is a 17-module Python package with its own CLI, config schemas, and test suite. It is a deliberately pinned, locally diverged snapshot of `fivetaku/insane-search`, not a follow-HEAD mirror. Before changing or re-vendoring it, read [`skills/ultimate-browsing/engine/AGENTS.md` §UPSTREAM BASELINE AND VERSION POLICY](skills/ultimate-browsing/engine/AGENTS.md#upstream-baseline-and-version-policy).
+`ultimate-browsing` is the one skill carrying a real sub-project: `skills/ultimate-browsing/engine/` is a 13-module Python package (plus YAML WAF and surrogate registries) with its own CLI, config schemas, and test suite. It is a deliberately pinned, locally diverged snapshot of `fivetaku/insane-search`, not a follow-HEAD mirror. Before changing or re-vendoring it, read [`skills/ultimate-browsing/engine/AGENTS.md` §UPSTREAM BASELINE AND VERSION POLICY](skills/ultimate-browsing/engine/AGENTS.md#upstream-baseline-and-version-policy).
 
 The Codex-only `lcx-report-bug`, `lcx-contribute-bug-fix`, and `lcx-doctor` skills live under `packages/omo-codex/plugin/components/lcx/skills/`; they are no longer authored in this package.
 
@@ -25,9 +25,10 @@ skills/ (source)
   ├─ build:shared-skills-assets (root) → cp -R skills dist/skills          # literal copy, no transform
   ├─ skills-loader-core → loadSkillsFromDir(sharedSkillsRootPath(), scope:"shared")   # OpenCode runtime
   └─ omo-codex/plugin/scripts/sync-skills.mjs → plugin/skills/             # the only transformer
-        1. copies 10 omo-codex COMPONENT skills FIRST (comment-checker, lcx-*, lsp, rules,
-           teammode, ulw-loop, ulw-plan, ultrawork from plugin/components/*/skills/*); same-named
-           shared skills are skipped → ulw-plan/ultrawork in Codex come from components, NOT from here
+        1. copies 9 omo-codex COMPONENT skills FIRST (comment-checker, lcx-contribute-bug-fix,
+           lcx-doctor, lcx-report-bug, lsp, rules, teammode, ulw-loop, and ulw-plan from
+           components/ultrawork); writes the `ultrawork` skill from the canonical prompts-core
+           directive; same-named shared skills are skipped -> ulw-plan in Codex is NOT from here
         2. copies remaining shared skills
         3. adaptSkillForCodex(): inserts Codex Harness Tool Compatibility sections; overlays
            ulw-execute/review-work; writes agents/openai.yaml display metadata with the "(OmO) "
@@ -67,4 +68,5 @@ upstreams/{open-design,taste-skill,ui-ux-pro-max,designpowers}   # pinned submod
 - **Packaging is pinned** by `omo-opencode/src/shared-skills-package.test.ts` (workspace inclusion + `files` entries + every skill parses).
 - **Skill CONTENT is PROSE — do NOT pin its wording with a test.** A skill body is instructions the model reads; asserting what it *says* (`toContain` a sentence, `not.toContain` old wording, word/char counts) guards a diff, not behavior, and blocks every legitimate edit — see `.omo/rules/test-discipline.md` §PROMPT TESTS. Guard only what a MACHINE consumes: packaging (`omo-opencode/src/shared-skills-package.test.ts`, above), personal-token scrubbing (`depersonalization-gate.test.ts` — a security exclusion), the third-party manifest (`frontend-thirdparty-manifest.test.ts`), the root-path probe (`shared-skills-root-path.test.ts`), `upstreams.test.ts`, the stylegallery routing membership (`frontend-stylegallery-routing.test.ts`), and the ultimate-browsing runtime pins (`ultimate-browsing-runtime-pins.test.ts`). A pure-prose skill edit ships on review with NO new test; the prose-pinning contract tests that used to sit here were removed as pretend-coverage.
 - **ulw-plan is dual-maintained by hand** (here AND `omo-codex/plugin/components/ultrawork/skills/ulw-plan/`) — sync-skills does NOT copy the shared version to Codex; keep both in step.
+- **Package-root modules:** `index.mjs` (root probe), `skill-source-filter.mjs` (`createSkillSourceCopyFilter`, used by Codex `sync-skills.mjs`), `depersonalization-gate.mjs` (deny-list for personal identity and credential leaks; not the engine's `bias_check.py`), `stage-omowright-runtime.mjs`; `scripts/` holds `frontend-refs-manifest.mjs`, `designpowers-refs-manifest.mjs`, `materialize-frontend-refs.mjs`. Machine-consumed routing membership is also guarded by `frontend-ambience-routing.test.ts`, `frontend-component-catalogs-routing.test.ts`, and `browser-skill-engine.test.ts`.
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

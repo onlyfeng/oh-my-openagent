@@ -1,6 +1,6 @@
 # mcp-stdio-core -- JSON-RPC stdio Framing + Dispatch (Core)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -13,7 +13,7 @@ The lowest-level core package: JSON-RPC 2.0 transport over stdio (line-mode and 
 | `types.ts` | `./types` | `JsonRpcId/Error/Result/Response`, `McpToolDescriptor`, `TextContent`, `McpLifecycleLog` |
 | `record.ts` | `./record` | `isPlainRecord(value)` type guard |
 | `responses.ts` | `./responses` | `successResponse`, `errorResponse`, `jsonRpcId`, `messageFromError` |
-| `server.ts` | `./server` | `runJsonRpcStdioServer(config)`: async-generator loop, idle timeout, `McpRequestHandler`, exits on terminal output errors |
+| `server.ts` | `./server` | `runJsonRpcStdioServer(config)`: async-generator loop, idle timeout (default 10 min), opt-in `parentWatchdog`, `McpRequestHandler`, exits on terminal output errors; also `isProcessAlive`, `createParentWatchdog` |
 | `transport.ts` | `./transport` | `readStdioJsonRpcMessages` (async gen), `writeStdioJsonRpcResponse`, dual framing |
 
 ## CONSUMERS
@@ -27,7 +27,8 @@ The lowest-level core package: JSON-RPC 2.0 transport over stdio (line-mode and 
 
 - **Two framing modes:** `"line"` (`\n`-delimited) and `"framed"` (`Content-Length:` header per MCP spec); auto-detected by scanning the buffer prefix for `content-length:`.
 - **Idle timeout uses `timer.unref()`**: the timeout never keeps the process alive.
+- **Parent watchdog is opt-in:** `parentWatchdog` (default poll 30 s) calls `onParentExit` once the parent pid is gone; when absent no timer exists. Deliberately detached callers (the lsp-daemon server) must not pass it. `isProcessAlive` treats only `ESRCH` as dead and must NEVER throw (it runs inside an unref'd `setInterval`); never fall back to a `ppid === 1` check, which is invalid on win32.
 - **Handler contract:** return `undefined` to skip silently; `onHandlerError` catches exceptions; `parseErrorResponse` customizes JSON parse errors.
 - **Output writes are awaited; closed output stops the loop:** `writeStdioJsonRpcResponse` is async and `writeChunk` removes its one-shot `error` listener after settle. `writeResponse` catches terminal output errors (`EPIPE`, `ERR_STREAM_DESTROYED`, `ERR_STREAM_WRITE_AFTER_END`), logs `output_error`, and returns false so the read loop exits; non-terminal write errors still propagate.
-- **Keep zero dependencies.** `.js` suffix on relative imports (ESM). This is the floor of the package layering; it must stay leaf.
+- **Keep zero dependencies.** `.js` suffix on relative imports (ESM). This is the floor of the package layering; it must stay leaf. `server.test.ts` (600+ lines) pins the loop contract; run `bun test src/*.test.ts src/**/*.test.ts`.
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

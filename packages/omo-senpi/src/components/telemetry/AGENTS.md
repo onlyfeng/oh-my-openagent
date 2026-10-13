@@ -30,6 +30,7 @@ Senpi telemetry adapter over `@oh-my-opencode/telemetry-core` PostHog primitives
 | `omo-native-category-config.ts` | Captures a `category_config` snapshot per `config_generation`; a generation is spent only when the canonical exportable map changed. Custom category and model names never leave the machine. |
 | `omo-native-crash.ts` / `process-crash-records.ts` / `crash-schema.ts` | `process_crashed`, sent from the `session_started` path (so after every telemetry gate) once per crash an earlier process recorded: reads every endpoint's `<agentDir>/rpc-host-daemon/*/crashes.jsonl` (fingerprint includes the endpoint dir, `shard_kind` `p`/`i`/`none`/`unknown` from the endpoint's `endpoint.json` or boot `settings.json` socket basename via senpi-task `parseShardBasename`, trusted only when the socket hashes to that dir; never the key or socket) and `<agentDir>/process-crashes/crashes.jsonl` (senpi#2194 markers plus senpi-task parent records), claims each record by exclusive-create under `<state>/crash-reports/<fingerprint>` before sending, skips malformed lines and records older than 14 days, caps 20 per start. Versions are version-shaped or `unknown`. |
 | `model-vocabulary.ts` | `KNOWN_MODELS` / provider vocabulary so every shipped fallback-chain rung masks to itself, not `custom`, plus `ALL_KNOWN_MODEL_IDS` — the provider-independent flat set of exportable model ids. |
+| `session-inventory.ts` / `session-model-registry.ts` | `readOmoNativeInventory` (the session-start provider/model inventory diagnostic behind `session_started`) and `resolveSessionModelRegistry` (live registry resolution feeding the masking vocabulary). |
 | `schema-doc.test.ts` | Pins the generated schema block in `docs/reference/senpi-telemetry.md` against `OMO_NATIVE_EVENT_SCHEMAS`. |
 | `telemetry.test-support.ts` | Recorded transport factory, fixed clock, fake os provider for tests. |
 
@@ -58,7 +59,7 @@ Senpi telemetry adapter over `@oh-my-opencode/telemetry-core` PostHog primitives
 ## Conventions
 
 - Fire-and-forget everywhere: capture failures surface once through the diagnostics callback or debug log, never to the user, never as a thrown error.
-- New events require a schema entry + allowlist in `product-identity.ts`, a doc regeneration (`schema-doc.test.ts` fails otherwise), and bucketing for any unbounded value.
+- New events require a schema entry + allowlist in `event-schemas.ts` (re-exported by `product-identity.ts`), a doc regeneration (`schema-doc.test.ts` fails otherwise), and bucketing for any unbounded value.
 - Tests inject `env`, `now`, `osProvider`, `stateDir`, and `transportFactory`; no test touches the network or the real agent home.
 
 ## Anti-patterns

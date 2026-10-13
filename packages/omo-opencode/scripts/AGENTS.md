@@ -1,12 +1,12 @@
 # scripts/ -- OpenGateway Catalog Generator
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-08-24 / f3642fcda | **Updated:** 2026-10-13 / dc373d26f
 
 Earned its file: score 8, distinct domain. Only code in this package outside `src/`; nothing in the plugin bundle imports it. Previously absent from the whole AGENTS.md hierarchy.
 
 ## OVERVIEW
 
-2 files, 700 LOC: `generate-opengateway-models.ts` (fetches the OpenGateway + models.dev catalogs, writes the tracked `src/features/opengateway-provider/opengateway-models.json`) plus its bun:test suite.
+2 files, 720 LOC: `generate-opengateway-models.ts` (283 LOC; fetches the OpenGateway + models.dev catalogs, writes the tracked `src/features/opengateway-provider/opengateway-models.json`) plus its 437-LOC bun:test suite.
 
 ## WHERE TO LOOK
 

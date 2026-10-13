@@ -115,7 +115,7 @@ Any future upstream sync preserves BOTH sides. Concretely:
 
 ## OVERVIEW
 
-A 17-module Python package embedded in the `ultimate-browsing` skill: a site-agnostic fetch chain that escalates from a cheap curl probe to a real browser, with declarative WAF and surrogate registries. Not "optional scripts" — it has its own CLI entry (`python3 -m engine URL`), two YAML config schemas, a 4-file test suite, and a standalone CI guard. Package exports (`__init__.py`): `fetch`, `FetchResult`, `Attempt`, `Verdict`, `ValidationResult`, `validate`, `CHALLENGE_MARKERS`, `detect`, `TRANSFORMS`, `apply_transform`.
+A 13-module Python package embedded in the `ultimate-browsing` skill: a site-agnostic fetch chain that escalates from a cheap curl probe to a real browser, with declarative WAF and surrogate registries. Not "optional scripts": it has its own CLI entry (`python3 -m engine URL`), two YAML config schemas, a 5-module test suite, and a standalone CI guard. Package exports (`__init__.py`): `fetch`, `FetchResult`, `Attempt`, `Verdict`, `ValidationResult`, `validate`, `CHALLENGE_MARKERS`, `detect`, `TRANSFORMS`, `apply_transform`.
 
 ## THE NO-SITE-NAME RULE (enforced in CI)
 
@@ -170,7 +170,7 @@ python3 -m engine URL [--selector S] [--device auto|desktop|mobile]
 
 ## TESTS
 
-`tests/` — `test_surrogate.py` (staleness, proxy gating, short-circuit), `test_surrogate_validators.py`, `test_fetch_chain.py`, `test_playwright_templates.py`, plus HTML/JSON fixtures under `tests/fixtures/`.
+`tests/`: `test_surrogate.py` (staleness, proxy gating, short-circuit), `test_surrogate_validators.py`, `test_fetch_chain.py`, `test_playwright_templates.py`, `test_playwright_stealth.py`, plus HTML/JSON fixtures under `tests/fixtures/`.
 
 ## NOTES
 

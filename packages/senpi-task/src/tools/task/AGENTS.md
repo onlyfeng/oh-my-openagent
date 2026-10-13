@@ -1,6 +1,6 @@
 # tools/task - The `task` Tool
 
-Single or `tasks:[...]` batch spawn of child tasks routed by category or agent. Tool contracts, plan-gated agents, and batch semantics live in the package AGENTS.md; this file maps the modules and the validation rules. 54 files, the largest tool subtree.
+Single or `tasks:[...]` batch spawn of child tasks routed by category or agent. Tool contracts, plan-gated agents, and batch semantics live in the package AGENTS.md; this file maps the modules and the validation rules. 24 implementation files, 44 tests, 2 `__fixtures__/` files: the largest tool subtree.
 
 ## Anatomy
 
@@ -16,14 +16,15 @@ Single or `tasks:[...]` batch spawn of child tasks routed by category or agent. 
 | `batch-item-details.ts` / `batch-progress.ts` | Per-item result details for batches; throttled per-child progress partials for a foreground batch (one status row per child). |
 | `foreground-wait.ts` | Foreground wait surface. |
 | `invocation-gate.ts` / `plan-review-contract.ts` | plan-consultant/plan-reviewer plan-gate consult before `manager.start` (single: `denied`; batch item: `plan_unresolved` / `invalid_target`). |
-| `spawn-policy.ts` | `evaluateSpawnPolicy` verdicts. |
+| `spawn-policy.ts` | `evaluateSpawnPolicy` verdicts (also consulted by the `workpool` tool, `../workpool.ts`). |
+| `kernel-tools.ts` | `resolveTaskKernelTools`: resolves the call's `tools` names ONCE against the parent's live kernel capability before any child exists; one ineligible item (curated agent, process mode, write-bypass policy) denies the whole call. |
 | `skills.ts` / `skill-result.ts` | Skill loading/prepend + task skill summaries. |
 | `renderers.ts` / `call-renderer.ts` / `start-presentation.ts` / `result-details.ts` | Result rendering and details; package subpath `./task-renderers` points at `renderers.ts`. |
 | `types.ts` | Contract hub: `TaskToolContext`, `TaskAncestry`, `TaskToolDeps`, `ResolvedSpawnItem`, `TaskToolDetails`. |
 
 ## Conventions
 
-- Pure-ish `run*` functions + `create*Tool` adapters; runtime seams injected via `TaskToolDeps` / `TaskToolContext` (tests use `__fixtures__/task-tool-fakes.ts`).
+- Pure-ish `run*` functions + `create*Tool` adapters; runtime seams injected via `TaskToolDeps` / `TaskToolContext` (tests use `__fixtures__/task-tool-fakes.ts` and `__fixtures__/typed-handle-session.ts`).
 - Every effective spawn has exactly one target after batch inheritance; an effective category item carries no own or inherited model.
 - `run_in_background` is batch-wide: the top-level value and every item-level mirror must agree (`resolveRunInBackground`); agreement is hoisted, disagreement is `invalid_arguments`.
 - Validation hard-fails invalid targets with the fix named in the message; fields are never silently ignored.
@@ -33,6 +34,7 @@ Single or `tasks:[...]` batch spawn of child tasks routed by category or agent. 
 - NEVER combine `category` with `subagent_type`; NEVER combine category routing with `model` (a call-site override would bypass `categories.<name>.models` routing).
 - Batches are uncapped per call: admission is governed only by `TaskConcurrency` lane/global limits, with items beyond the limit queued. Never reintroduce a per-call size cap in the schema or the execution path.
 - New spawn paths must consult the invocation gate; both single and batch routes do.
+- Never create a child session or task record before the kernel-tool grant resolves; a grant failure leaves neither behind.
 
 ## QA
 
@@ -40,4 +42,4 @@ Single or `tasks:[...]` batch spawn of child tasks routed by category or agent. 
 bun test packages/senpi-task/src/tools/task
 ```
 
-Parent: [`../../../AGENTS.md`](../../../AGENTS.md).
+Parent: [`../../AGENTS.md`](../../AGENTS.md); package contracts in [`../../../AGENTS.md`](../../../AGENTS.md).

@@ -1,6 +1,6 @@
 # memory commands
 
-The thirteen memory slash commands, registered once by the memory component through `register.ts` (`registerMemoryCommands(pi, deps)`). `MEMORY_COMMAND_NAMES`: `/memory /memfs /remember /init /doctor /recompile /memory-repository /sleeptime /reflect /dream /search /people /facts`. Score ~24 (53 files, DI surface, central registration).
+The thirteen memory slash commands, registered once by the memory component through `register.ts` (`registerMemoryCommands(pi, deps)`). `MEMORY_COMMAND_NAMES`: `/memory /memfs /remember /init /doctor /recompile /memory-repository /sleeptime /reflect /dream /search /people /facts`. Score ~24 (62 files, DI surface, central registration).
 
 ## Anatomy
 
@@ -12,7 +12,7 @@ The thirteen memory slash commands, registered once by the memory component thro
 | `backup.ts` / `repo.ts` | Repository backup and git/repository access helpers. |
 | `memory.ts` / `memfs.ts` + `memfs-runtime.ts` + `memfs-shared.ts` / `memfs-extra.ts` | `/memory` status; `/memfs` file tree. `/memfs` registers synchronously and lazy-loads its runtime on first invocation; replacement is noninteractive and ALWAYS backs up first. |
 | `init.ts` | `/init` - NEVER overwrites an existing memory repository. |
-| `doctor.ts` / `doctor-runtime.ts` / `doctor-checks.ts` / `doctor-reservation.ts` | Synchronous command registration with a first-invocation lazy runtime; health checks; the `facts` line stays silent at zero state. `doctor-reservation` warns on a ghost `active.lock` (dead/missing launcher identity) with reclaim remediation. |
+| `doctor.ts` / `doctor-runtime.ts` / `doctor-checks.ts` / `doctor-reservation.ts` / `doctor-projection.ts` / `doctor-receipts.ts` | Synchronous command registration with a first-invocation lazy runtime; health checks; the `facts` line stays silent at zero state. `doctor-reservation` warns on a ghost `active.lock` (dead/missing launcher identity) with reclaim remediation. `doctor-projection` checks the compiled projection; `doctor-receipts` summarizes the last receipt per kind and lists quarantined runs. |
 | `recompile.ts` / `remember.ts` / `search.ts` / `sleeptime.ts` / `reflect.ts` / `dream.ts` + `dream-staging.ts` | Single-purpose commands; `/sleeptime` shows the resolved nudge/facts/dream/people/soul settings. |
 | `memory-repository.ts` | Push-only git mirror sync (the cloud-free sync story). |
 | `people.ts` / `people-runtime.ts` / `people-ask.ts` / `people-query.ts` / `people-render.ts` / `people-search.ts` + `people.test-support.ts` | People cards: query/selection, ask runner (`createPeopleAskRunner`), roster/card rendering, search hits. `people.ts` is only the registration shell; `runPeopleCommand` in `people-runtime.ts` ships in the memory palace sidecar (`../palace/runtime.ts`) and loads on the first `/people`. |

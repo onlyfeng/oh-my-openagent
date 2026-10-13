@@ -21,7 +21,7 @@ visual-qa/
     ├── ansi.ts                   # ANSI escape stripping (width must be escape-aware)
     ├── png-decode.ts / png-crc.ts / png-synth.ts   # stdlib PNG codec (no deps)
     ├── types.ts
-    └── *.test.ts                 # co-located bun tests for every module above
+    └── *.test.ts                 # co-located bun tests: cli, image-diff, tui-grid, east-asian-width, ansi, png-decode
 ```
 
 ## BUNDLE/SOURCE DUALITY

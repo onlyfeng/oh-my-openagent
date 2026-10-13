@@ -1,6 +1,6 @@
 # skills
 
-Native Senpi skills authored directly against the Senpi tool surface (not ported from Codex or the shared pool). `plugin/scripts/sync-skills.mjs` ships the native registry verbatim; shared-pool skills (ulw-execute, git-master, ...) get senpi overlays at sync time. Earned by score: 11 skill dirs with their own authoring contract.
+Native Senpi skills authored directly against the Senpi tool surface (not ported from Codex or the shared pool). `plugin/scripts/sync-skills.mjs` ships the native registry verbatim; shared-pool skills (ulw-execute, git-master, ...) get senpi overlays at sync time. Earned by score: 11 skill dirs with their own authoring contract. 26 files total (22 Markdown, 2 Bash, 2 `.mjs`); the fat bodies are `ultrawork/SKILL.md` (~575 LOC, embedded verbatim into the ultrawork component's generated directive), `hyperplan/SKILL.md` (~461), and `ulw-research/SKILL.md` (~427).
 
 ## WHERE TO LOOK
 
@@ -8,7 +8,7 @@ Native Senpi skills authored directly against the Senpi tool surface (not ported
 |-------|------|
 | `mass-ulw/` | Dag orchestration at repo scale (one run per phase with every stage chained up front, file handoff between nodes, size formula, node categories). `references/planning.md` is REQUIRED reading before building any dag: stage doctrine, node prompt contract, failure playbook. |
 | `ultrawork/` | Senpi-native ultrawork directive source; its body is embedded into `src/components/ultrawork/generated-directive.ts` by `plugin/scripts/embed-directive.mjs` (build fails on non-senpi harness tokens). Blocks wrapped in `<!-- omo-ultrawork-astra:<name>:start/end -->` are swapped for the matching `## <name>` section of `references/astra-variant.md` in the GPT-6 Astra variant the ultrawork component selects by receiving model; the baseline strips only the marker lines, so every other model reads the skill body verbatim. |
-| `ulw-plan/` | Read-only planning lifecycle: draft -> plan with explicit approval; `scripts/scaffold-plan.mjs` scaffolds guarded `.omo` artifacts. |
+| `ulw-plan/` | Read-only planning lifecycle: draft -> plan with explicit approval; `scripts/scaffold-plan.mjs` scaffolds guarded `.omo` artifacts from `scripts/plan-templates.mjs` (`PLAN_SECTION_HEADERS`, `FINAL_VERIFICATION_ITEMS`, `buildDraft`, `buildPlanSkeleton`). |
 | `ulw-loop/` | Goal/QA lifecycle loop; component-owned native source, shipped verbatim. |
 | `ulw-research/` | Claim-graph research orchestration: claims enter `claim-graph.md` as `verified-claims`; unsupported claims stay unresolved/refuted. |
 | `hyperplan/` | Adversarial cross-critique planning; debate rounds and planner handoff must not be skipped. |

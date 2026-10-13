@@ -1,10 +1,10 @@
 # test — aggregate plugin contract suite (node:test)
 
-**Score 14** (53 files, ~9.7k LOC; distinct domain: black-box contract checking over generated artifacts).
+**Score 14** (56 files, ~10.1k LOC; distinct domain: black-box contract checking over generated artifacts).
 
 ## OVERVIEW
 
-51 `*.test.mjs` suites + `index.js` loader asserting contracts over GENERATED/INSTALLED artifacts — manifests, aggregate hook JSON, built CLIs, synced skills — not over component sources. Runs via `npm test` from `plugin/` after `npm run build`; also the tail of repo-root `bun run test:codex`.
+50 `*.test.mjs` suites + `index.js` loader asserting contracts over GENERATED/INSTALLED artifacts (manifests, aggregate hook JSON, built CLIs, synced skills), not over component sources. Runs via `npm test` from `plugin/` after `npm run build`; also the tail of repo-root `bun run test:codex`.
 
 ## KEY FILES
 
@@ -21,12 +21,12 @@
 | Family | Suites |
 |--------|--------|
 | Aggregate wiring | `aggregate-{manifest,hooks,build,mcp,agents,model-catalog}.test.mjs` |
-| Bootstrap | `bootstrap-{hooks,setup,binlinks,orchestration,ps-guard}.test.mjs` |
+| Bootstrap | `bootstrap-{hooks,setup,binlinks,orchestration,ps-guard,default-role}.test.mjs` |
 | Update flow | `auto-update{,-state-persistence,-restart-notice,-release-notes}.test.mjs` |
 | Migration | `migrate-codex-config.test.mjs` (1,242 LOC — densest), `multi-agent-v2-regression`, `subagent-limit-migration` |
-| Skills sync | `sync-skills{,-codex-compatibility}.test.mjs`, `ulw-plan`/`ulw-research`/`ulw-loop` skill contracts |
+| Skills sync | `sync-skills{,-codex-compatibility}.test.mjs`, `canonical-ultrawork-directive.test.mjs`, `ulw-plan`/`ulw-research`/`ulw-loop` skill contracts |
 | Teammode | `teammode-{transport,communication,worktree,safety,thread-links,thread-title,archive-ambiguity}.test.mjs` |
-| Component CLIs | `component-{bundled-cli,bin-names}.test.mjs`, `lsp-prebuild-layouts` |
+| Component CLIs | `component-{bundled-cli,bin-names}.test.mjs`, `lsp-prebuild-layouts`, `install-time-build-runtime` |
 
 ## CONVENTIONS
 

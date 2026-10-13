@@ -1,8 +1,8 @@
 # team-runtime — Team Lifecycle Engine
 
-**Generated:** 2026-08-24
+**Generated:** 2026-10-13 / dc373d26f
 
-**Score:** 12 (22 files, 3.3k LOC, distinct domain; one line in `team-mode/AGENTS.md`)
+**Score:** 12 (14 source + 8 test files, 3.3k LOC, distinct domain; one line in `team-mode/AGENTS.md`)
 
 ## OVERVIEW
 
@@ -12,10 +12,10 @@ Lifecycle engine behind `team_create` / `team_status` / `team_shutdown_request`(
 
 | Task | Location |
 |------|----------|
-| Create a team run | `create.ts` (`createTeamRun`) — spawns members via BackgroundManager, inits mailbox/tasklist/worktrees, activates optional tmux layout |
+| Create a team run | `create.ts` (`createTeamRun`, 276 LOC, largest file): spawns members via BackgroundManager, inits mailbox/tasklist/worktrees, activates optional tmux layout |
 | Status | `status.ts` |
 | Shutdown handshake | `shutdown.ts` + `shutdown-helpers.ts`, `shutdown-test-fixtures.ts` |
-| Delete + background cancel | `delete-team.ts`, `delete-team-bg-cancel.ts` |
+| Delete + background cancel | `delete-team.ts` (bg-task cancel covered by `delete-team-bg-cancel.test.ts`) |
 | Resource cleanup / rollback | `cleanup-team-run-resources.ts` |
 | Member resolution | `resolve-member.ts`, `resolve-member-dependencies.ts`, `unresolved-team-members.ts` (`assertNoUnresolvedTeamMembers`) |
 | Layout activation | `activate-team-layout.ts` (delegates to `../team-layout-tmux/`) |
@@ -24,12 +24,12 @@ Lifecycle engine behind `team_create` / `team_status` / `team_shutdown_request`(
 
 ## CONVENTIONS
 
-- Partial-failure rollback: `create.ts` throws `TeamRunCreateError` carrying a `cleanupReport` (`cancelledTaskIds`, `removedLayout`, `removedWorktrees`, `errors`) — every resource acquired mid-create must appear in that report on failure.
+- Partial-failure rollback: `create.ts` throws `TeamRunCreateError` carrying a `cleanupReport` (`cancelledTaskIds`, `removedLayout`, `removedWorktrees`, `errors`); every resource acquired mid-create must appear in that report on failure.
 - Session IDs are polled (`SESSION_ID_POLL_MS = 25`) until known, then `registerTeamSession()` is called synchronously (spawn-race rule from parent `AGENTS.md`).
 - Caller-lead reuse decided by `shouldReuseCallerLeadSession` (`../resolve-caller-team-lead.ts`).
 
 ## ANTI-PATTERNS
 
 - NEVER spawn members without registering the session in `../team-session-registry.ts` first.
-- NEVER leave a failed `create` partially provisioned — rollback path must run even when individual cleanup steps error.
+- NEVER leave a failed `create` partially provisioned; the rollback path must run even when individual cleanup steps error.
 - Do not add direct state writes here; durable state goes through `../team-state-store/` (atomic locks).

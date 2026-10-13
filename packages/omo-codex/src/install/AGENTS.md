@@ -1,6 +1,6 @@
 # src/install — Codex installer engine (TypeScript source of truth)
 
-**Score 14** (63 source modules + 53 colocated tests, ~15.7k LOC; the package's largest code mass).
+**Score 15** (68 source modules + 52 colocated tests, ~16.7k LOC; the package's largest code mass).
 
 ## OVERVIEW
 
@@ -13,11 +13,11 @@ Everything the `lazycodex` install/upgrade surface does: plugin cache install, `
 | `codex-cache-*` (13) | Plugin cache layout, install, bins/shims, local deps, MCP manifests, prune, runtime wrappers |
 | `codex-cleanup-*` (4) | Uninstall, bin cleanup, config cleanup, deletion safety |
 | `codex-config-*` (9) + `toml-*` (2) | `config.toml` feature mutators + TOML text primitives |
-| `install-*` (3) | Orchestration (`install-codex.ts`), local CLI adapter, ast-grep provisioning |
+| `install-*` (4) | Orchestration (`install-codex.ts`), local CLI adapter, ast-grep provisioning, bundled agent install (`install-codex-agents.ts`) |
 | `lazycodex-*` (5) | Manual update flow, CLI args, delegated commands, version stamping, bun global paths |
-| `codex-marketplace*`, `codex-model-catalog`, `codex-multi-agent*` | Snapshot/manifest plumbing, model catalog, MultiAgent guards |
-| `link-cached-plugin-agents` + `preserved-agent-settings` + `retired-managed-agent-purge` + `managed-agent-reasoning-defaults` | Agent TOML linking, preservation, purging |
-| `git-bash*`, `codex-git-bash-*`, `codex-hook-*`, `lsp-daemon-reaper`, `codex-process`, `codex-install*` | Preflight, hook trust/targets, daemon reaping, telemetry, detection |
+| `codex-marketplace*`, `codex-model-catalog`, `codex-multi-agent-{mode,v2}-config`, `codex-package-layout` | Snapshot/manifest plumbing, model catalog, MultiAgent guards, package layout |
+| `link-cached-plugin-agents` + `preserved-agent-settings` + `retired-managed-agent-purge` + `managed-agent-reasoning-defaults` + `agent-model-overrides` + `codex-agent-config` + `default-agent-role` | Agent TOML linking, preservation, purging, per-agent model/reasoning overrides (`codex-agent-config.ts` imports `splitReasoningSuffix` from `omo-config-core`) |
+| `git-bash*`, `codex-git-bash-*`, `codex-hook-*`, `lsp-daemon-reaper`, `codex-process`, `codex-install*`, `codex-project-local-cleanup*` | Preflight, hook trust/targets, daemon reaping, telemetry, detection, project-local artifact repair |
 
 ## WHERE TO LOOK
 
@@ -25,20 +25,20 @@ Everything the `lazycodex` install/upgrade surface does: plugin cache install, `
 |------|----------|
 | Installer orchestration | `install-codex.ts` (`runCodexInstaller`; also `findRepoRoot`, `resolveCodexInstallerBinDir`) |
 | `config.toml` updates | `codex-config-toml.ts` (`updateCodexConfig`) composing the `codex-config-*` mutators |
-| TOML section/key primitives | `toml-section-editor.ts` (448 LOC; shared hotspot — every config path imports it), `toml-setting-reader.ts` |
+| TOML section/key primitives | `toml-section-editor.ts` (456 LOC; shared hotspot: every config path imports it), `toml-setting-reader.ts` |
 | Cache install/link | `codex-cache-install.ts`, `codex-cache.ts`, `codex-cache-bins.ts` |
 | Managed-artifact markers | `codex-cache-command-shim.ts` (`COMMAND_SHIM_MARKER`), `codex-cache-runtime-wrapper.ts` (`RUNTIME_WRAPPER_MARKER`) |
 | Cleanup safety | `codex-cleanup-safety.ts`; regression homes: `codex-cleanup.test.ts`, `codex-cache-dangling-bins.ts` |
 | Agent TOML linking | `link-cached-plugin-agents.ts` + preservation/purge trio |
-| Manual/npx update flow | `lazycodex-manual-update.ts` (262 LOC) |
+| Manual/npx update flow | `lazycodex-manual-update.ts` (261 LOC) |
 | Daemon reaping | `lsp-daemon-reaper.ts` + attestation tests |
-| Shared type contract | `types.ts` (`isPlainRecord` = most-imported internal guard) |
+| Shared type contract | `types.ts`; `isPlainRecord` (most-imported internal guard) lives in `codex-cache-fs.ts` |
 
 ## CONVENTIONS
 
 - NO generic TOML serializer: sections, dotted keys, and multiline values are edited by text-scanning `toml-section-editor.ts`, so comments, ordering, and unknown user sections survive.
 - Writes atomic (`codex-config-atomic-write.ts` temp+rename).
-- Tests colocated `*.test.ts`, Bun test, real-filesystem tempdirs, explicit platform cases. Heaviest: `codex-config-toml.test.ts` (878 LOC), `codex-cleanup.test.ts` (783), `codex-cache.test.ts` (654).
+- Tests colocated `*.test.ts`, Bun test, real-filesystem tempdirs, explicit platform cases. Heaviest: `codex-config-toml.test.ts` (876 LOC), `codex-cleanup.test.ts` (782), `codex-cache.test.ts` (625).
 - Source imports omit `.ts` extensions (Bun/bundler resolution).
 
 ## ANTI-PATTERNS

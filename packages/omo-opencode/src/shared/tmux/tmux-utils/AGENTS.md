@@ -1,8 +1,8 @@
 # tmux-utils — Pane/Session/Layout Primitives
 
-**Generated:** 2026-08-24
+**Generated:** 2026-10-13
 
-**Score:** 17 (33 files, 2.4k LOC, own module boundary; not described in `shared/AGENTS.md` beyond one row)
+**Score:** 16 (32 files in this dir; the whole `shared/tmux/` tree incl. parent `runner.ts`/`cmux-detect.ts`/`constants.ts`/`types.ts`/`tmux-utils.ts` totals 40 files, ~2.6k LOC; own module boundary)
 
 ## OVERVIEW
 
@@ -21,7 +21,7 @@ Tmux pane/session/window/layout utilities under `shared/tmux/`. Pure decision lo
 
 ## CONVENTIONS
 
-- Barrel `index.ts` exports ONLY `killTmuxSessionIfExists`; everything else is consumed via direct file imports (notably `src/create-managers.ts` and `features/tmux-subagent/`).
+- Barrel `index.ts` exports ONLY `killTmuxSessionIfExists` (~40 references in `src/`); everything else is consumed via direct file imports (notably `src/create-managers.ts` and `features/tmux-subagent/`). The parent `runner.ts` `runTmuxCommand` (~50 references) adapts `@oh-my-opencode/tmux-core`.
 - New tmux invocation goes into a `*-runner.ts` with injected spawn deps — never spawn `tmux` inside logic modules; the separation exists so logic stays unit-testable without a tmux binary.
 
 ## ANTI-PATTERNS

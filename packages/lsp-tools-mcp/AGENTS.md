@@ -1,10 +1,10 @@
 # lsp-tools-mcp -- LSP Tools stdio MCP (MCP layer)
 
-**Generated:** 2026-07-17 / 7d664b96b
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Vendored, Node-targeted MCP-layer package (`@code-yeongyu/lsp-tools-mcp`). Serves LSP tools via stdio MCP, consuming [`lsp-core`](../lsp-core/AGENTS.md) for tool definitions + LSP runtime and [`mcp-stdio-core`](../mcp-stdio-core) for JSON-RPC framing. Registered as tier-1 MCP `lsp` in [`packages/omo-opencode/src/mcp/`](../omo-opencode/src/mcp/AGENTS.md). Used directly by the OpenCode edition and consumed by [`lsp-daemon`](../lsp-daemon/AGENTS.md) for the Codex edition.
+Vendored, Node-targeted MCP-layer package (`@code-yeongyu/lsp-tools-mcp`). Serves LSP tools via stdio MCP, consuming [`lsp-core`](../lsp-core/AGENTS.md) for tool definitions + LSP runtime and [`mcp-stdio-core`](../mcp-stdio-core) for JSON-RPC framing. Registered as tier-1 MCP `lsp` in [`packages/omo-opencode/src/mcp/`](../omo-opencode/src/mcp/AGENTS.md). Used directly by the OpenCode edition. [`lsp-daemon`](../lsp-daemon/AGENTS.md) no longer imports this package; it consumes `lsp-core` directly.
 
 ## TOOLS SERVED
 
@@ -14,6 +14,7 @@ Vendored, Node-targeted MCP-layer package (`@code-yeongyu/lsp-tools-mcp`). Serve
 - `lsp_symbols`
 - `lsp_prepare_rename`
 - `lsp_rename`
+- `lsp_format`
 - `lsp_status`
 - `lsp_install_decision`
 
@@ -30,7 +31,8 @@ Vendored, Node-targeted MCP-layer package (`@code-yeongyu/lsp-tools-mcp`). Serve
 ## NOTES
 
 - **Node + npm + vitest + biome, NOT Bun.** Built with `npm ci` + `npm run build` (triggered from root via `bun run build:lsp-tools-mcp`). `engines.node >= 20`. The build itself bundles with `bun build`; tests/tooling stay npm/Vitest/Biome.
-- **All logic lives in `lsp-core`.** This package is a thin vendored shim that re-exports the core and adds a standalone CLI entry. Most `src/lsp/*.ts` are one-line re-export shims.
+- **All logic lives in `lsp-core`.** This package is a thin vendored shim (`src/` is ~25 files / under 100 LOC) that re-exports the core and adds a standalone CLI entry. Most `src/lsp/*.ts` are one-line re-export shims. `lsp-core` and `mcp-stdio-core` are `file:` devDependencies, bundled into `dist/` by `bun build`.
+- **Tests:** `test/` holds ~22 vitest suites, including security tests; it is not co-located with `src/`.
 - **`ensure-core-links.mjs`** prepares local `lsp-core` links before build — run via the npm scripts, not manually.
 - **Config:** `.codex/lsp-client.json` (project) and `~/.codex/lsp-client.json` (user), overridable via `LSP_TOOLS_MCP_PROJECT_CONFIG` and `LSP_TOOLS_MCP_USER_CONFIG`.
 

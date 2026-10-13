@@ -5,7 +5,7 @@ description: Developer reference for the Sisyphus-Junior category-spawned execut
 
 # src/agents/sisyphus-junior/ -- Category-Spawned Executor
 
-**Generated:** 2026-05-18
+**Generated:** 2026-05-18 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -15,7 +15,7 @@ description: Developer reference for the Sisyphus-Junior category-spawned execut
 
 | File | Purpose |
 |------|---------|
-| `agent.ts` | `createSisyphusJuniorAgentWithOverrides()` factory, model-variant routing, `SISYPHUS_JUNIOR_DEFAULTS` |
+| `agent.ts` | `createSisyphusJuniorAgentWithOverrides()` factory, `getSisyphusJuniorPromptSource()` routing, `SISYPHUS_JUNIOR_DEFAULTS` |
 | `index.ts` | Barrel exports |
 | `default.ts` | Base/Claude prompt: todo discipline, verification, termination rules |
 | `gemini.ts` | Gemini-optimized prompt variant |
@@ -30,11 +30,11 @@ description: Developer reference for the Sisyphus-Junior category-spawned execut
 
 ## VARIANT SELECTION
 
-Parent `agent.ts` selects prompt variant by model name:
-- Kimi K3 -> `kimi-k3.ts`
-- Kimi K2.7 -> `kimi-k2-7.ts`
-- Contains "kimi-k2" -> `kimi-k2-6.ts`
-- Contains "gpt-5.5" or "gpt-5.6" -> shared `gpt-5-5.ts` prompt family with model-aware identity
+`agent.ts` `getSisyphusJuniorPromptSource()` checks in this order:
+- Kimi K3 (`isKimiK3Model`) -> `kimi-k3.ts`
+- Kimi K2 code model (`isKimiK2CodeModel`) -> `kimi-k2-7.ts`
+- Other Kimi K2 -> `kimi-k2-6.ts` (source id `kimi-k2`)
+- GPT-5.5, GPT-5.6 or GPT-6 -> shared `gpt-5-5.ts` prompt family with model-aware identity
 - Contains "gpt-5.4" -> `gpt-5-4.ts`
 - Contains "gpt" -> `gpt.ts`
 - Contains "gemini" -> `gemini.ts`
@@ -44,11 +44,11 @@ Parent `agent.ts` selects prompt variant by model name:
 ## KEY BEHAVIORS
 
 - Mode: `subagent` (uses own fallback chain, ignores UI selection)
-- Default model: `claude-sonnet-5`
+- Default model: `anthropic/claude-sonnet-5` (override model, then system default, win over it)
 - Default temperature: `0.1` (`SISYPHUS_JUNIOR_DEFAULTS`)
-- Fallback chain: claude-sonnet-5 -> kimi-k3 -> gpt-5.6-sol medium -> minimax-m3 -> MiniMax-M3 -> minimax-m2.7 -> big-pickle
-- Blocked tools: `task` (all models); `apply_patch` also blocked for GPT models
+- Fallback chain (`packages/model-core/src/agent-model-requirements.ts`): claude-sonnet-5 -> kimi-k3 -> gpt-5.6-sol medium -> minimax-m3 -> MiniMax-M3 -> minimax-m2.7 -> big-pickle
+- Blocked tools: `task` only (`BLOCKED_TOOLS`)
 - `call_omo_agent` explicitly allowed so subagents can spawn explore/librarian
-- Max tokens: 64000
-- Thinking enabled for non-GPT/non-GLM models (budgetTokens: 32000)
-- Reasoning effort "medium" for GPT models
+- Max tokens: 64000; color `#20B2AA`
+- GPT models: `reasoningEffort` from override, default "medium"; GLM models: no thinking block
+- Every other model gets `buildClaudeThinkingConfig(model)` merged in

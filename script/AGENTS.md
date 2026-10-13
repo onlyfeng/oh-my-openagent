@@ -1,6 +1,6 @@
 # script/ -- Build/Publish Automation
 
-**Generated:** 2026-08-24
+**Generated:** 2026-10-13 (dc373d26f; prior 2026-08-24)
 
 ## OVERVIEW
 
@@ -40,15 +40,18 @@ Build, publish, QA, and repo-invariant automation. Run via `bun run <script>` fr
 | `lazycodex-marketplace-validation.ts` | Validate the synced marketplace payload (runtime path args incl. Windows/absolute/`components/*/dist/*.js`) |
 | `lazycodex-runtime-dists.ts` | Enumerate component runtime dists bundled into the published payload |
 | `update-frontend-upstreams.mjs` | Bump shared-skills submodules + rewrite ATTRIBUTION pins (`--check` verifies) |
-| `install-codex-dev.ts` | Dev dogfood installer: uninstall current Codex Light, then install this repo's local build into the REAL `~/.codex` stamped as version `dev` (`.../omo/dev/`, `(OmO dev)` hook prefix). Sets `LAZYCODEX_DEV_VERSION`. Run via `bun run install:codex-dev`. Flags: `--version=<x>`, `--no-uninstall`. NOT for QA — use the isolated `CODEX_HOME` flow for that. |
+| `install-codex-dev.ts` | Dev dogfood installer: uninstall current Codex Light, then install this repo's local build into the REAL `~/.codex` stamped as version `dev` (`.../omo/dev/`, `(OmO dev)` hook prefix). Sets `LAZYCODEX_DEV_VERSION`. Run via `bun run install:codex-dev`. Flags: `--version=<x>`, `--no-uninstall`. NOT for QA; use the isolated `CODEX_HOME` flow for that. |
+| `changelog-*.ts`, `backfill-changelog.ts`, `check-pr-changelog.mjs`, `changelog-shipping-policy.mjs` | Changelog parse/normalize/validate/audit/backfill pipeline and the PR changelog check |
+| `bun-panic-retry.ts` / `check-cargo-pinned-deps.mjs` | CI wrapper retrying once on a Bun crash only (oven-sh/bun#44390) / pinned Cargo dep gate run first by `bun run test:desktop` |
 
 ## SUBDIRS
 
-- `qa/` -- QA drivers: `codex-marketplace-e2e.sh`, `web-terminal-visual-qa.mjs` (renders TUI evidence through real xterm.js + node-pty in a browser, true color; NEVER tmux capture-pane), `xterm-live-terminal.mjs` (live capture core), `strip-ansi.mjs`, `web-terminal-redaction.mjs`, `omo-native-telemetry-qa.mjs` (end-to-end telemetry privacy QA; `--evidence-dir <dir> --senpi-bin <path>`). Its adjacent `omo-native-telemetry-{provider,drive,capture,assertions,evidence}.mjs` modules own the scripted provider, isolated RPC lifecycle, capture server, privacy checks, and evidence output. Prompt progression waits for `agent_settled`; failure termination reserves a one-second grace inside the 120-second total drive budget, then escalates to SIGKILL without losing the original error. Evidence includes each session JSONL, redacted payloads, opt-out checks, and cleanup receipts.
-- `fixtures/` -- shared script test fixtures (vendored LSP build owner).
+- `qa/` -- live QA drivers (marketplace e2e, web-terminal visual QA, omo-native telemetry/eval/parity smokes, desktop drivers, dependency audit); own tsconfig. See [`qa/AGENTS.md`](qa/AGENTS.md).
+- `installer/` -- release mirror to R2: `mirror-plan.ts` (pure planner: SHA256SUMS parse, version order, channel moves never backwards unless forced, beta pruning), `r2-signed-put.ts` + `r2-store.ts` (signed verified PUT), `mirror-release-to-r2.ts` (entry).
+- `fixtures/` -- shared script test fixtures (vendored LSP build owner, `senpi-hooks-state-*` runners/readers).
 - `agent/` -- dev-env contract: `setup.sh`, `cleanup.sh`, `cleanup-hook.sh`, `docker-dev.sh`, `qa-sandbox.sh`, `qa-docker.sh` (see root AGENTS.md DEVELOPMENT ENVIRONMENT).
 
-## TESTS (61 `*.test.ts`)
+## TESTS (111 top-level `*.test.ts`, plus `.test.mjs`/`.test.mts`)
 
 The `ci:full-matrix` label launches the separate `ci-full-matrix-label.yml` caller; its `full-matrix / ...` checks are optional and do not gate merge. Keep the label and push a commit or reopen the PR to run the full matrix in required checks. Normal `ci.yml` does not trigger on labels. `ci-label-workflow-policy.test.ts` guards target branches, distinct workflow identity, the reusable call, and concurrency behind the exact job label gate. The classifier still receives the caller's PR labels.
 
@@ -71,4 +74,4 @@ Co-located per script (`build-binaries.test.ts`, `stats.test.ts`, `sync-lazycode
 
 ## NOTE
 
-CI uses plain `bun test`; there is no sharding or split isolation runner.
+Local root `bun test` is one unsharded process. CI shards it per OS: each leg runs `ROOT_TEST_SERIAL_QUARANTINE` serially first, then the remainder through `bunfig.*.parallel*.toml`; the Windows `rpc-host` invocation goes through `bun-panic-retry.ts`.

@@ -1,12 +1,12 @@
 # dag - Dependency-Frontier Task DAG Engine
 
-Compile a node definition into an execution graph, admit each node the moment every node it dependsOn has completed (plus a free resident slot), journal every boundary transition to a filesystem WAL, and recover runs after crashes. Largest subsystem in senpi-task (35 files, ~13.9k LOC; added after the 2026-07 package snapshot). Public surface: `index.ts` barrel + package subpath `./dag`; consumer is the omo-senpi task component (`dag-runtime.ts`, `dag-tool.ts`, `dag-rpc-bridge.ts`).
+Compile a node definition into an execution graph, admit each node the moment every node it dependsOn has completed (plus a free resident slot), journal every boundary transition to a filesystem WAL, and recover runs after crashes. Largest subsystem in senpi-task (46 TS files, ~18.2k LOC incl. tests; hotspots `scheduler.ts` 1.1k, `store.ts` 945, `manager.ts` 787, `recovery.ts` 602). Public surface: `index.ts` barrel + package subpath `./dag`; consumer is the omo-senpi task component (`dag-runtime.ts`, `dag-tool.ts`, `dag-rpc-bridge.ts`).
 
 ## Anatomy
 
 | Path | Purpose |
 |------|---------|
-| `types.ts` | Domain vocabulary: branded `DagRunId`/`DagNodeId`, 6 run statuses, 8 node states, route union (category XOR agent, no model-only route), `DAG_RUN_EVENT_TYPES` (17 boundary types), settings defaults (`max_runs_per_session: 16`, `retention_days: 7`), flat event envelope, unsequenced activity types. |
+| `types.ts` | Domain vocabulary: branded `DagRunId`/`DagNodeId`, 6 run statuses, 8 node states, route union (category XOR agent, no model-only route), `DAG_RUN_EVENT_TYPES` (17 boundary types), settings defaults (`max_nodes_per_run: 64`, `max_runs_per_session: 16`, `retention_days: 7`, `max_prompt_bytes: 262144`), `DAG_NODE_ERROR_CODES`, flat event envelope, unsequenced activity types. |
 | `graph.ts` | `compileDag`: deterministic ordering, invalid-dep/cycle detection, wave groupings (informational metadata for event grouping + rendering), critical path, bottlenecks. |
 | `fingerprint.ts` | `dagFingerprint` (canonicalize -> sha256), `dagDefinitionFingerprint`, `nodeFingerprintInput`. |
 | `events.ts` | Pure builders for all 17 boundary events. No seq/lane metadata here. |
@@ -21,6 +21,7 @@ Compile a node definition into an execution graph, admit each node the moment ev
 | `handle.ts` | `createDagWaitSurface`: resolves terminal `DagRunResult`s. |
 | `owner.ts` | `DagTaskOwner` identity (runId + nodeId + fingerprint over definition/node/execAttempt) for task-owner locks and ownership checks. |
 | `execution-mode.ts` | Per-node execution-mode resolution. |
+| `node-activity.ts` | Dates a running node's child by its transcript log mtime (`store/event-log.ts` path), since `updated_at` only moves on transitions (#8674). Every fault reads as "no activity": it runs inside timer-driven `projectSnapshot` (#8672). |
 | `skills.ts` | `createDagSkillMaterializer` / `readDagSkillManifest`: creation-time effective-prompt snapshot. |
 | `scheduler-frontier` `.test.ts` | Regression matrix for frontier admission (dag_530ad299): dependent admitted behind an unrelated running sibling, dependency gate preserved, residency FIFO, informational wave grouping. |
 | `e2e-happy` / `e2e-failure` / `scheduler-spill` `.test.ts` | Integrated runner-path coverage (happy path, failure/recovery, spill). |

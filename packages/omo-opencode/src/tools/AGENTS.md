@@ -1,10 +1,10 @@
 # src/tools/ — 12–38 Native Tools Across 14 Tool Directories (+ shared utilities)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13 | 15 dirs (14 tool dirs + `shared/`), root `index.ts` aggregates every factory and defines `createBackgroundTools()`
 
 ## OVERVIEW
 
-Tools registered via [`createToolRegistry()`](../plugin/tool-registry.ts) in `src/plugin/`. Native tools are factory-based (`createXXXTool`) except `interactive_bash` (`ToolDefinition`). LSP tools are served by the Tier-1 built-in MCP `lsp`; structural search and rewrite is handled by the `ast-grep` skill.
+Tools registered via [`createToolRegistry()`](../plugin/tool-registry.ts) in `src/plugin/`, split into `tool-registry-core-tools.ts` (always-on + `look_at` gate + goal tools), `tool-registry-gated-tools.ts` (task system, monitor, hashline `edit`), `tool-registry-team-tools.ts` (12 `team_*`), `tool-registry-factories.ts` (factory injection seam), and `tool-registry-trimming.ts` (`trimToolsToCap` after `filterDisabledTools`). Native tools are factory-based (`createXXXTool`) except `interactive_bash` (`ToolDefinition`). LSP tools are served by the Tier-1 built-in MCP `lsp`; structural search and rewrite is handled by the `ast-grep` skill.
 
 ## TOOL CATALOG
 
@@ -25,7 +25,7 @@ Tools registered via [`createToolRegistry()`](../plugin/tool-registry.ts) in `sr
 | Tool(s) | Gate | Source |
 |---------|------|--------|
 | `look_at` | not in `disabled_agents` for `multimodal-looker` | `look-at/` |
-| `interactive_bash` | `isInteractiveBashEnabled(config)` (tmux config) | `interactive-bash/` |
+| `interactive_bash` | `isInteractiveBashEnabled()` (tmux on PATH, `src/interactive-bash-availability.ts`) | `interactive-bash/` |
 | `task_create`, `task_get`, `task_list`, `task_update` | `experimental.task_system` | `task/` |
 | `monitor_start`, `monitor_stop`, `monitor_list`, `monitor_output` | `monitor.enabled` | `monitor/` (watcher engine: `../features/monitor/`) |
 | `edit` (hashline-edit) | `hashline_edit: true` | `hashline-edit/` |
@@ -75,7 +75,7 @@ tools/
 ├── call-omo-agent/       # call_omo_agent (explore + librarian only)
 ├── delegate-task/        # task — full delegation with categories + skills
 ├── glob/                 # glob (60s timeout, 100 file limit)
-├── grep/                 # grep (60s timeout, 10MB limit)
+├── grep/                 # grep (60s timeout, 10M max filesize, 256KB output cap)
 ├── hashline-edit/        # edit — hash-anchored line edits with LINE#ID validation
 ├── interactive-bash/     # interactive_bash — tmux session control
 ├── look-at/              # look_at — image/PDF analysis
@@ -83,18 +83,18 @@ tools/
 ├── session-manager/      # 4 session_* tools
 ├── skill/                # skill — load skill or run command
 ├── skill-mcp/            # skill_mcp — call skill-embedded MCP servers
-├── slashcommand/         # discoverCommandsSync — feeds skill tool with /-command list
-├── task/                 # 4 task_* tools (Sisyphus task system)
-└── index.ts              # barrel exports
+├── slashcommand/         # discoverCommandsSync - feeds skill tool + auto-slash-command hook with /-command list
+├── task/                 # 4 task_* tools (Sisyphus task system) + todo sync
+├── shared/               # rgSemaphore (ripgrep concurrency 2) + collectSearchProcessOutput for glob/grep
+└── index.ts              # barrel exports + createBackgroundTools()
 ```
 
 ## ADDING A NEW TOOL
 
 1. Create `src/tools/{name}/index.ts` with factory `createXXXTool`
-2. Add `types.ts` for parameter Zod schemas
-3. Add `tools.ts` (or single index.ts) for implementation
-4. Export factory from `src/tools/index.ts`
-5. Register in `src/plugin/tool-registry.ts`:
-   - Always-on: spread into `allTools` directly
-   - Conditional: build a `Record<string, ToolDefinition>` and gate-spread
-6. If the tool needs disabling, ensure it appears in `filterDisabledTools` allow-list (its name will be matched against `disabled_tools`)
+2. Add `types.ts` for parameter Zod schemas and `tools.ts` (or single index.ts) for implementation
+3. Export factory from `src/tools/index.ts`
+4. Register in the `src/plugin/tool-registry*.ts` split:
+   - Always-on: add to `tool-registry-core-tools.ts` (factory via `tool-registry-factories.ts`)
+   - Conditional: return a gated `Record<string, ToolDefinition>` from `tool-registry-gated-tools.ts`
+5. If the tool needs disabling, ensure it appears in `filterDisabledTools` allow-list (its name will be matched against `disabled_tools`)

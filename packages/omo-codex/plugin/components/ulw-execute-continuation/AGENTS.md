@@ -1,14 +1,14 @@
-# Repository Conventions
+# ulw-execute-continuation - Stop hook auto-continuing Boulder plan work
 
-Conventions for human contributors and AI agents working on this repository.
+**Score 12** (32 files, ~1.8k LOC; distinct domain: continuation gate over `.omo/boulder.json` + structured plan checklists).
 
 ## Stack
 
 - Node >=20 runtime.
 - npm package manager.
-- TypeScript 6 strict mode.
+- TypeScript 7 strict mode.
 - Biome 2 linting and formatting.
-- Vitest 4 test runner.
+- Vitest 5 test runner.
 
 ## Forbidden
 
@@ -31,6 +31,7 @@ Conventions for human contributors and AI agents working on this repository.
 
 ## Layout
 
+- `src/index.ts`: library barrel (`readContinuationState`, `runStopHook`, `ULW_EXECUTE_CONTINUATION_DIRECTIVE`, state/checklist types); `src/cli.ts` invokes `runStopHook`.
 - `src/boulder-reader.ts`: reads `.omo/boulder.json`, resolves the active work for the session, re-exports `getPlanChecklist`/`PlanChecklist` from `plan-checklist.ts`. `readContinuationState` returns null in four cases: `boulder.json` is missing or unparseable, no work matches the session, the work status is not continuable (only `active` and `paused` continue - `completed`/`abandoned` stop), or `checklist.total === 0`.
 - `src/plan-checklist.ts`: `PlanChecklist` (`completed`/`remaining`/`total`/`nextTaskLabel`) and `getPlanChecklist`/`parsePlanChecklist`. Mirrors `@oh-my-opencode/boulder-state`'s grammar: counts structured `## TODOs` rows (`N` / `T<n>[.<n>[a]]`) and `## Final Verification Wave` rows (`F<n>` / `H<n>`), each followed by `.`, space, `-` or em-dash; falls back to simple top-level checkboxes when there are no structured sections, or when they count nothing while checkboxes sit under another heading. `[~]` (blocked) counts toward `total` only, never `completed` or `remaining`. Skips fenced blocks and respects `#`/`##` section boundaries.
 - `src/codex-hook.ts`: Stop hook; fills nine placeholders into `directive.md` - `PLAN_NAME`, `PLAN_PATH`, `BOULDER_PATH`, `REMAINING_COUNT`, `TOTAL_COUNT`, `NEXT_TASK_LABEL`, `WORKTREE_BLOCK`, `LEDGER_PATH`, `SESSION_ID`. `WORKTREE_BLOCK` renders empty when the work has no worktree. When `remaining === 0`, `nextTaskLabel` is null and renders as "none (final gate pending)". SubagentStop is intentionally accepted by the CLI as a no-op for compatibility, but never injects a root plan.

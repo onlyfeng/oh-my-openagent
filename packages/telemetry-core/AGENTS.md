@@ -24,7 +24,7 @@ Harness-neutral PostHog telemetry: env-gated opt-out, SHA256-hashed machine id, 
 ## DEPENDENCIES & CONSUMERS
 
 - **Depends on:** `@oh-my-opencode/utils` (`writeFileAtomically`, `resolveXdgDataDir`) + `posthog-node` (^5).
-- **Consumed by BOTH editions:** `omo-opencode/src/shared/posthog*.ts`; `omo-codex/src/telemetry/*` and `omo-codex/plugin/components/telemetry/*`.
+- **Consumed by BOTH editions:** `omo-opencode/src/shared/posthog*.ts` + `telemetry-product-identity.ts` + `cli/doctor/checks/telemetry.ts`; `omo-codex/src/telemetry/*` and `omo-codex/plugin/components/telemetry/*`.
 
 ## NOTES
 
@@ -34,5 +34,7 @@ Harness-neutral PostHog telemetry: env-gated opt-out, SHA256-hashed machine id, 
 - **Opt-out env matrix:** `${PREFIX}_DISABLE_POSTHOG` (truthy `1/true/yes`) OR `${PREFIX}_SEND_ANONYMOUS_TELEMETRY` (opt-out `0/false/no/yes`); global `OMO_` prefix also checked; plus the standard unprefixed `DO_NOT_TRACK`.
 - **NO_OP_CLIENT** returned when disabled or transport init fails (`enabled: false`, all methods no-op). Transport + OS provider are injectable for tests.
 - **Diagnostics** JSONL: 7-day retention, 256 KB cap, cleanup on every write.
+- **Cross-process day claim:** `day-claim.ts` (`claimUtcDay`, internal, NOT re-exported by the barrel) exclusive-creates `daily-active.<day>.claim` (`wx`) in the state dir, so exactly one of many concurrent launches captures a fresh day; `getDailyActiveCaptureState` consults it. Never replace it with read-then-write. Covered by `activity-state.concurrency.test.ts` / `activity-state.dedupe.test.ts`.
+- **QA:** `bun --cwd packages/telemetry-core test` (top-level `src/*.test.ts` only) and `bun --cwd packages/telemetry-core run typecheck`.
 - **`createEventTelemetryClient`** (events.ts) — event telemetry with a per-product `propertyAllowlist`: unknown properties are DROPPED with diagnostics, never sent. Hard-rejected keys: `$ip`, non-allowlisted `$` keys (only `$os`, `$os_version`, `$process_person_profile`, `$session_id` pass), `*_text|*_path|*_prompt` suffixes (allowlisted non-string flags excepted), and non-finite numbers. Batching overrides (`flushAt: 20`, `flushInterval: 10s`) are applied LAST so a product config cannot weaken them. `disableGeoip: false` lets PostHog derive `$geoip_country_code` server-side from the transport IP — the client still never authors/stores an IP. No-op client when disabled, same as the daily-active path.
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

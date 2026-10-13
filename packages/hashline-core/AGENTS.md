@@ -1,6 +1,6 @@
 # hashline-core — Hash-Anchored Edit Primitives (Core)
 
-**Generated:** 2026-06-17
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -28,5 +28,6 @@ The engine behind the Hashline edit tool (inspired by [oh-my-pi](https://github.
 - **"Option 2" hashing:** no npm xxhash dependency. `xxhash32.ts` prefers native `Bun.hash.xxHash32()` at call time and falls back to a pure-JS impl, so it runs under Bun and Node.
 - **Legacy hash compatibility:** validation accepts both `computeLineHash` (trimEnd + strip `\r`) and `computeLegacyLineHash` (strip ALL whitespace) — old stored hashes still validate.
 - **Seed rule:** content lines seed `0`; whitespace-only lines seed `lineNumber` (distinct hash per position).
-- **`normalizeHashlineEdits` rejects unknown ops** with `"Legacy format was removed; use op/pos/end/lines."` — the discriminated union is `replace | append | prepend` only.
+- **`normalizeHashlineEdits` rejects unknown ops** with `"Legacy format was removed; use op/pos/end/lines."`; the discriminated union is `replace | append | prepend` only (`types.ts`).
+- **Tests:** flat `src/*.test.ts` plus `smoke-untested-modules.test.ts` covering the small modules; run `bun test src/*.test.ts`. `package.json` `types` names a non-existent `./index.d.ts` (imports resolve through `src/index.ts`).
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

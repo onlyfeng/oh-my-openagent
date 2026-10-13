@@ -1,10 +1,10 @@
 # src/hooks/auto-update-checker/ -- npm Update Detection
 
-**Generated:** 2026-05-18
+**Generated:** 2026-05-18 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-~41 code files. Session Tier hook on `session.created`. Checks the npm registry for newer plugin versions, compares against the installed version, and surfaces update availability via startup toasts. Caches results to avoid repeated registry fetches. Throttled per channel (`latest`, `next`, `beta`). Skips CLI run mode and subagent sessions.
+45 TypeScript files (~3.9k LOC incl. tests). Session Tier hook on `session.created`. Checks the npm registry for newer plugin versions, compares against the installed version, and surfaces update availability via startup toasts. Caches results to avoid repeated registry fetches. Throttled per channel (`latest`, `next`, `beta`). Skips CLI run mode and subagent sessions.
 
 ## FILE CATALOG
 
@@ -13,15 +13,15 @@
 | `index.ts` | Barrel exports: hook factory, checker, cache invalidation, channel helpers |
 | `hook.ts` | `createAutoUpdateCheckerHook()` -- event handler, orchestrates startup toasts and background check |
 | `checker.ts` | Barrel for `checker/` subdir -- version resolution, local dev detection, package entry finding |
-| `cache.ts` | `invalidatePackage()` -- removes package from bun.lock, node_modules, and specifier cache |
-| `version-channel.ts` | `extractChannel()` -- resolves dist-tags and prerelease versions to npm channels |
+| `cache.ts` | `invalidatePackage()` -- removes package from bun.lock, node_modules, and specifier cache; `invalidateCache()` is `@deprecated` (invalidates all plugins), use `invalidatePackage` |
+| `version-channel.ts` | `extractChannel()` -- resolves dist-tags and prerelease versions to npm channels; also used by `cli/doctor/checks/` and `cli/get-local-version/` |
 | `types.ts` | `UpdateCheckResult`, `AutoUpdateCheckerOptions`, `NpmDistTags` |
 | `constants.ts` | Registry URL, timeouts, cache paths, accepted package names |
 
 ## SUBDIRECTORIES
 
-- `checker/` -- 11 files. Core version checking logic: `check-for-update.ts`, `latest-version.ts`, `local-dev-version.ts`, `plugin-entry.ts`, `cached-version.ts`, `pinned-version-updater.ts`, `sync-package-json.ts`, plus helpers.
-- `hook/` -- 9 files. Startup UX: `background-update-check.ts`, `deferred-startup-check.ts`, `startup-toasts.ts`, `update-toasts.ts`, `spinner-toast.ts`, `config-errors-toast.ts`, `connected-providers-status.ts`, `model-capabilities-status.ts`, `model-cache-warning.ts`.
+- `checker/` -- 14 source files. Core version checking logic: `check-for-update.ts`, `latest-version.ts`, `local-dev-version.ts`, `local-dev-path.ts`, `plugin-entry.ts`, `cached-version.ts`, `bundled-version.ts`, `pinned-version-updater.ts`, `sync-package-json.ts`, `sandbox-refresh.ts`, `semver-compare.ts`, `package-json-locator.ts`, `config-paths.ts`, `jsonc-strip.ts`.
+- `hook/` -- 10 source files. Startup UX: `background-update-check.ts`, `deferred-startup-check.ts`, `startup-toasts.ts`, `update-toasts.ts`, `spinner-toast.ts`, `ignore-toast-error.ts`, `config-errors-toast.ts`, `connected-providers-status.ts`, `model-capabilities-status.ts`, `model-cache-warning.ts`.
 
 ## CACHE
 
@@ -40,9 +40,10 @@ Registered in `create-session-hooks.ts` as `autoUpdateChecker`. Part of the Sess
 
 ## RELATED
 
-Two `zauc-mocks-*` directories in `src/hooks/` exist specifically to test this hook with mocked dependencies (hook orchestration, including CLI run mode, is covered by `hook.test.ts` here):
+Four sibling `zauc-*` directories in `src/hooks/` exist specifically to test this hook with mocked dependencies (hook orchestration, including CLI run mode, is covered by `hook.test.ts` here):
 - `zauc-mocks-cache/` -- tests cache invalidation paths
 - `zauc-mocks-bg/` -- tests background check scheduling
+- `zauc-mocks-ws/` -- workspace resolution; `zauc-sync-mocks/` -- `sync-package-json`
 
 ## CROSS-REFERENCES
 

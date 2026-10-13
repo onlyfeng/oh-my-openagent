@@ -1,10 +1,10 @@
 # src/tools/hashline-edit/ — Hash-Anchored File Edit Tool
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13
 
 ## OVERVIEW
 
-24 files. Implements hash-anchored file editing where every line reference includes a content hash (`LINE#ID`). Validates hashes before applying edits, rejecting stale references. Registered as the `edit` tool (only when `hashline_edit: true`), replacing OpenCode's line-number edit.
+23 files. Implements hash-anchored file editing where every line reference includes a content hash (`LINE#ID`). Validates hashes before applying edits, rejecting stale references. Registered as the `edit` tool (only when `hashline_edit: true`), replacing OpenCode's line-number edit. The pure edit primitives (hashing, validation, ordering, dedup, autocorrect, diff, formatting) are thin shims over `@oh-my-opencode/hashline-core`; OpenCode-specific logic here is `tools.ts`, `hashline-edit-executor.ts`, `formatter-trigger.ts`, and `tool-description.ts`.
 
 ## THREE-OP MODEL
 
@@ -51,8 +51,8 @@ hashline-edit-executor.ts
 | `diff-utils.ts` | Thin wrapper around `diff` npm library |
 | `hashline-chunk-formatter.ts` | Format line chunks with `LINE#ID` tags |
 | `tool-description.ts` | `HASHLINE_EDIT_DESCRIPTION` constant |
-| `types.ts` | `HashlineEdit`, `ReplaceEdit`, `AppendEdit`, `PrependEdit` |
-| `constants.ts` | Hash alphabet, separator character (`#`), pipe separator (`|`) |
+| `formatter-trigger.ts` | Post-edit formatter run: `resolveFormatters` from OpenCode formatter config (cached, `clearFormatterCache`), `runFormattersForFile` |
+| `types.ts` + `constants.ts` | `HashlineEdit`/`ReplaceEdit`/`AppendEdit`/`PrependEdit`; hash alphabet, `#` and `|` separators |
 
 ## LINE#ID FORMAT
 

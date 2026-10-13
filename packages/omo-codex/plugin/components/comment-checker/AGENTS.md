@@ -14,9 +14,9 @@ Conventions for human contributors and AI agents working on this repository.
 
 - `src/core.ts`: parse API — `parseApplyPatchRequests`, `extractCommentCheckRequests`, `toHookInput`, `isToolFailureOutput`, `isRecord`.
 - `src/apply-patch.ts`: `apply_patch` extraction supporting Codex `tool_input.command`, raw patch text, and OMO-compatible metadata.
-- `src/request-extractor.ts` / `src/hook-input.ts` / `src/core-values.ts`: request/input shaping and constants.
+- `src/request-extractor.ts` / `src/hook-input.ts` / `src/core-values.ts` / `src/types.ts`: request/input shaping, constants, shared types.
 - `src/runner.ts`: spawns the checker binary — `runCommentChecker`, `resolveCommentCheckerBinary`, `spawnProcess`.
-- `src/codex-hook.ts`: `PostToolUse` hook + CLI (`extractCodexCommentCheckRequests`, `runCommentCheckerPostToolUse`, `runCodexHookCli`).
+- `src/codex-hook.ts`: `PostToolUse` hook + CLI (`extractCodexCommentCheckRequests`, `runCommentCheckerPostToolUse`, `runCodexHookCli`). Package `@code-yeongyu/codex-comment-checker`, bin `omo-comment-checker`.
 - `hooks/hooks.json`: registration. Heaviest suite: `test/codex-hook.test.ts` (513 LOC).
 
 ## Commands

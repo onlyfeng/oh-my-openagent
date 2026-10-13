@@ -1,10 +1,10 @@
 # src/features/skill-mcp-manager/ — Skill-Embedded MCP Client Lifecycle
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-This module manages **tier 3** of the MCP system: skill-embedded MCP servers declared in SKILL.md YAML frontmatter. Per-session client isolation, dual transport (stdio + HTTP), OAuth 2.0 with step-up authentication, idle cleanup. Harness-neutral MCP client lifecycle and OAuth primitives are extracted to [`packages/mcp-client-core/`](../../../../../packages/mcp-client-core); this directory keeps the OpenCode manager wiring stable.
+This module manages **tier 3** of the MCP system: skill-embedded MCP servers declared in SKILL.md YAML frontmatter. Per-session client isolation, dual transport (stdio + HTTP), OAuth 2.0 with step-up authentication, idle cleanup. Harness-neutral MCP client lifecycle and OAuth primitives are extracted to [`packages/mcp-client-core/`](../../../../../packages/mcp-client-core); this directory keeps the OpenCode manager wiring stable. Every non-test `.ts` here (11 files incl. `index.ts`) is a one-line `export * from "@oh-my-opencode/mcp-client-core/skill-mcp-manager/..."`; the files and behavior below are implemented in `packages/mcp-client-core/src/skill-mcp-manager/`. The 9 local tests (`manager.test.ts` 1.2k LOC, `connection-race`, `manager-oauth-retry`, `plugin-reload-mcp-survival`, ...) pin adapter-visible behavior. Consumers: `create-managers.ts`, `tools/skill-mcp/`.
 
 ## THREE-TIER MCP CONTEXT
 

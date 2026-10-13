@@ -1,12 +1,12 @@
 # .agents/ — Project-Scope Skills & Commands (Migration Target)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
 Project-scope skills + slash commands under the new `.agents/` directory name. During the `oh-my-opencode` → `oh-my-openagent` rename transition, this directory is the **target** of the migration from `.opencode/`. It is a strict SUPERSET of `.opencode/` (4 -> 13 skills; 5 commands).
 
-Loaded alongside `.opencode/` by [`packages/omo-opencode/src/features/opencode-skill-loader/`](../packages/omo-opencode/src/features/opencode-skill-loader/). When both directories declare the same skill or command name, the higher-priority scope wins per the loader's deduplication rules.
+Loaded alongside `.opencode/` by [`packages/skills-loader-core/src/features/opencode-skill-loader/`](../packages/skills-loader-core/src/features/opencode-skill-loader/) (numeric `SCOPE_PRIORITY`; the `packages/omo-opencode/src/features/opencode-skill-loader/` dir is the adapter shim). When both directories declare the same skill or command name, the higher-priority scope wins per the loader's deduplication rules.
 
 ## SKILLS (13, superset of `.opencode/`)
 
@@ -30,7 +30,7 @@ The 5 "NEW" skills here are skill-format equivalents of slash commands that exis
 
 ## COMMANDS (5 slash commands)
 
-Identical set to `.opencode/command/`:
+Same file set as `.opencode/command/` (`remove-deadcode.md` content currently differs between the two copies):
 - `/get-unpublished-changes`
 - `/omomomo`
 - `/publish`
@@ -48,7 +48,7 @@ Identical set to `.opencode/command/`:
 |---------|------|
 | Why TWO directories? | `.opencode/` is the legacy layout. `.agents/` is the future-proof name after the harness rename. |
 | When does `.opencode/` go away? | After the multi-harness refactor lands and existing users have re-installed. Tracked in [ROADMAP](../ROADMAP.md). |
-| What if both exist with conflicting skills? | The skill-loader dedupes by name. Higher-priority scope wins. The 4 shared skills (`work-with-pr`, `hyperplan`, etc.) are byte-identical between the two dirs today; if they diverge, fix here first. |
+| What if both exist with conflicting skills? | The skill-loader dedupes by name. Higher-priority scope wins. Of the 4 shared skills, `work-with-pr`, `github-triage`, `pre-publish-review` are byte-identical; `hyperplan` has drifted (`.agents` names category `deep-low`, `.opencode` still says `deep`). Fix here first, then sync. |
 | Where do NEW skills go? | `.agents/` only. Do NOT add new entries to `.opencode/`. |
 
 ## CONVENTIONS

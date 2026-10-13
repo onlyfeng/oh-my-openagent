@@ -1,10 +1,10 @@
 # src/features/claude-code-agent-loader/ -- Claude Code Agent Compatibility Layer
 
-**Generated:** 2026-05-18
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Sibling to `claude-code-mcp-loader`. Loads Claude Code agent definitions from `.opencode/agents/`, `~/.claude/agents/`, and inline `opencode.json` config, then translates them to OpenCode `AgentConfig`. Shared parsing and compatibility primitives are extracted to [`packages/claude-code-compat-core/`](../../../../../packages/claude-code-compat-core); this directory is the OpenCode adapter shim.
+Sibling to `claude-code-mcp-loader`. Loads Claude Code agent definitions from `.opencode/agents/`, `~/.claude/agents/`, and inline `opencode.json` config, then translates them to OpenCode `AgentConfig`. Shared parsing and compatibility primitives are extracted to [`packages/claude-code-compat-core/`](../../../../../packages/claude-code-compat-core); this directory is the OpenCode adapter shim. Every non-test `.ts` here is a one-line `export * from "@oh-my-opencode/claude-code-compat-core/claude-code-agent-loader/..."`; the pipeline and file roles below describe the Core implementation behind each shim. Only `opencode-config-agents-reader.test.ts` stays local.
 
 ## LOAD PIPELINE
 

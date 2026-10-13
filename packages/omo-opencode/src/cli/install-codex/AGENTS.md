@@ -1,10 +1,10 @@
-# src/cli/install-codex/ — Codex Light Edition Installer (39 Files)
+# src/cli/install-codex/ - Codex Light Edition Installer Shims (42 Files)
 
-**Generated:** 2026-06-06
+**Generated:** 2026-06-06 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Installs the `omo` plugin into `~/.codex/` for the Codex CLI Light edition. This directory is now an OpenCode CLI adapter shim over the canonical installer source in [`packages/omo-codex/src/install/`](../../../../../packages/omo-codex/src/install). Entry: `runCodexInstaller()` in `install-codex.ts`. Triggered by `bunx oh-my-openagent install --platform=codex` (alias `npx lazycodex-ai install`).
+Installs the `omo` plugin into `~/.codex/` for the Codex CLI Light edition. Every file here except `install-codex-test-fixtures.ts` (104-line test helper) is a one-line `export * from "@oh-my-opencode/omo-codex/install/<same-name>"` re-export; the logic and its tests live in [`packages/omo-codex/src/install/`](../../../../../packages/omo-codex/src/install). Edit there, never here. The file names below describe the canonical modules. Entry: `runCodexInstaller()` in `install-codex.ts`. Triggered by `bunx oh-my-openagent install --platform=codex` (alias `bunx lazycodex-ai install`).
 
 ## KEY FILES
 
@@ -53,12 +53,13 @@ runCodexInstaller()
 - All TOML mutation is string-based via `toml-section-editor.ts` (no TOML parser dependency)
 - Atomic directory promotion: copy to temp sibling, then `rename()`; backup restored on failure
 - Windows uses `.cmd` shims; POSIX uses symlinks
-- Current managed Codex agent roster: `explorer`, `librarian`, `metis`, `momus`, `plan`
-- Legacy purge/back-compat code still tracks the retired reviewer agent so installs can remove stale config and agent files from older releases
+- Current managed Codex agent roster (`CURRENT_MANAGED_CODEX_AGENT_NAMES`): `explorer`, `lazycodex-worker-high`, `lazycodex-worker-medium`, `lazycodex-worker-low`, `librarian`, `metis`, `momus`, `plan`
+- Legacy purge list (`LEGACY_MANAGED_CODEX_AGENT_NAMES_TO_PURGE`) still carries the retired `codex-ultrawork-reviewer` so installs can remove stale config and agent files from older releases
 - Legacy marketplace cleanup: `lazycodex` and `code-yeongyu-codex-plugins` are pruned on `sisyphuslabs` install
 
 ## ANTI-PATTERNS
 
+- Never add logic to these shims; a shim that diverges from its `omo-codex` module splits the installer in two
 - Never use a real TOML parser for config edits; the text-manipulation layer is intentional to avoid dependencies
 - Never skip the temp-and-rename promotion in cache install; direct writes risk corrupting a live cache
 - Never hardcode new agent names without updating `MANAGED_CODEX_AGENT_NAMES` in both `codex-config-agents.ts` and `codex-cleanup-config.ts`

@@ -14,6 +14,7 @@ Selected modules and resources:
 builtin-skills/
 ├── index.ts              # Barrel exports
 ├── skills.ts             # createBuiltinSkills() factory + resolveActiveBuiltinSkills()
+├── skill-file-loader.ts  # loadSharedSkillTemplate(): SKILL.md body from shared-skills (cached)
 ├── types.ts              # BuiltinSkill interface
 ├── skills/
 │   ├── git-master.ts                  # Wraps git-master/ SKILL.md + section constants
@@ -53,11 +54,11 @@ Selected skills; the provider registry is defined in `skills.ts`.
 | `review-work` | — | Post-implementation gate review (orchestrator manual QA + one gate reviewer) |
 | `debugging` | — | Debugging methodology |
 | `visual-qa` | — | Visual QA |
-| `$omo:remove-ai-slops` | — | Remove AI-generated code smells |
+| `remove-ai-slops` | - | Remove AI-generated code smells (body loaded from shared-skills) |
 | `init-deep` | — | Hierarchical AGENTS.md generation |
 | `security-research` | — | Team Mode exploitability-driven security research |
 | `security-review` | — | Reuses security-research |
-| `team-mode` | — | **Conditional** — only rendered when `team_mode.enabled`; documents the 12 `team_*` tools and lifecycle |
+| `team-mode` | - | **Conditional**: registered only when `teamModeEnabled` is true and `team-mode` is not disabled; documents the 12 `team_*` tools and lifecycle |
 
 ## BROWSER VARIANT SELECTION
 
@@ -66,7 +67,8 @@ Config `browser_automation_engine` selects which browser skill loads. Selected v
 | Value | Skill Loaded |
 |-------|-------------|
 | `"playwright"` (default) | playwright (MCP-backed) |
-| `"playwright-cli"` | playwright-cli (CLI-backed) |
+| `"playwright-cli"` | playwright-cli (CLI-backed; registered under the name `playwright`) |
+| `"dev-browser"` | dev-browser (persistent page state) |
 
 Only one browser skill is active per session; non-selected variants are skipped.
 `resolveActiveBuiltinSkills({ systemMcpNames })` additionally filters out builtin
@@ -76,23 +78,12 @@ For the `playwright` (MCP) variant, `browser_automation_engine.playwright_mcp_ar
 
 ## TEAM-MODE SKILL GATING
 
-The `team-mode` skill is registered unconditionally but only **rendered** when `team_mode.enabled: true`:
-
-```typescript
-// skills/team-mode.ts (paraphrase)
-const teamModeSkill: BuiltinSkill = {
-  name: "team-mode",
-  shouldLoad: (config) => config.team_mode?.enabled === true,
-  // ...
-}
-```
-
-When disabled, the skill is filtered out before agent prompt assembly so agents do not see `team_*` tool docs they cannot use.
+`createBuiltinSkills({ teamModeEnabled })` pushes `teamModeSkill` only when `teamModeEnabled` is true and `disabledSkills` does not contain `team-mode` (`skills.ts`). There is no `shouldLoad` hook: the caller (and `resolveSkillContent` via `SkillResolutionOptions.teamModeEnabled`) passes the flag, so agents never see `team_*` tool docs they cannot use. `disabledSkills` filters every other builtin by name after construction.
 
 ## ADDING A NEW BUILT-IN SKILL
 
 1. Create `skills/{name}.ts` exporting a `BuiltinSkill` object
 2. Register in `skills.ts` `createBuiltinSkills()` factory
 3. Add resources (if any) under a sibling directory: `{name}/SKILL.md`, prompt sections, etc.
-4. If the skill is conditional, set `shouldLoad: (config) => …`
+4. If the skill is conditional, gate the push in `createBuiltinSkills()` on a `CreateBuiltinSkillsOptions` flag (as `teamModeEnabled` does)
 5. Optionally declare an MCP server in the skill (loaded by `skill-mcp-manager` per session)

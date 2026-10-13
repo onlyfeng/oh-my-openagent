@@ -1,21 +1,21 @@
 # omo-config-core - Harness-Neutral omo.json Config Core
 
-**Generated:** 2026-07-07
+**Generated:** 2026-07-07 (updated 2026-10-13 / dc373d26f)
 
 ## OVERVIEW
 
-Harness-neutral primitives for the `omo.json` config surface: a Zod v4 schema tree, a walked multi-layer loader with VSCode-style view resolution (shared base -> `[harness]` block -> `profiles.<P>` -> `profiles.<P>.[harness]`), a shared model catalog resolver, a comment-preserving atomic writer, and a lock+journal legacy-config migration engine. Pure logic with all IO injected through filesystem ports. No OpenCode, Codex, Senpi, Pi, or adapter imports (guarded by `script/shared-core-extraction-guard.test.ts`). Package: `@oh-my-opencode/omo-config-core` (private, `sideEffects: false`). This is THE config surface for every omo harness: `packages/omo-opencode` resolves its plugin config through it, `packages/omo-senpi` loads task/config-watch settings plus startup migration through it, and `packages/omo-codex`'s config loader reads through it.
+Harness-neutral primitives for the `omo.json` config surface: a Zod v4 schema tree, a walked multi-layer loader with VSCode-style view resolution (shared base -> `[harness]` block -> `profiles.<P>` -> `profiles.<P>.[harness]`), a shared model catalog resolver, a comment-preserving atomic writer, and a lock+journal legacy-config migration engine. Pure logic with all IO injected through filesystem ports. No OpenCode, Codex, Senpi, Pi, or adapter imports (guarded by `script/shared-core-extraction-guard.test.ts`). Package: `@oh-my-opencode/omo-config-core` (private, `sideEffects: false`). This is THE config surface for every omo harness: `packages/omo-opencode` resolves its plugin config through it, `packages/omo-senpi` loads task/config-watch settings plus startup migration through it, `packages/omo-native` reads it, and `packages/omo-codex`'s config loader reads through it.
 
 ## ANATOMY
 
 | Path | Purpose |
 |------|---------|
-| `src/index.ts` | Barrel re-exporting `./schema`, `./loader`, `./models`, `./writer`, `./migration`. |
-| `src/schema/config.ts` | Root `OmoConfigSchema` + `OmoConfigLayerSchema` (`.strict()`; `$schema`, `categories`, `agents`, `git_master`, `task`, `teams`, `models`, `side_panel`, `[opencode]`/`[senpi]`/`[codex]` blocks, `profiles`, `_migrations`, `legacy_migrations`). `OmoConfig` type. |
-| `src/schema/harness.ts` | `HARNESS_IDS` (`codex`/`opencode`/`omo`), `OMO_CONFIG_HARNESS_IDS` (`opencode`/`senpi`/`codex`), `OmoHarnessIdSchema`. |
+| `src/index.ts` | Barrel re-exporting `./schema`, `./loader`, `./models`, `./writer`, `./migration`. `src/internal/` (`parseJsoncSafe`, `isPlainObject`, `isUnsafeObjectKey`, posix-path) is package-private, not re-exported. |
+| `src/schema/config.ts` | Root `OmoConfigSchema` + `OmoConfigLayerSchema` (`.strict()`; `$schema`, `formatOnMutation`, `gateway`, `categories`, `agents`, `git_master`, `task`, `teams`, `models`, `model_profiles`, `model_profile`, `memory`, `telemetry`, `side_panel`, `computer`, `disabled_skills`, `[opencode]`/`[native]`/`[senpi]`/`[codex]` blocks, `profiles`, `_migrations`, `legacy_migrations`). `OmoConfig` type. |
+| `src/schema/harness.ts` (+ `legacy-harness-names.ts`) | `HARNESS_IDS` (`codex`/`opencode`/`omo`), `OMO_CONFIG_HARNESS_IDS` (`opencode`/`native`/`codex`), `OmoHarnessIdSchema`; `senpi` survives only as the legacy alias of `native` (`OMO_CONFIG_LEGACY_HARNESS_ALIASES`, canonicalized on read). Other schema modules: `memory`, `telemetry`, `computer`, `gateway`, `format-on-mutation`, `model-profile`, `model-ref`, `legacy-category-names`, `reasoning-vocabulary` (`splitReasoningSuffix`, imported by `omo-codex`). |
 | `src/schema/model-catalog.ts` | `OmoModelCatalogSchema` / `*Layer` variants: record of short name to `{ model, variant?, reasoningEffort? }`. |
 | `src/schema/category.ts` | `OmoCategoryConfigSchema` / `OmoCategoriesConfigSchema`. Keeps the OpenCode camelCase keys (`maxTokens`, `reasoningEffort`, `textVerbosity`) verbatim for parity. |
-| `src/schema/git-master.ts` | `OmoGitMasterSettingsSchema` (`commit_footer` bool\|string default `false`, `include_co_authored_by` deprecated no-op default `false`) + `resolveOmoGitMasterSettings` for commit attribution in the Senpi harness. |
+| `src/schema/git-master.ts` | `OmoGitMasterSettingsSchema` (`commit_footer` bool\|string default `false`, `include_co_authored_by` deprecated no-op default `false`) + `resolveOmoGitMasterSettings` for commit attribution in the Native harness (`GIT_MASTER_HARNESS_SUPPORT` = `native` only). |
 | `src/schema/side-panel.ts` | `OmoSidePanelSettingsSchema` (`enabled` bool default `false`, `width` columns-or-percent default `"26%"`, `min_columns` default `120`, `usage_poll_seconds` default `150`, per-section `sections` switches) + `resolveOmoSidePanelSettings` for the Senpi side panel. |
 | `src/schema/agent.ts` | `OmoAgentDefSchema` / `OmoAgentsConfigSchema` (`execution_mode`, `max_depth`, `allowed_subagents`, ...). |
 | `src/schema/task.ts` | `OmoTaskSettingsSchema` + nested `OmoTaskNotificationSchema`, `OmoTaskWaitSchema`, `OmoTaskTeamSettingsSchema`, all with defaults. |
@@ -62,8 +62,8 @@ Recursively deep-merges plain objects; scalars and arrays replace. `__proto__`, 
 
 ## DEPENDENCIES & CONSUMERS
 
-- **Depends on:** `@oh-my-opencode/utils` (`parseJsoncSafe`, `isPlainObject`, `isUnsafeObjectKey`), `jsonc-parser`, `zod`.
-- **Consumed by:** `packages/senpi-task` (schema types re-used by the task/team config surface), `packages/omo-senpi` (`components/config-resolution` wraps `loadOmoConfig` + `resolveModelReferences`; `components/config-startup` runs the migration engine at startup; `components/task` consumes the resolved config), `packages/omo-opencode` (`plugin-config/omo-config-chain.ts` builds the per-layer OpenCode views and the user-only protected view; `startup-migration.ts` drives the engine; `config-migration/` supplies OpenCode-side discovery + transform), and `packages/omo-codex` (`plugin/shared/src/config-loader.ts` + `config-migration.ts` for the `config.jsonc` group).
+- **Depends on:** `jsonc-parser`, `zod` only (JSONC parsing and object-safety helpers live in package-private `src/internal/`; no `@oh-my-opencode/utils` runtime dependency).
+- **Consumed by:** `packages/omo-native`, `packages/senpi-task` (schema types re-used by the task/team config surface), `packages/omo-senpi` (`components/config-resolution` wraps `loadOmoConfig` + `resolveModelReferences`; `components/config-startup` runs the migration engine at startup; `components/task` consumes the resolved config), `packages/omo-opencode` (`plugin-config/omo-config-chain.ts` builds the per-layer OpenCode views and the user-only protected view; `startup-migration.ts` drives the engine; `config-migration/` supplies OpenCode-side discovery + transform), and `packages/omo-codex` (`plugin/shared/src/config-loader.ts` + `config-migration.ts` for the `config.jsonc` group).
 
 ## QA
 

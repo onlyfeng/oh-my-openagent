@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-55 files (~6.2k LOC). Discovers, parses, merges, and resolves SKILL.md files
+56 files (~6.1k LOC of TypeScript incl. tests). Discovers, parses, merges, and resolves SKILL.md files
 from 7 `discover*` sources (5 scope families) with priority deduplication by
 name. Maintains both sync and async loader implementations (async uses
 bounded concurrency and lazy content loading).
@@ -40,11 +40,17 @@ Same-named skill at higher priority replaces the lower; disabled names never loa
 | `skill-discovery.ts` | Find SKILL.md files in directory trees |
 | `skill-directory-loader.ts` | Load all skills from a single directory |
 | `config-source-discovery.ts` | Discover scope directories from config |
-| `skill-template-resolver.ts` | Variable substitution in skill templates (incl. disabled watermark options) |
+| `skill-template-resolver.ts` | Name-based skill content resolution (sync: builtins; async: all discovered skills) |
 | `skill-mcp-config.ts` | Extract MCP configs from skill YAML |
 | `git-master-template-injection.ts` | Git-master prompt template injection |
 | `skill-deduplication.ts` | Name-dedup rules across sources |
 | `types.ts` | `LoadedSkill`, `SkillScope`, `SkillDiscoveryResult` |
+| `blocking.ts` / `discover-worker.ts` | `discoverAllSkillsBlocking()` synchronous discovery through a worker |
+| `skill-disable-config.ts` | Disabled-skill alias normalization (`collectDisabledSkillAliases`, `isDisabledSkillName`) |
+| `opencode-config-skills-reader.ts` | `readOpencodeConfigSkills()` host config `skills` section reader |
+| `loaded-skill-from-path.ts` / `loaded-skill-template-extractor.ts` / `allowed-tools-parser.ts` | Single-file skill load, template extraction, `allowed-tools` parsing |
+| `skill-definition-record.ts` | Loaded/builtin skills to `CommandDefinition` records |
+| `merger/` | `scope-priority.ts`, `builtin-skill-converter.ts`, `config-skill-entry-loader.ts`, `skill-definition-merger.ts`, `skills-config-normalizer.ts` |
 
 ## SKILL FORMAT (SKILL.md)
 
@@ -69,4 +75,4 @@ Handles complex merge logic when skills from multiple scopes have overlapping na
 
 ## TEMPLATE RESOLUTION
 
-Variables like `{{directory}}`, `{{agent}}` in skill content get resolved at load time based on current context.
+`skill-template-resolver.ts` resolves by skill NAME, not by `{{variable}}` substitution. Sync `resolveSkillContent()` / `resolveMultipleSkills()` look up builtins only (`createBuiltinSkills` with `browserProvider` / `disabledSkills` / `teamModeEnabled` from `SkillResolutionOptions`); the `*Async` variants search every discovered skill (`getAllSkills` + `matchSkillByName`). `git-master` content gets `injectGitMasterConfig()` (config + shell type) applied.

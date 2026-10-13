@@ -1,6 +1,6 @@
 # src/__tests__/ — Plugin Perf Benchmarks
 
-**Generated:** 2026-06-01
+**Generated:** 2026-06-01 | **Updated:** 2026-10-13 / dc373d26f (verified unchanged: 2 perf tests, 20 fixture `.ts` files)
 
 ## OVERVIEW
 

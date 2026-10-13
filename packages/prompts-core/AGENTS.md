@@ -1,6 +1,6 @@
 # prompts-core — Markdown Prompt Loading + Variant Routing (Core)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-08-24 / f3642fcda, updated 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -19,7 +19,7 @@ Owns all static markdown prompt content (`prompts/` tree), bundles it at build t
 
 - **Constants:** `ULTRAWORK_{DEFAULT,GPT,GEMINI,GLM,PLANNER}_PROMPT`, `CODEX_ULTRAWORK_PROMPT`, `HYPERPLAN_MODE_PROMPT`, `TEAM_MODE_PROMPT`; `VariantTable`s `ultraworkPromptVariants`, `codexUltraworkPromptVariants`, `atlasPromptVariants`, `prometheusPromptVariants`.
 - **Functions:** `resolveVariant(input)` (uses `model-core` matchers), `loadPrompt`/`loadPromptSync` (bundled sync or filesystem async).
-- **Types/errors:** `ModelVariant` (9 literals), `PromptSource`, `LoadedPrompt`, `VariantTable`; `PromptFileNotFoundError`, `PromptPathTraversalError`.
+- **Types/errors:** `ModelVariant` (10 literals: `default`, `gpt`, `gemini`, `kimi`, `glm`, `swe-2`, `planner`, `codex`, `opus-4-7`, `minimax`; not every table has a file per literal), `PromptSource`, `LoadedPrompt`, `VariantTable`; `PromptFileNotFoundError`, `PromptPathTraversalError`.
 
 ## DEPENDENCIES & CONSUMERS
 
@@ -30,5 +30,7 @@ Owns all static markdown prompt content (`prompts/` tree), bundles it at build t
 
 - **Edit prompt bodies in `prompts/*.md`, NOT the `.ts` loaders.** The `-prompts.ts` files just import + wrap the markdown.
 - **No `@opencode-ai/*` imports** — enforced by `test/opencode-coupling-audit.test.ts`.
+- Bundled mode prompts import with `with { type: "text" }`; mode constants strip exactly one trailing LF.
+- Tests: `bun run --cwd packages/prompts-core test` (`src/*.test.ts test/*.test.ts`), `typecheck` via tsgo.
 - **`codex.md` is exported via a secondary package path** (`./prompts/ultrawork/codex.md`) for the Light edition; prometheus stays single-variant (no per-model files).
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

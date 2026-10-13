@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-The only shared skill besides `ultimate-browsing` carrying a real sub-project: a Python package + CLI that finds, lists, searches, and reads local coding-agent session transcripts across ~25 platforms (Codex, Claude, OpenCode, OMO/Senpi/pi, and a long tail), normalizing them into one `Session` model. Earned this file: 33 files, 23 Python modules, own test suite, own `pyrightconfig.json`, own `.npmignore` (ships in the npm package minus tests/caches).
+The only shared skill besides `ultimate-browsing` carrying a real sub-project: a Python package + CLI that finds, lists, searches, and reads local coding-agent session transcripts across ~25 platforms (Codex, Claude, OpenCode, OMO/Senpi/pi, and a long tail), normalizing them into one `Session` model. Earned this file: 33 files, 22 Python modules, own test suite, own `pyrightconfig.json`, own `.npmignore` (ships in the npm package minus tests/caches).
 
 ## STRUCTURE
 
@@ -15,7 +15,7 @@ coding-agent-sessions/
 ├── agents/openai.yaml            # Codex agent role declaration
 ├── scripts/
 │   ├── find-agent-sessions.py    # thin shebang entry (PEP 723, >=3.11); runpy → agent_sessions.cli
-│   ├── agent_sessions/           # the package (12 modules)
+│   ├── agent_sessions/           # the package (15 modules incl. __init__)
 │   └── tests/                    # 6 pytest modules
 └── pyrightconfig.json            # extraPaths scripts/, excludes scripts/tests
 ```
@@ -24,11 +24,11 @@ coding-agent-sessions/
 
 | Module | Key exports |
 |--------|-------------|
-| `scanners.py` | `scan`, `DEFAULT_PLATFORMS`, `PLATFORM_SCANNERS`, per-platform `scan_*` (codex, claude, opencode, senpi, oh_my_pi, gajae_code, …) |
+| `scanners.py` | `scan`, `DEFAULT_PLATFORMS`, `PLATFORM_SCANNERS`, `PLATFORM_ALIASES`; `__all__` re-exports six `scan_*` (claude, codex, gajae_code, oh_my_pi, opencode, senpi), the rest stay registry-only |
 | `types.py` | `Session`, `Options`, `Json`, `JsonMap` — imported by nearly every module and test |
 | `transcript.py` | parallel file reads, normalization, timestamps, session ids; `recent`, `MAX_PLATFORM_FILES` |
-| `cli.py` | command parsing, filtering, payload construction, JSON emission (283 LOC — behavioral hotspot) |
-| platform adapters | `file_scanners.py` (file-backed providers), `opencode.py` (CLI/SQLite/storage fallbacks), `sqlite_scanners.py`, `sqlite_optional_scanners.py`, `pi_family.py`, `aside_scanner.py`, `kiro_scanner.py` |
+| `cli.py` | command parsing, filtering, payload construction, JSON emission (287 LOC; behavioral hotspot) |
+| platform adapters | `claude.py`, `codex.py`, `file_scanners.py` (file-backed providers), `opencode.py` (CLI/SQLite/storage fallbacks), `sqlite_scanners.py`, `sqlite_optional_scanners.py`, `pi_family.py`, `aside_scanner.py`, `kiro_scanner.py`; helpers `jsonio.py`, `timeparse.py` |
 
 ## CLI CONTRACT
 

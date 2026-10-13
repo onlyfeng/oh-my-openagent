@@ -1,6 +1,6 @@
-# src/plugin-handlers/ -- 6-Phase Config Loading Pipeline
+# src/plugin-handlers/ -- Config Hook Pipeline
 
-**Generated:** 2026-07-17 / 7d664b96b
+**Generated:** 2026-10-13 / dc373d26f
 
 ## CRITICAL: AGENT ORDERING
 
@@ -45,36 +45,39 @@ PRs attempting any of the forbidden patterns will be rejected.
 
 ## OVERVIEW
 
-14 non-test files implementing the `ConfigHandler` -- the `config` hook handler. Executes 6 sequential phases to register agents, tools, MCPs, and commands with OpenCode.
+20 non-test files (+19 tests). `createConfigHandler(deps)` in `config-handler.ts` builds the OpenCode `config` hook; it is created in `create-managers.ts` and wired as `managers.configHandler` by `plugin-interface.ts`.
 
-## 6-PHASE PIPELINE
+## PIPELINE (config-handler.ts, in order)
 
-| Phase | Handler | Purpose |
-|-------|---------|---------|
-| 1 | `applyProviderConfig` | Cache model context limits, detect anthropic-beta headers |
-| 2 | `loadPluginComponents` | Discover Claude Code plugins (10s timeout, error isolation) |
-| 3 | `applyAgentConfig` | Load agents from 5 sources, skill discovery, plan demotion |
-| 4 | `applyToolConfig` | Agent-specific tool permissions |
-| 5 | `applyMcpConfig` | Merge builtin + CC + plugin MCPs |
-| 6 | `applyCommandConfig` | Merge commands/skills from 9 parallel sources |
+| Step | Handler | Purpose |
+|------|---------|---------|
+| 0 | `setAdditionalAllowedMcpEnvVars`, `applyOpenGatewayProviderConfig` | `mcp_env_allowlist` + OpenGateway provider injection |
+| 1 | `applyProviderConfig` | Model context limits, anthropic-beta headers, trusted vision models |
+| 2 | `loadPluginComponents` | Claude Code plugin discovery (error isolation; `retryableLoadFailure` skips the agent cache) |
+| 3 | `applyHookConfig` | Push plugin hook configs into claude-code-hooks |
+| 4 | `applyAgentConfig` | Agent assembly; result snapshot cached by `{agent, default_agent, model, skills}` key and replayed on hit |
+| 5 | `applyToolConfig` + `attachHiddenConfigKeyAliases` | Per-agent permissions; hidden config-key aliases for display-named agents |
+| 6 | `applyMcpConfig` | Builtin (`createBuiltinMcps`) + `.mcp.json` + plugin MCPs |
+| 7 | `applyCommandConfig` | Commands/skills merge |
+| 8 | `applyRuntimeSkillSourceConfig` | Only when a runtime skill source URL exists |
 
 ## FILES
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `config-handler.ts` | ~200 | Main orchestrator, 6-phase sequential |
-| `plugin-components-loader.ts` | ~100 | CC plugin discovery (10s timeout) |
-| `agent-config-handler.ts` | ~300 | Agent loading + skill discovery from 5 sources |
-| `mcp-config-handler.ts` | ~150 | Builtin + CC + plugin MCP merge |
-| `command-config-handler.ts` | ~200 | 9 parallel sources for commands/skills |
-| `tool-config-handler.ts` | ~100 | Agent-specific tool grants/denials |
-| `provider-config-handler.ts` | ~80 | Provider config + model cache |
-| `prometheus-agent-config-builder.ts` | ~140 | Prometheus config with model + fallback_models resolution |
-| `plan-model-inheritance.ts` | 28 | Plan demotion logic (inherits model settings incl. fallback_models) |
-| `agent-priority-order.ts` | ~30 | sisyphus, hephaestus, prometheus, atlas first |
-| `agent-key-remapper.ts` | ~30 | Agent key → display name |
-| `category-config-resolver.ts` | ~40 | User vs default category lookup |
-| `index.ts` | ~10 | Barrel exports |
+| File | Purpose |
+|------|---------|
+| `config-handler.ts` | Orchestrator above (~200 lines) |
+| `agent-config-handler.ts` | `applyAgentConfig`: delegates to source loader, assembly, finalizer |
+| `agent-source-loader.ts` / `agent-skill-discovery.ts` | Agent sources + skill discovery |
+| `agent-config-assembly.ts` | Source filtering, default-agent selection (`getConfiguredDefaultAgent`), largest file (~245) |
+| `agent-config-finalizer.ts` / `agent-override-protection.ts` | Final map ordering + protect builtin overrides |
+| `agent-config-types.ts` | Shared agent-config types |
+| `hook-config-handler.ts` | `applyHookConfig` |
+| `plugin-components-loader.ts` | CC plugin discovery |
+| `mcp-config-handler.ts` / `command-config-handler.ts` / `tool-config-handler.ts` / `provider-config-handler.ts` | One phase each |
+| `prometheus-agent-config-builder.ts` / `plan-model-inheritance.ts` | Prometheus config + plan demotion (inherits fallback_models) |
+| `agent-priority-order.ts` / `agent-key-remapper.ts` | Ordering + key to display name |
+| `category-config-resolver.ts` | `resolveCategoryConfig` (re-exported by config-handler) |
+| `index.ts` | Barrel |
 
 ## TOOL PERMISSIONS
 
@@ -87,13 +90,7 @@ PRs attempting any of the forbidden patterns will be rejected.
 
 ## MULTI-LEVEL CONFIG MERGE
 
-```
-User (~/.omo/omo.jsonc)
-  ↓ deepMerge
-Project (.omo/omo.jsonc)
-  ↓ Zod defaults
-Final Config
-```
+Config loading is NOT here: it lives in `../plugin-config/omo-config-chain.ts` (`loadOmoOpenCodeConfigChain`), which delegates to `@oh-my-opencode/omo-config-core`. This directory only consumes the resolved `OhMyOpenCodeConfig`.
 
 - `agents`, `categories`, `claude_code`: deep merged
 - `disabled_*` arrays: Set union

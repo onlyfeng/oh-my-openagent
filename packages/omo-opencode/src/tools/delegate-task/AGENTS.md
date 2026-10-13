@@ -1,6 +1,6 @@
 # src/tools/delegate-task/ — Task Delegation Engine
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13 | ~100 files (~58 implementation, ~44 tests, ~22k LOC incl. tests; `tools.test.ts` alone ~4.9k) + `zauc-mocks-subagent-resolver/`
 
 ## OVERVIEW
 
@@ -29,10 +29,13 @@ The `task` tool implementation delegates work to subagents via background or syn
 ## SYNC EXECUTION CHAIN
 
 ```
-sync-task.ts → sync-session-creator.ts → sync-prompt-sender.ts → sync-session-poller.ts → sync-result-fetcher.ts
+sync-task.ts (spawn reservation, metadata, lifecycle side effects)
+  -> sync-task-runner.ts (runSyncTaskLoop; fallback retries via sync-task-fallback.ts, poll-error recovery)
+  -> sync-task-deps.ts: sync-session-creator.ts -> sync-prompt-sender.ts -> sync-session-poller.ts -> sync-result-fetcher.ts
+  -> sync-completion-message.ts; sync-session-cleanup.ts schedules session deletion
 ```
 
-Each file handles one step. `sync-continuation.ts` handles session continuation (resume with task_id).
+Each file handles one step; `sync-task-deps.ts` is the injectable deps record wiring the four session steps. `sync-continuation.ts` (+ `sync-continuation-deps.ts`) handles session continuation (resume with task_id). `sync-result-fetcher.ts` does not accept a complete plan tag merely sketched in model output.
 
 ## BACKGROUND EXECUTION
 
@@ -45,13 +48,17 @@ background-task.ts → BackgroundManager.launch() → (async polling) → backgr
 ## CATEGORY RESOLUTION
 
 1. Check user-defined categories (`pluginConfig.categories`)
-2. Fall back to built-in 8 categories
-3. Resolve model from category config
-4. Check model availability → fallback if unavailable
+2. Fall back to the built-in 9 categories (`BUILTIN_CATEGORIES` in `builtin-categories.ts`, aggregating `google-`/`openai-`/`kimi-categories.ts`; exposed as `DEFAULT_CATEGORIES` in `constants.ts`, also imported by plugin handlers, config migration, and agent prompt builders)
+3. Resolve model from category config (`category-resolver.ts`, `categories.ts` `resolveCategoryConfig`)
+4. Check model availability (`builtinCategoryGateModels`) -> fallback if unavailable
+
+## SUBAGENT PREFLIGHT
+
+`subagent-request-preflight.ts` rejects coordinator/meta agents listed in `constants.ts` as subagent targets. Passing both `category` and `subagent_type`: category wins (`tool-description.ts`). Team runtime reuses `resolveCategoryExecution`, `resolveSubagentExecution`, `buildSystemContent`, and `ExecutorContext` from here.
 
 ## MODEL STRING PARSER
 
-`model-string-parser.ts` handles `"model variant"` format (e.g., `"gpt-5.5 medium"` → model=`gpt-5.5`, variant=`medium`).
+`parseModelString` lives in `../../shared/model-string-parser.ts` (not in this dir) and handles `"model variant"` format (e.g., `"gpt-5.5 medium"` -> model=`gpt-5.5`, variant=`medium`); consumed by `categories.ts` and `category-resolver.ts`.
 
 ## UNSTABLE AGENT TRACKING
 

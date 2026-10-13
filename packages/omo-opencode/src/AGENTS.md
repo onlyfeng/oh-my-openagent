@@ -1,6 +1,6 @@
 # src/ - Plugin Source
 
-**Generated:** 2026-08-07 / 51ab1e5b6
+**Generated:** 2026-08-07 / 51ab1e5b6 | **Updated:** 2026-10-13 / dc373d26f
 
 ## STOP. THIS IS THE OPENCODE PLUGIN. QA IS MANDATORY. EVERY SINGLE TIME YOU CHANGE ANYTHING HERE.
 
@@ -27,8 +27,12 @@ Entry `index.ts` orchestrates a staged initialization across the directories bel
 
 | File | Purpose |
 |------|---------|
-| `index.ts` | Plugin entry; default-exports `pluginModule: PluginModule` with `{ id, server }` |
-| `plugin-config.ts` | JSONC parse, multi-level merge (user + walked project), Zod v4 validation, migration |
+| `index.ts` | Plugin entry; default-exports `pluginModule: PluginModule` from `createPluginModule()`, exports `omoPlugin` (its `server`) and config types |
+| `plugin-config.ts` + `plugin-config/` | JSONC parse, multi-level merge (`config-merger.ts`, `omo-config-chain.ts`), Zod v4 validation, `unknown-key-diagnostics.ts`, `agent-order-warnings.ts` |
+| `startup-migration.ts` | `runOpenCodeStartupMigration()`: runs `config-migration/` plans at plugin startup (also behind `cli config migrate`) |
+| `plugin-dispose.ts` | `createPluginDispose()`: final teardown of managers and hooks |
+| `tui.ts` | TUI plugin module (`@opencode-ai/plugin/tui`): `registerSidebarContentSlot`, `handleTuiPollError` |
+| `interactive-bash-availability.ts` | `isInteractiveBashEnabled()` (tmux on PATH) |
 | `plugin-state.ts` | `createModelCacheState()`: model resolution cache shared across handlers |
 | `plugin-interface.ts` | 12 OpenCode hook handlers wired into `Hooks` (a further 2, `experimental.session.compacting` + `experimental.compaction.autocontinue`, are wired in `src/testing/create-plugin-module.ts`, for 14 total) |
 | `create-managers.ts` | TmuxSessionManager, BackgroundManager, SkillMcpManager, ConfigHandler |
@@ -36,19 +40,9 @@ Entry `index.ts` orchestrates a staged initialization across the directories bel
 | `create-hooks.ts` | 5-tier composition: `createCoreHooks() + createContinuationHooks() + createSkillHooks()` |
 | `create-runtime-tmux-config.ts` | `isTmuxIntegrationEnabled()` + `createRuntimeTmuxConfig()` |
 
-## INITIALIZATION (7 STEPS)
+## INITIALIZATION
 
-```
-serverPlugin(input, options)
-  1. installAgentSortShim()        # patches Array.prototype.{toSorted,sort} for canonical agent ordering
-  2. initConfigContext()           # detects opencode-vs-openagent config layout
-  3. detectExternalSkillPlugin()   # warn if conflicting plugin loaded
-  4. injectServerAuthIntoClient()  # wire auth headers into shared SDK client
-  5. loadPluginConfig()            # walk project + user JSONC → Zod safeParse → migrate
-  6a. initializeOpenClaw()         # if openclaw config present (start reply-listener daemon)
-  6b. checkTeamModeDependencies()  # if team_mode.enabled (verify git, tmux, ensure ~/.omo/teams/)
-  7. createManagers/Tools/Hooks/PluginInterface
-```
+The staged flow lives in `testing/create-plugin-module.ts` and is listed step by step in the root `AGENTS.md` INITIALIZATION FLOW. Adapter-local facts: startup migration (`runOpenCodeStartupMigration`) runs before config load, `ensureTuiPluginEntry()` always runs, and team-mode deps plus `ensureBaseDirs()` are lazy-imported only when `team_mode.enabled`. Every step is injectable through the `createPluginModule()` dependency object, which is what the `index.*.test.ts` suites exercise.
 
 ## CONFIG LOADING (Phase pipeline)
 
@@ -73,7 +67,7 @@ Counts verified from each composer's return object. Numbers in brackets show cou
 ```
 createHooks()
   ├─→ createCoreHooks()
-  │   ├─ createSessionHooks()     # 23: preemptiveCompaction,
+  │   ├─ createSessionHooks()     # 24: preemptiveCompaction,
   │   │                             sessionNotification, thinkMode, modelFallback,
   │   │                             anthropicContextWindowLimitRecovery, autoUpdateChecker,
   │   │                             astGrepSgProvision,
@@ -82,7 +76,7 @@ createHooks()
   │   │                             prometheusMdOnly, sisyphusJuniorNotepad, noSisyphusGpt,
   │   │                             noHephaestusNonGpt, hephaestusAgentsMdInjector,
   │   │                             questionLabelTruncator, taskResumeInfo,
-  │   │                             runtimeFallback, legacyPluginToast
+  │   │                             runtimeFallback, legacyPluginToast, nativeEditionNudge
   │   ├─ createToolGuardHooks()   # 17 [+1 with team-mode]: commentChecker, toolOutputTruncator,
   │   │                             directoryAgentsInjector, directoryReadmeInjector,
   │   │                             emptyTaskResponseDetector, rulesInjector, tasksTodowriteDisabler,
@@ -90,10 +84,11 @@ createHooks()
   │   │                             jsonErrorRecovery, readImageResizer, todoDescriptionOverride,
   │   │                             webfetchRedirectGuard, fsyncSkipWarning,
   │   │                             notepadWriteGuard, planFormatValidator [+ teamToolGating]
-  │   └─ createTransformHooks()   # 4 [+2 team-mode, +1 monitor-gated]: claudeCodeHooks,
-  │                                  keywordDetector, contextInjectorMessagesTransform,
-  │                                  toolPairValidator [+ teamModeStatusInjector,
-  │                                  teamMailboxInjector, monitorStatusInjector (monitor.enabled)]
+  │   └─ createTransformHooks()   # 5 [+2 team-mode, +1 monitor-gated]: claudeCodeHooks,
+  │                                  keywordDetector, btwSideContextInjector,
+  │                                  contextInjectorMessagesTransform, toolPairValidator
+  │                                  [+ teamModeStatusInjector, teamMailboxInjector,
+  │                                  monitorStatusInjector (monitor.enabled)]
   ├─→ createContinuationHooks()   # 7: stopContinuationGuard, compactionContextInjector,
   │                                  compactionTodoPreserver, todoContinuationEnforcer (boulder),
   │                                  unstableAgentBabysitter, backgroundNotificationHook, atlasHook
@@ -104,7 +99,7 @@ createHooks()
     team-member-error-handler, team-member-status-handler
 ```
 
-Total: 54 base, 61 with team-mode, 62 with monitor enabled. Authoritative per-tier breakdown: [`hooks/AGENTS.md`](hooks/AGENTS.md). Each tier produces an object whose values are `(input, output) => void` handlers; the matching OpenCode handler invokes them in registration order via `safeHook()` wrappers.
+Composed slots: 24 + 18 + 8 + 7 + 2 = 59; several are config-gated nulls. Active totals: 54 base, 61 with team-mode, 62 with monitor enabled. Authoritative per-tier breakdown: [`hooks/AGENTS.md`](hooks/AGENTS.md). Each tier produces an object whose values are `(input, output) => void` handlers; the matching OpenCode handler invokes them in registration order via `safeHook()` wrappers.
 
 ## SUBSYSTEM INVENTORY
 
@@ -115,8 +110,9 @@ Total: 54 base, 61 with team-mode, 62 with monitor enabled. Authoritative per-ti
 | `tools/` | 14 native tool dirs (+1 shared utilities dir); LSP + AST-grep moved to built-in MCPs | yes (+ background-task, call-omo-agent, delegate-task, hashline-edit, look-at, skill) |
 | `features/` | 24 feature modules (including `btw-side`, `opengateway-provider`; some now shimming `team-core`, `tmux-core`, `skills-loader-core`, `mcp-client-core`, and `claude-code-compat-core`) | yes (+ 16 sub-AGENTS.md including team-mode, background-agent, btw-side, claude-code-*) |
 | `shared/` | Cross-cutting adapter utilities plus shims over extracted Core packages, barrel-exported | yes |
-| `cli/` | Commander.js CLI: install, run, doctor, mcp-oauth, boulder | yes (+ config-manager, doctor, run) |
+| `cli/` | Commander.js CLI: install (opencode/codex/both/native), run, doctor, config migrate, mcp oauth, login/logout/whoami, boulder, worktree-sweep, cleanup, ulw-loop | yes (+ config-manager, doctor, install-codex, run) |
 | `plugin/` | 12 OpenCode hook handlers + hook composition | yes |
+| `plugin-config/` | Config merge, omo.json chain, unknown-key and agent-order diagnostics behind `plugin-config.ts` | no |
 | `config/` | Zod v4 schema files | yes |
 | `plugin-handlers/` | 6-phase config loading pipeline | yes |
 | `openclaw/` | Bidirectional Discord/Telegram/HTTP integration | yes |
@@ -124,12 +120,13 @@ Total: 54 base, 61 with team-mode, 62 with monitor enabled. Authoritative per-ti
 | `mcp/` | 4 built-in MCPs (3 remote + local stdio lsp) | yes |
 | `testing/` | Test utilities + `create-plugin-module.ts` | yes |
 | `config-migration/` | Legacy config discovery + transform plans (consumed by senpi config-startup + codex startup) | yes |
-| `types/` | Ambient `.d.ts` declarations (markdown modules) | no |
+| `types/` | Ambient `.d.ts` declarations (markdown modules; `markdown.d.ts` / `markdown-modules.d.ts` also sit at the src root) | no |
+| `generated/` | Generated data (model capabilities) | no |
 | `help/` | CLI help schema definitions (acp, doctor, sandbox, status) | no |
 | `locales/` | i18n strings (en, zh): toasts + model-fallback labels | no |
 
 ## NOTES
 
-- `plugin-interface.ts` is the **only** layer that talks to OpenCode's `Plugin` API. Every other file goes through it.
+- `plugin-interface.ts` is the server-side layer that talks to OpenCode's `Plugin` hooks; the one other OpenCode API surface is `tui.ts` (`TuiPluginModule`). Every other file goes through them.
 - Reach for `shared/` before adding helpers anywhere else; duplicate utilities WILL be flagged in review.
 - Path aliases are forbidden. Use relative imports within a module, barrel imports across modules.

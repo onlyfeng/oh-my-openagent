@@ -1,10 +1,10 @@
 # src/mcp/ — 4 Built-in MCPs
 
-**Generated:** 2026-05-18
+**Generated:** 2026-05-18 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Tier 1 of the three-tier MCP system. Built-ins are created by `createBuiltinMcps(disabledMcps, config, options)` and include remote MCPs plus the local `lsp` stdio MCP.
+Tier 1 of the three-tier MCP system. Built-ins are created by `createBuiltinMcps(disabledMcps, config, options)` (`options = { cwd?, resolveExecutable? }`) and include remote MCPs plus the local `lsp` stdio MCP. Sole production caller: `plugin-handlers/mcp-config-handler.ts`.
 
 ## BUILT-IN MCPs
 
@@ -43,4 +43,8 @@ Tier 1 of the three-tier MCP system. Built-ins are created by `createBuiltinMcps
 | `websearch.ts` | Exa/Tavily provider with config |
 | `context7.ts` | Context7 with optional auth header |
 | `grep-app.ts` | Grep.app (no auth) |
-| `lsp.ts` | Local stdio MCP config for packaged `lsp-tools-mcp` |
+| `lsp.ts` | Local stdio MCP config for packaged `lsp-tools-mcp` (`createLspMcpConfig`) |
+| `runtime-executable.ts` | `RuntimeExecutableResolver`: resolve Node/Bun for the lsp command |
+| `cli-suffix.ts` | Source (`src/cli.ts`) vs dist (`dist/cli.js`) CLI path selection |
+| `shared/ancestor-cli-resolver.ts` | Walk ancestors to find the vendored CLI from `src/` or `dist/` layouts |
+| `zauc-mocks-mcp-index/` | Test-only `mock.module` setup (sort-order prefix), not an MCP |

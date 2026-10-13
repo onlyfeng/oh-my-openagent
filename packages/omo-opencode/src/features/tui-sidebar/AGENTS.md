@@ -1,10 +1,10 @@
 # src/features/tui-sidebar/ — TUI Sidebar Snapshot + Mirror
 
-**Generated:** 2026-08-17
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-24 .ts files (12 impl + 12 co-located tests). Two halves connected only by a JSON mirror file on disk: the plugin process writes runtime snapshots (`TuiStateMirror`), the TUI process polls the mirror, derives section states, and renders sidebar nodes. Gated on `tui.sidebar.enabled` (on unless explicitly `false`).
+22 .ts files (14 impl + 8 co-located tests) plus `qa/register-and-run.sh`. Two halves connected only by a JSON mirror file on disk: the plugin process writes runtime snapshots (`TuiStateMirror`), the TUI process polls the mirror, derives section states, and renders sidebar nodes. Gated on `tui.sidebar.enabled` (on unless explicitly `false`).
 
 ## DATA FLOW
 
@@ -30,13 +30,14 @@ TUI side:     1s poll → readMirror() → derivers → computeView() → viewKe
 | `roster-resolver.ts` | Idle-view model roster from config via doctor's model resolution |
 | `element-helpers.ts` | `ViewNode` type + `box`/`text` constructors (renderer-agnostic) |
 | `config-validator.ts` | Re-export of `validatePluginConfig` |
-| `constants.ts` | All timing/size knobs: STALE_MS 6s, HEARTBEAT_MS 2s, POLL_INTERVAL_MS 1s, WRITE_DEBOUNCE_MS 250ms, LOOP_FRESH_MS 120s |
+| `constants.ts` | All timing/size knobs: STALE_MS 6s, HEARTBEAT_MS 2s, POLL_INTERVAL_MS 1s, WRITE_DEBOUNCE_MS 250ms, LOOP_FRESH_MS 120s, MAX_AGENTS/MAX_JOBS 12, MIRROR_SCHEMA_VERSION 1 |
+| `qa/register-and-run.sh` | Real-OpenCode QA in isolated XDG dirs with session-count proof; `--disabled` checks the off path |
 
 ## KEY EXPORTS
 
-- `TuiStateMirror` — constructed in `src/create-managers.ts` when sidebar enabled; deps injected (`client`, `backgroundManager`, optional `getStatuses`/`sessionAgentResolver`).
-- `readMirror`, `computeView`, `viewKey`, `buildViewNodes`, derivers, `POLL_INTERVAL_MS` — consumed by `src/tui.ts` on the render side.
-- `TuiRuntimeSnapshot` — the cross-process contract; bump `MIRROR_SCHEMA_VERSION` on shape changes (readers drop non-matching versions).
+- `TuiStateMirror`: constructed in `src/create-managers.ts` when sidebar enabled; deps injected (`client`, `backgroundManager`, optional `getStatuses`/`sessionAgentResolver`).
+- `readMirror`, `computeView`, `viewKey`, `buildViewNodes`, derivers, `POLL_INTERVAL_MS`: consumed by `src/tui.ts` on the render side.
+- `TuiRuntimeSnapshot`: the cross-process contract; bump `MIRROR_SCHEMA_VERSION` on shape changes (readers drop non-matching versions).
 
 ## LIFECYCLE / WIRING
 

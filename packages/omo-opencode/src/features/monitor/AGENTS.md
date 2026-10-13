@@ -1,6 +1,6 @@
 # monitor — Managed Watcher Backend
 
-**Generated:** 2026-08-17
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -31,7 +31,8 @@ Backend for the `monitor_*` tools: spawn long-running watcher processes, decode 
 
 - `createMonitorManager(options)` / `MonitorManager` — the only stateful entry point; everything else is composed behind it.
 - `types.ts` — `MonitorRecord`, `MonitorStartOpts`, `MonitorOutputQuery`, `MonitorManagerEvent` (`session.idle` / `session.deleted`).
-- Defaults in `manager-internals.ts`: 3 monitors per session, 30min max runtime, 1000-line ring, 50-line/16KB/1s batches.
+- Defaults in `manager-internals.ts` (`DEFAULT_MONITOR_CONFIG`): 3 monitors per session, 30min max runtime, 1000-line ring, 50-line/16KB/1s batches, 8KB per-line cap, 512-char pattern cap; active-turn deferral capped by `MONITOR_OUTPUT_MAX_ACTIVE_DEFER_MS` (60s).
+- Tests: 12 co-located, including `injection-route.test.ts` (gate routing) and `monitor-terminal-wake.test.ts` (wake on process exit).
 
 ## HOW IT WIRES
 
@@ -52,7 +53,7 @@ Backend for the `monitor_*` tools: spawn long-running watcher processes, decode 
 
 ## ANTI-PATTERNS
 
-- Never spawn watcher processes directly — go through `spawnMonitoredProcess` (process-group kill, grace period, max-runtime enforcement).
-- Never inject monitor output as a raw session message — always through `MonitorOutputInjector` + `prompt-async-gate`, or it races user turns.
+- Never spawn watcher processes directly; go through `spawnMonitoredProcess` (process-group kill, grace period, max-runtime enforcement).
+- Never inject monitor output as a raw session message; always go through `MonitorOutputInjector` + `prompt-async-gate`, or it races user turns.
 - Never accept a match pattern without `createMonitorFilter` validation; unvetted regexes risk catastrophic backtracking on hot output paths.
 - Never bypass the ring buffer counters when dropping lines; `monitor_output` consumers rely on drop accounting.

@@ -5,13 +5,15 @@
 `@oh-my-opencode/memory-core` owns the shared memory domain used by harness
 adapters: a git-backed markdown MemFS, atomic memory tools, prompt compilation,
 reflection scheduling, transcript search, synchronization, and seed content.
-The public API is the barrel at `src/index.ts`.
+The public API is the barrel at `src/index.ts` (19 `export *` lines). Subpath
+exports: `./fs` (`src/fs/resilient.ts`), `./personas` (`personas/manifest.ts`),
+`./process-identity`, `./process-start-time` (both under `locks/`).
 
 ## ANATOMY
 
 | Directory | Responsibility |
 |-----------|----------------|
-| `src/git/` | Git command boundary, clean-tree checks, commits, merges, remotes, and typed git errors. |
+| `src/git/` | Git command boundary (injectable `GitExec`), clean-tree checks, commits, merges, remotes, config/worktree mutation serialization, secret screening, and typed git errors. |
 | `src/identity/` | Memory identity resolution and the `OMO_MEMORY_HOME` directory layout. |
 | `src/locks/` | Cross-process locks for memory writes, reflection scheduling, and transcript state, plus the machine-wide `recall-wake` counting lease (`recall-wake.slot-<n>.lock` per slot, FIFO `recall-wake.tickets/`, default 2 slots, proof-based stale recovery for slots and tickets alike, bounded wait ending in `RecallWakeBusyError`). |
 | `src/memfs/` | Memory-path validation, markdown frontmatter parsing, and hook-script installation. |
@@ -21,7 +23,12 @@ The public API is the barrel at `src/index.ts`.
 | `src/people/` | People-card grammar: parse/serialize, slug rules, reserved slugs, observations. |
 | `src/soul/` | Soul-file paths and identity-scoped soul-notice watermark consumption. |
 | `src/reflection/` | Trigger evaluation, run reservation, worktree execution, completion validation, merge outcomes, the orphan sweep that reclaims worktrees/branches no live run owns, and the park policy that stops automatic reflection after repeated failures (one half-open probe per interval). |
-| `src/compile/` | Compile committed memory revisions into marked system-prompt blocks and cache them by template hash. |
+| `src/fs/` | Hardened `node:fs` namespace (EINTR retry, cap 128; write-all; rename contention retry). Memory code imports it instead of `node:fs`, enforced by `fs/no-direct-node-fs.test.ts`. |
+| `src/recall/` | Committed-HEAD recall corpus (excludes only root `system/`), deterministic query planner, substring / CJK-aware BM25 / hybrid strategy, pending nudges with parent-authoritative gate (`gate.ts`). |
+| `src/receipts/` | Append-only runtime JSONL receipts outside the memory repo (lock-serialized dedupe, redaction, never rotated) + `maybeKillAt` crash-test kill points (`OMO_MEMORY_KILL_POINT`, child processes only). |
+| `src/personas/` | Persona asset manifest + cached loader. |
+| `src/audit/` | `auditMemoryRepo()` corpus audit report (dangling links, invalid frontmatter, duplicates, orphans, system pressure). |
+| `src/compile/` | Compile committed memory revisions into marked system-prompt blocks and cache them by template hash; golden fixtures under `compile/fixtures/`. |
 | `src/search/` | Query parsing, transcript providers, and ranked memory/session search. |
 | `src/sync/` | Remote mirror synchronization and secret redaction. |
 | `src/reminders/` | Reflection and memory-maintenance reminder generation. |
@@ -30,52 +37,25 @@ The public API is the barrel at `src/index.ts`.
 
 ## CORE INVARIANTS
 
-- **Stay harness-neutral.** Production code and package dependencies must not
-  import Senpi, Pi, OpenCode adapters, or other harness-specific packages.
-  `src/harness-neutrality.test.ts` enforces this boundary.
-- **Treat the memory repository as transactional state.** Write tools acquire
-  the `memory-write` lock, require a clean repository, validate paths, apply one
-  operation, and commit only the affected paths. Do not bypass
-  `GitMemoryRepo`, lock domains, or the tool entry points.
-- **Compile from committed state.** Prompt compilation may target `HEAD` or an
-  explicit revision. Uncommitted working-tree content is not authoritative
-  memory.
-- **Preserve markdown contracts.** Memory files require YAML frontmatter with a
-  non-empty `description`; `read_only: "true"` blocks mutation. Keep UTF-8,
-  normalized repository-relative paths, and LF output.
-- **Frontmatter is strict YAML, one grammar everywhere.** `renderMemoryFile`
-  is the only writer: it quotes any scalar that the `yaml` package would not
-  read back verbatim and re-parses its own header. The reader decodes quoted
-  scalars, keeps non-contract keys (`extra`) so SKILL.md `name`/`version`
-  survive edits, and only falls back to the legacy first-colon grammar for
-  pre-existing files. `describeFrontmatterViolation` is the shared gate for
-  the pre-commit hook rules, `validateCompletion`, and
-  `normalizeMemoryFrontmatter` (one-time legacy repair keyed by a marker in
-  the common git dir). Never emit an unquoted `description:` by hand.
-- **Keep reflection transitions deterministic.** Manual triggers outrank
-  compaction, which outranks step-count triggers. Only one active run and one
-  merged pending reservation may exist.
-- **Keep locks domain-specific.** Use `memory-write`,
-  `reflection-scheduler`, or the transcript-specific lock. Do not replace them
-  with one global lock or add timing-based tests.
-- **Redact before external synchronization.** Remote mirror output must pass
-  through the sync redaction layer; never copy secret-bearing raw logs or
-  configuration into committed memory.
-- **Facts state is durable and fail-closed.** Queue/cursor/consumed writes
-  publish atomically (`.tmp` + rename, mode `0o600`) under an identity-scoped
-  lock; malformed JSON parses to empty, never blocks. Enqueue/consumed
-  watermarks NEVER regress, and ordering follows canonical journal position /
-  snapshot boundary — never lexical message-ID comparison.
-- **Behavioral patterns are NEVER stored in people cards.** Card lines are
-  limited to the `IDENTITY` / `ATTRIBUTE` / `RELATIONSHIP` / `INSTRUCTION`
-  prefixes with bounded metadata.
+- **Stay harness-neutral.** Production code and package dependencies must not import Senpi, Pi, OpenCode adapters, or other harness-specific packages. `src/harness-neutrality.test.ts` enforces this boundary.
+- **Treat the memory repository as transactional state.** Write tools acquire the `memory-write` lock, require a clean repository, validate paths, apply one operation, and commit only the affected paths. Do not bypass `GitMemoryRepo`, lock domains, or the tool entry points.
+- **Compile from committed state.** Prompt compilation may target `HEAD` or an explicit revision. Uncommitted working-tree content is not authoritative memory. Recall follows the same rule.
+- **Preserve markdown contracts.** Memory files require YAML frontmatter with a non-empty `description`; `read_only: "true"` blocks mutation. Keep UTF-8, normalized repository-relative paths, and LF output.
+- **Frontmatter is strict YAML, one grammar everywhere.** `renderMemoryFile` is the only writer: it quotes any scalar that the `yaml` package would not read back verbatim and re-parses its own header. The reader decodes quoted scalars, keeps non-contract keys (`extra`) so SKILL.md `name`/`version` survive edits, and only falls back to the legacy first-colon grammar for pre-existing files. `describeFrontmatterViolation` is the shared gate for the pre-commit hook rules, `validateCompletion`, and `normalizeMemoryFrontmatter` (one-time legacy repair keyed by a marker in the common git dir). Never emit an unquoted `description:` by hand.
+- **Keep reflection transitions deterministic.** Manual triggers outrank compaction, which outranks step-count triggers. Only one active run and one merged pending reservation may exist.
+- **Keep locks domain-specific.** Use `memory-write`, `reflection-scheduler`, or the transcript-specific lock. Do not replace them with one global lock or add timing-based tests.
+- **Redact before external synchronization.** Remote mirror output must pass through the sync redaction layer (`sync/redact.ts`, also reused by compile and git); never copy secret-bearing raw logs or configuration into committed memory. The mirror is push-only: no pull, fetch, or import path.
+- **Facts state is durable and fail-closed.** Queue/cursor/consumed writes publish atomically (`.tmp` + rename, mode `0o600`) under an identity-scoped lock; malformed JSON parses to empty, never blocks. Enqueue/consumed watermarks NEVER regress, and ordering follows canonical journal position / snapshot boundary, never lexical message-ID comparison. Details: [`src/facts/AGENTS.md`](src/facts/AGENTS.md).
+- **Behavioral patterns are NEVER stored in people cards.** Card lines are limited to the `IDENTITY` / `ATTRIBUTE` / `RELATIONSHIP` / `INSTRUCTION` prefixes with bounded metadata.
+- **User-owned `system/boundaries.md` never changes silently** (`soul/paths.ts`).
 
 ## PUBLIC SURFACES
 
 - `runMemoryTool()` implements `create`, `str_replace`, `insert`, `delete`,
   `rename`, and `update_description`.
-- `runMemoryApplyPatch()` applies multi-file Codex-style patches inside the
-  memory repository.
+- `runMemoryApplyPatch()` (`tools/memory-apply-patch.ts`, not re-exported by
+  the tools barrel, which exposes `applyMemoryPatch` / `parseMemoryPatch`)
+  applies multi-file Codex-style patches inside the memory repository.
 - `GitMemoryRepo` owns repository initialization, clean checks, commits,
   revisions, merge worktrees, and remote detection.
 - `evaluateTransitions()`, `reserveTransition()`, and
@@ -85,11 +65,16 @@ The public API is the barrel at `src/index.ts`.
 - `FactsQueue`, `applyFactsBatch()`, `planFactsMutation()`, and
   `consumeSoulNoticeDelta()` drive the facts/soul lifecycle from
   `src/facts/` and `src/soul/`.
+- `planRecallQueries()`, `RecallCorpusCache`, `selectRecallCandidates()`, and
+  `appendMemoryReceipt()` / `readMemoryReceipts()` back Senpi recall wiring and
+  doctor/receipt ports.
 
 ## CONSUMERS
 
 Harness adapters provide identity, lifecycle events, tool registration, and
-sync orchestration; the Senpi adapter lives in `packages/omo-senpi/src/components/memory/`.
+sync orchestration; the Senpi adapter lives in `packages/omo-senpi/src/components/memory/`
+(main barrel imported ~150 times, `./fs` ~90 times; isolation-core also reuses
+the process-identity exports).
 Keep adapter-specific behavior there, never imported back into this package.
 
 ## QA

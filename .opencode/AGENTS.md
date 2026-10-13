@@ -1,12 +1,12 @@
 # .opencode/ — Project-Scope Skills & Commands
 
-**Generated:** 2026-08-24
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Project-scope OpenCode configuration: 4 skills and 5 slash commands committed alongside the source. Picked up by [`packages/omo-opencode/src/features/opencode-skill-loader/`](../packages/omo-opencode/src/features/opencode-skill-loader/) and the slash-command discovery pipeline.
+Project-scope OpenCode configuration: 4 skills and 5 slash commands committed alongside the source. Picked up by [`packages/skills-loader-core/src/features/opencode-skill-loader/`](../packages/skills-loader-core/src/features/opencode-skill-loader/) (adapter shim in `packages/omo-opencode/src/features/opencode-skill-loader/`) and the slash-command discovery pipeline.
 
-**Relationship to `.agents/`:** `.agents/` is the migration target during the `oh-my-opencode` → `oh-my-openagent` rename. It is a SUPERSET of `.opencode/` (mirrors all 4 skills + adds 9 more, mirrors the 5 commands). Both directories load during the transition; consumers should prefer `.agents/`.
+**Relationship to `.agents/`:** `.agents/` is the migration target during the `oh-my-opencode` → `oh-my-openagent` rename. It is a SUPERSET of `.opencode/` (mirrors all 4 skills + adds 9 more, mirrors the 5 commands). Both directories load during the transition; consumers should prefer `.agents/`. Known drift today: `skills/hyperplan/SKILL.md` (category `deep` here vs `deep-low` in `.agents/`) and `command/remove-deadcode.md`; sync from `.agents/`.
 
 ## SKILLS (4)
 
@@ -32,12 +32,12 @@ Each skill follows the standard layout (`SKILL.md` + optional `scripts/`, `refer
 ## OTHER CONTENTS
 
 - `background-tasks.json` — Runtime state for active background tasks (gitignored from sensitive content but tracked structurally).
-- `bun.lock`, `package.json`, `node_modules/` — Skill dependencies (some skills install their own packages).
+- `package.json`, `package-lock.json`, `node_modules/` - Skill dependencies (some skills install their own packages).
 - `.gitignore` — Local scope ignore patterns.
 
 ## CONVENTIONS
 
-- **Skill YAML frontmatter is mandatory.** [`opencode-skill-loader`](../packages/omo-opencode/src/features/opencode-skill-loader/) rejects skills without `name` + `description`.
+- **Skill YAML frontmatter is mandatory.** [`opencode-skill-loader`](../packages/skills-loader-core/src/features/opencode-skill-loader/) rejects skills without `name` + `description`.
 - **Project-scope > user-scope.** A skill at `.opencode/skills/X/` overrides `~/.config/opencode/skills/X/` of the same name.
 - **Trigger words** in the skill description determine when OpenCode loads the skill. Be specific.
 - **Commands are user-visible.** Name them with a leading `/` (the loader normalizes filename → command).

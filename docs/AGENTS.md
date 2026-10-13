@@ -1,10 +1,10 @@
 # docs/ — User-Facing Documentation
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-30 tracked Markdown files across 6 subdirectories (guide 7, reference 18, examples 3 JSONC, legal 2, templates 1, troubleshooting 1) + root files. Categorized by audience: user-facing guides + reference, troubleshooting, legal. The web site at [packages/web/](../packages/web) consumes some of these (via `web-deploy.yml` triggers).
+46 tracked files across 6 subdirectories (guide 16 `.md`, reference 23 `.md`, examples 3 JSONC, legal 2, templates 1 `AGENTS.md.example`, troubleshooting 1) + 3 root files. Categorized by audience: user-facing guides + reference, troubleshooting, legal. The web site at [packages/web/](../packages/web) consumes some of these (via `web-deploy.yml` triggers).
 
 ## WHERE TO LOOK
 
@@ -14,6 +14,7 @@
 | Installing OmO with the one-line installer (omo.dev/docs/install) | [docs/guide/install.md](guide/install.md) |
 | Installing the plugin | [docs/guide/installation.md](guide/installation.md) |
 | Installing the compiled binary | [docs/guide/binary-install.md](guide/binary-install.md) |
+| Moving from the OpenCode plugin to OmO Native | [docs/guide/migrating-from-opencode.md](guide/migrating-from-opencode.md) |
 | How agents collaborate | [docs/guide/orchestration.md](guide/orchestration.md) |
 | Picking the right model per agent | [docs/guide/agent-model-matching.md](guide/agent-model-matching.md) |
 | Team Mode (opt-in multi-agent) | [docs/guide/team-mode.md](guide/team-mode.md) |
@@ -27,6 +28,8 @@
 | OmO Desktop updates, release notes and tracks, omo.dev/docs/desktop-updates | [docs/guide/desktop-updates.md](guide/desktop-updates.md) |
 | Configuration field reference | [docs/reference/configuration.md](reference/configuration.md) |
 | Harness-neutral `omo.json` config reference | [docs/reference/omo-json.md](reference/omo-json.md) |
+| Legacy OpenCode-only config | [docs/reference/opencode-config.md](reference/opencode-config.md) |
+| `omob` dev binary from latest commits | [docs/reference/omob-dev-binary.md](reference/omob-dev-binary.md) |
 | Native `computer` tool contract | [docs/reference/computer.md](reference/computer.md) |
 | Feature-by-feature reference | [docs/reference/features.md](reference/features.md) |
 | CLI command reference | [docs/reference/cli.md](reference/cli.md) |
@@ -59,21 +62,18 @@
 docs/
 ├── manifesto.md                              # The "why" — referenced from README
 ├── model-capabilities-maintenance.md         # How model-capabilities cache is refreshed
-├── guide/                                    # User-facing tutorial-style guides (7 files)
-├── reference/                                # API / config / CLI reference (18 files)
-├── examples/                                 # Sample JSONC configs (3 files)
+├── guide/                                    # User-facing tutorial-style guides (16 files)
+├── reference/                                # API / config / CLI reference (23 files)
+├── examples/                                 # Sample JSONC configs (3 files; audited by script/opus5-model-recommendation-audit.test.ts)
 ├── legal/                                    # privacy-policy.md + terms-of-service.md
-├── templates/
-│   └── AGENTS.md.example                     # Copyable OMO project rules template
-└── troubleshooting/
-    └── ollama.md
+├── templates/AGENTS.md.example               # Copyable OMO project rules template
+└── troubleshooting/ollama.md
 ```
 
 ## CONVENTIONS
 
-- **CI matrix label:** adding `ci:full-matrix` launches a separate run with optional `full-matrix / ...` checks that do not gate merge. Keep the label and push a commit or reopen the PR to run the full matrix in the required checks.
 - **User-facing language only in `guide/` and `reference/`.** No `OmO` internal jargon without explanation.
-- **Path links** use the `file://` scheme so OpenCode renders them in TUI. Use absolute paths.
+- **Links are repo-relative.** No machine-local absolute paths; `packages/omo-opencode/src/shared/markdown-link-audit.test.ts` fails the suite on them. (`file://` appears only as a documented `prompt` config URI form.)
 - **No HTML.** Markdown only. No `<details>` / `<summary>` (causes rendering issues in some terminals).
 - **Code blocks** use language fences. Use `jsonc` for config snippets to preserve comments.
 - **Visual QA evidence** must come from the real-pty + xterm.js flow ([`script/qa/web-terminal-visual-qa.mjs`](../script/qa/web-terminal-visual-qa.mjs)). NEVER use `tmux capture-pane` for color/visual/CJK evidence; tmux is boot-smoke only.

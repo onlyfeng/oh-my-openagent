@@ -1,6 +1,6 @@
-# Teammode Component
+# teammode - thread-title PostToolUse hook + team orchestration skill
 
-**Generated:** 2026-07-03
+**Score 11** (14 files, ~1.8k LOC; distinct domain: Codex-only dual-transport team state machine).
 
 ## OVERVIEW
 
@@ -20,7 +20,7 @@ Codex team-mode component. Two deliverables in one dir:
 - `skills/teammode/scripts/team-state.mjs` - state model + persistence: per-team `.team.lock` dir lock (`owner.json`; `OMO_TEAMMODE_LOCK_TIMEOUT_MS` / `OMO_TEAMMODE_LOCK_RETRY_MS`), atomic tmp+rename writes, symlink- and escape-guarded team dirs, schemaVersion 3 (legacy 2 migrates in memory to `codex_app` and persists on the next mutation), `MIN_MEMBERS = 2`, unique focus/name invariants plus per-transport identity invariants (taskName/agentPath on V2, threadTitle on codex_app).
 - `skills/teammode/scripts/team-worktree.mjs` - git worktree provisioning + `merge --no-ff --no-edit` integration; conflict leaves the tree mid-merge for the leader to resolve and re-run.
 - `skills/teammode/scripts/team-guide.mjs` - pure string builders for `guide.md` + the short member bootstrap trigger, branched by transport (V2: `/root` leader target + `members[].agentPath` peers + `send_message`/`followup_task`; codex_app: `codex_app.send_message_to_thread` + `codex://threads/<id>` deep links), `WORKING:` / `BLOCKED:` heartbeat rules, English-only member traffic.
-- `test/thread-title-hook.test.ts` - hook unit tests (vitest-style imports, run via `bun test`).
+- `test/thread-title-hook.test.ts` - hook unit tests (vitest-style imports, run via `bun test`); `test/v2-spawn-schema.test.ts` pins the V2 `spawn_agent` member schema.
 
 ## WHERE TO LOOK
 

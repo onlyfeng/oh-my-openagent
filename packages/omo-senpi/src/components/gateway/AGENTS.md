@@ -2,6 +2,8 @@
 
 Operating-rules injection for gateway sessions (omo-gateway todo 16). The scope lead and every session with an active binding get their scope's compiled behavioral rules as one `<operating-rules version="<rules sha>">` block in the system prompt; a rules commit appends exactly one `rules_changed` delivery per affected session.
 
+Earned by score ~11 (5 top-level TS files + `store-extension/` with 3): a distinct domain - the only component registering a worker-side store extension on the session-gateway store. Registered after `memory` so its block composes after the memory block.
+
 ## Boundary
 
 Rules are COMPUTED by the gateway package (its store, compiler and commit path; closed source). omo owns only the mechanics, through the `gateway_rules` store extension this component registers on the session-gateway store:
@@ -24,3 +26,9 @@ The caller (the gateway package) passes ONE target per affected session, choosin
 ## Tests
 
 Colocated, against a real store (`thread/gateway/testing/harness`): block content for the bound chat, exactly-one `rules_changed` per session per version (repeat commit replays, duplicate target replays, new version delivers), row removal, malformed-args refusal, the byte-identical pass-through, identical bytes across turns on one version, block replacement on a new version, and the activation gates (no config / no database = no store creation).
+
+## Commands
+
+```bash
+bun test packages/omo-senpi/src/components/gateway   # colocated real-store tests
+```

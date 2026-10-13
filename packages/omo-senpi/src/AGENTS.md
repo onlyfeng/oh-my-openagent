@@ -9,10 +9,10 @@ Source root of the Senpi adapter package. The package barrel (`index.ts`) export
 | Extension entry / composition | `extension/` | `index.ts` (source entry, eager task), `bundled-index.ts` (built entry, lazy task runtime). Own AGENTS.md. |
 | Install / uninstall | `install/` | `runSenpiInstaller` / `runSenpiUninstaller`, local launcher, atomic settings writes. |
 | Real host modules for tests | `senpi-test-runtime.ts` | Resolves the installed `@code-yeongyu/senpi` dist and imports real theme/ModelRegistry/ModelRuntime at load time. |
-| Deep components | `components/{task,memory,lsp,telemetry,init-deep-advisor}/` | Each has its own AGENTS.md; `memory/` additionally documents `worker/`, `commands/`, `palace/`. |
+| Deep components | `components/{task,memory,lsp,telemetry,init-deep-advisor,thread,side-panel,gateway,computer-use}/` | Each has its own AGENTS.md; `memory/` additionally documents `worker/`, `commands/`, `palace/`. |
 | Bundled remote MCPs | `components/builtin-mcps/` | `context7` + `grep_app` HTTP declarations, `CONTEXT7_API_KEY` bearer gating, and the disable switches. Own AGENTS.md. |
 | X search | `components/x-search/` | Credential-gated `x_search` tool and conditional skill (files, gating, contract, error codes, backtest pointer). Own AGENTS.md. |
-| Small components | `components/*` | Single-purpose factories (ulw-loop, config-watch, onboarding, fallback-architect, ...) documented in `../AGENTS.md`. |
+| Small components | `components/*` | 34 dirs: 29 factories listed in `extension/component-list.ts` plus `task` (passed in by the extension entry), and 4 non-registered helpers (`config-resolution`, `agent-home`, `formatter` consumed by `lsp`, `post-mutation` shared by `formatter` and `lsp`). Single-purpose factories are documented in `../AGENTS.md`. |
 
 ## Root audit gates
 
@@ -20,6 +20,9 @@ Colocated at `src/` root. These are executable package-contract tests, not docum
 
 - `bundle-purity.test.ts` - import allowlist for the extension bundle; keep aligned with `SENPI_LOADER_ALIASES` in `plugin/scripts/build-extension.mjs` (peer-external rule in `../AGENTS.md`).
 - `bundle-size.test.ts` - raw byte budget for built `plugin/extensions/omo.js`. Every ceiling increase requires a separate measured PR with bundle sizes before/after and the reason; never fold it into a feature PR.
+- `bundle-lazy-barrel.test.ts` - lazy dynamic imports survive minification in the emitted extension bundle.
+- `bundled-skill-disable.test.ts` - a `disabled_skills` entry drops that skill from the resolved native skill set.
+- `computer-use-lazy-runtime.test.ts` - #9113, asserted on the EMITTED artifacts, not the source graph: computer-use keeps only its registration shell in `omo.js`; the desktop service, engine client and handle live in `omo-computer-use.js`, evaluated on first use.
 - `package-shape.test.ts` - adapter manifest contract; license/notice files must ship with generated artifacts.
 - `plugin-manifest.test.ts` - packaged plugin manifest.
 - `runtime-dependency-resolution.test.ts` - a symlinked plugin without host hoisting still resolves runtime deps from the real path.

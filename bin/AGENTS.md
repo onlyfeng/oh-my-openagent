@@ -8,7 +8,7 @@ Node-side launch surface for every public CLI alias. The root shim resolves a pl
 
 | Task | Location | Notes |
 |------|----------|-------|
-| Main launcher | `oh-my-opencode.js` | Entry for `oh-my-opencode`, `oh-my-openagent`, `omo`, `lazycodex`, and `lazycodex-ai` |
+| Main launcher | `oh-my-opencode.js` | Entry for the five root `package.json` bins: `oh-my-opencode`, `oh-my-openagent`, `omo-agent-toolkit`, `lazycodex`, `lazycodex-ai` (`omo` was renamed to `omo-agent-toolkit`; `postinstall.mjs` prints the notice) |
 | Platform selection | `platform.js` | OS/arch/libc package candidates and baseline fallback |
 | Platform types | `platform.d.ts` | Public declarations for the plain-JS selector |
 | Version mismatch output | `version-mismatch.js` | User-facing installed-wrapper/platform-package mismatch diagnostics |
@@ -31,3 +31,4 @@ Node-side launch surface for every public CLI alias. The root shim resolves a pl
 - Do not hard-code one npm package family. `oh-my-opencode` and `oh-my-openagent` wrappers share the launcher.
 - Do not edit generated launcher payloads under `packages/oh-my-opencode-*/bin/`; regenerate them through `script/build-binaries.ts`.
 - Do not remove baseline fallback without updating platform tests and publish-platform coverage.
+- Do not let Linux resolution guess an unknown libc; `getPlatformPackage` and baseline resolution throw instead.

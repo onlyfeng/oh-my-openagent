@@ -5,7 +5,7 @@ description: Developer reference for the Prometheus strategic planner agent thin
 
 # src/agents/prometheus/ -- Strategic Planner
 
-**Generated:** 2026-05-24 | **Updated:** 2026-06-15 (single thin prompt)
+**Generated:** 2026-05-24 | **Updated:** 2026-10-13 / dc373d26f (single thin prompt)
 
 ## OVERVIEW
 
@@ -47,7 +47,7 @@ Prometheus itself stays a planner. It reads, searches, and writes planning artif
 
 ## KEY CONSTRAINTS
 
-- May ONLY create/edit `.md` files (enforced by hook)
+- May ONLY create/edit `.md` files (enforced by `prometheus-md-only` hook); `bash` and `interactive_bash` are denied by the `tool-config-handler.ts` permission overlay
 - FORBIDDEN paths: `src/`, `package.json`, config files
 - Must explore codebase before planning (NEVER plan blind)
 - Plans saved to `.omo/plans/`

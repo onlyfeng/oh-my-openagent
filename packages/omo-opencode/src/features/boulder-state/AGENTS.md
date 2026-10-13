@@ -1,12 +1,12 @@
 # src/features/boulder-state/ — Active Work Plan Tracker
 
-**Generated:** 2026-07-17 / 7d664b96b
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-10 files (~1k LOC excl. tests). Tracks Sisyphus's "boulder" — the active work plan being rolled across sessions, worktrees, and subagent task delegations. Named after the Sisyphus myth: the boulder must keep rolling until the plan is complete.
+Adapter shim: 6 re-export files + 2 tests (`storage.test.ts` 1.2k LOC). The implementation lives in [`packages/boulder-state/`](../../../../boulder-state) (`@oh-my-opencode/boulder-state`); `formatDurationHuman` comes from `@oh-my-opencode/utils`. Tracks Sisyphus's "boulder" - the active work plan being rolled across sessions, worktrees, and subagent task delegations. Named after the Sisyphus myth: the boulder must keep rolling until the plan is complete.
 
-Inspected interactively via `bunx oh-my-opencode boulder` (see [`src/cli/boulder/`](../../cli/boulder)).
+Inspected interactively via `bunx oh-my-opencode boulder` (see [`src/cli/boulder/`](../../cli/boulder), registered in `src/cli/runtime-commands.ts`).
 
 ## SCHEMA (v2)
 
@@ -31,14 +31,16 @@ interface BoulderState {
 
 ## FILES
 
-| File | Purpose |
-|------|---------|
-| `types.ts` | `BoulderState`, `BoulderWorkState`, `TaskSessionState`, status enums |
-| `storage.ts` | Atomic CRUD on `.omo/boulder.json`. Writes via temp file + rename; file lock per work_id |
-| `constants.ts` | Path resolution + schema version constant |
-| `top-level-task.ts` | Helpers to identify the current top-level plan task and resolve its reusable subagent session |
-| `format-duration.ts` | `formatDurationHuman(ms)` — "1h 23m 5s" formatting for boulder duration |
-| `index.ts` | Barrel exports |
+All are re-exports; edit the Core package, not these files.
+
+| File | Re-exports |
+|------|------------|
+| `types.ts` | `BoulderState`, `BoulderWorkState`, `TaskSessionState`, status types |
+| `storage.ts` | Atomic CRUD on `.omo/boulder.json` (`createBoulderState`, `addBoulderWork`, `getWorkForSession`, ...) |
+| `constants.ts` | `BOULDER_DIR` (`.omo`), `BOULDER_FILE` (`boulder.json`) |
+| `top-level-task.ts` | `readCurrentTopLevelTask` |
+| `format-duration.ts` | `formatDurationHuman(ms)` from utils |
+| `index.ts` | Barrel |
 
 ## LIFECYCLE
 
@@ -68,7 +70,7 @@ session.completed
 <worktree-root>/.omo/boulder.json   # gitignored; one file per worktree
 ```
 
-Atomic writes: temp file → fsync (where supported) → rename. File lock prevents concurrent corruption. Schema migrations between versions handled inline in `storage.ts`.
+Atomic writes: temp file, fsync (where supported), rename. File lock prevents concurrent corruption. Schema migrations between versions are handled in the Core `storage.ts`.
 
 ## NOTES
 

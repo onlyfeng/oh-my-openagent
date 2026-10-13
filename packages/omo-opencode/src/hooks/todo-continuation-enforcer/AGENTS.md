@@ -1,6 +1,6 @@
 # src/hooks/todo-continuation-enforcer/ (Boulder Continuation Mechanism)
 
-**Generated:** 2026-07-17 (7d664b96b)
+**Generated:** 2026-07-17 (7d664b96b) | **Updated:** 2026-10-13 (dc373d26f)
 
 ## OVERVIEW
 
@@ -43,8 +43,8 @@ While `continuationBlockReason` is set, `handleSessionIdle` and `continuation-in
 | `non-idle-events.ts` | `handleNonIdleEvent()`: `message.updated` / `message.part.updated` / `message.part.delta` and `tool.execute` handlers; classifies user interruptions vs assistant turns for the turn-boundary pause |
 | `session-state.ts` | `SessionStateStore`: per-session failure/abort/cooldown/progress state |
 | `todo.ts` | Check todo completion status via session store |
-| `countdown.ts` | 2s countdown toast before injection |
-| `abort-detection.ts` | Detect MessageAbortedError / AbortError |
+| `countdown.ts` / `abort-detection.ts` | 2s countdown toast before injection; detect MessageAbortedError / AbortError |
+| `stagnation-detection.ts` / `pending-question-detection.ts` / `compaction-guard.ts` / `token-limit-detection.ts` / `unrecoverable-request-error.ts` / `resolve-message-info.ts` | Stop gates: stagnation, unanswered question, post-compaction guard, token limit, unrecoverable request, latest message info |
 | `continuation-injection.ts` | Build + inject CONTINUATION_PROMPT into session |
 | `message-directory.ts` | Temp dir for message injection exchange |
 | `constants.ts` | Timing constants, CONTINUATION_PROMPT, skip agents |
@@ -55,10 +55,10 @@ While `continuationBlockReason` is set, `handleSessionIdle` and `continuation-in
 ```typescript
 DEFAULT_SKIP_AGENTS = ["prometheus", "compaction", "plan"]
 CONTINUATION_COOLDOWN_MS = 5_000      // 5s base, exponential backoff per failure
-MAX_CONSECUTIVE_FAILURES = 5          // Then 5min pause (exponential backoff)
+MAX_CONSECUTIVE_FAILURES = 5          // Skip injection until FAILURE_RESET_WINDOW_MS has passed since lastInjectedAt (idle-event.ts)
 FAILURE_RESET_WINDOW_MS = 5 * 60_000  // 5min window for failure reset
-COUNTDOWN_SECONDS = 2
-ABORT_WINDOW_MS = 3000                // Grace after abort signal
+MAX_STAGNATION_COUNT = 3; COMPACTION_GUARD_MS = 60_000
+COUNTDOWN_SECONDS = 2; ABORT_WINDOW_MS = 3000  // Grace after abort signal
 ```
 
 ## STATE PER SESSION

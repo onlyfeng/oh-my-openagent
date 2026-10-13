@@ -1,10 +1,10 @@
-# src/hooks/ -- ~54 Lifecycle Hooks Across 60 Dirs
+# src/hooks/ -- ~55 Lifecycle Hooks Across 60 Dirs
 
-**Generated:** 2026-07-17
+**Generated:** 2026-07-17 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-54 base registered hooks on default config (61 with team-mode; `monitor-status-injector` adds 1 more with `monitor.enabled` → 62 max), composed from 54 `index.ts` hook dirs (52 wired; `task-reminder/` and `ralph-loop/` unwired) plus 5 standalone hook `.ts` files at the `src/hooks/` top level (bash-file-read-guard, empty-task-response-detector, preemptive-compaction, session-notification, tool-output-truncator). The 60 directories = 54 with `index.ts` + 6 without (`shared/`, `team-session-events/`, and 4 `zauc-mocks-*`/`zauc-sync-mocks`). 5-tier composition wired in `src/plugin/hooks/`. All hooks follow `createXXXHook(deps) -> HookFunction` factory pattern.
+55 base hook slots in the tier tables below (62 with team-mode; `monitor-status-injector` adds 1 more with `monitor.enabled` → 63 max; earlier docs said 54/61/62 before `nativeEditionNudge` and the always-on `btwSideContextInjector` were counted), composed from 54 `index.ts` hook dirs (52 wired; `task-reminder/` and `ralph-loop/` unwired) plus 5 standalone hook `.ts` files at the `src/hooks/` top level (bash-file-read-guard, empty-task-response-detector, preemptive-compaction, session-notification, tool-output-truncator). The 60 directories = 54 with `index.ts` + 6 without (`shared/`, `team-session-events/`, and 4 `zauc-mocks-*`/`zauc-sync-mocks`). 5-tier composition wired in `src/plugin/hooks/`. All hooks follow `createXXXHook(deps) -> HookFunction` factory pattern.
 
 **Unwired WIP (do not modify casually):** `task-reminder/` (has `index.ts` + `createTaskReminderHook` but NOT exported from barrel, NOT imported by any composer) and `ralph-loop/` (exported from barrel but NOT imported by any composer; retained for migration, superseded by `goal/`). Treat as orphaned until wired in.
 
@@ -14,14 +14,12 @@
 |------|----------|------|----------------|-------|
 | **Session** | `create-session-hooks.ts` | 24 | 24 | OpenCode session lifecycle + chat.params + chat.message |
 | **Tool Guard** | `create-tool-guard-hooks.ts` | 17 | 18 | Pre/post tool execution (+1: `team-tool-gating`) |
-| **Transform** | `create-transform-hooks.ts` | 4 | 6 | `experimental.chat.messages.transform` (+2: `team-mode-status-injector`, `team-mailbox-injector`; `monitor-status-injector` is a further +1 gated on `monitor.enabled`, not team-mode) |
+| **Transform** | `create-transform-hooks.ts` | 5 | 7 | `experimental.chat.messages.transform` (`btwSideContextInjector` + `contextInjectorMessagesTransform` are unconditional, from `features/`; +2: `team-mode-status-injector`, `team-mailbox-injector`; `monitor-status-injector` is a further +1 gated on `monitor.enabled`, not team-mode) |
 | **Continuation** | `create-continuation-hooks.ts` | 7 | 7 | Boulder/atlas/compaction/notification |
 | **Skill** | `create-skill-hooks.ts` | 2 | 2 | Skill awareness (categorySkillReminder, autoSlashCommand) |
-| **Direct event handlers** | `src/plugin/event.ts` | 0 | +4 | `team-session-events/` sub-files: `team-idle-wake-hint`, `team-lead-orphan-handler`, `team-member-error-handler`, `team-member-status-handler` |
+| **Direct event handlers** | `src/plugin/event-team-handlers.ts` | 0 | +4 | `team-session-events/` sub-files: `team-idle-wake-hint`, `team-lead-orphan-handler`, `team-member-error-handler`, `team-member-status-handler` |
 
-Total exposed hooks: **54 base, 61 with team-mode, 62 with team-mode + monitor** (counts the 4 team-session-events handlers individually).
-
-Hook name allowlist for `disabled_hooks`: all configurable hook names enumerated in [`src/config/schema/hooks.ts`](../config/schema/hooks.ts) `HookNameSchema`. Team-session-event sub-hooks are not individually listed in the schema -- they activate together with `team_mode.enabled`.
+Composed slots: 24 + 18 + 8 + 7 + 2 = **59**. Many are config-gated nulls at creation (`preemptive-compaction` needs `experimental.preemptive_compaction`, `model-fallback` needs `model_fallback`, `goal` needs `goal.enabled`, `interactive-bash-session` needs tmux integration). Total exposed hooks: **55 base, 62 with team-mode, 63 with team-mode + monitor** (counts the 4 team-session-events handlers individually). Hook name allowlist for `disabled_hooks`: all configurable hook names enumerated in [`src/config/schema/hooks.ts`](../config/schema/hooks.ts) `HookNameSchema`. Team-session-event sub-hooks are not individually listed in the schema -- they activate together with `team_mode.enabled`.
 
 ### Tier 1: Session Hooks (24)
 
@@ -50,6 +48,7 @@ Hook name allowlist for `disabled_hooks`: all configurable hook names enumerated
 | `hephaestusAgentsMdInjector` | chat.message | Inject walk-up AGENTS.md context for Hephaestus deep-work sessions |
 | `runtimeFallback` | event | Reactive auto-switch on API provider errors |
 | `legacyPluginToast` | chat.message | Show toast when legacy plugin name detected |
+| `nativeEditionNudge` | session.created | Snoozable toast suggesting OmO Native (root sessions only); skipped in CI/non-TTY or when `~/.omo/agent` exists |
 
 ### Tier 2: Tool Guard Hooks (17)
 
@@ -73,12 +72,13 @@ Hook name allowlist for `disabled_hooks`: all configurable hook names enumerated
 | `notepadWriteGuard` | tool.execute.before | Block `Write` to append-only notepad paths (`.omo/notepads`, `.sisyphus/notepads`) |
 | `planFormatValidator` | tool.execute.before | Validate plan/todo checkbox format on `Write`/`Edit` of boulder plans |
 
-### Tier 3: Transform Hooks (4 base + 1 monitor-gated)
+### Tier 3: Transform Hooks (5 base + 1 monitor-gated)
 
 | Hook | Event | Purpose |
 |------|-------|---------|
 | `claudeCodeHooks` | messages.transform | Claude Code settings.json compatibility |
 | `keywordDetector` | messages.transform | Detect ultrawork/search/analyze/team modes; inject mode-specific prompt |
+| `btwSideContextInjector` | messages.transform | BTW side-question context (`features/btw-side`, always on) |
 | `contextInjectorMessagesTransform` | messages.transform | Inject AGENTS.md/README.md into context |
 | `toolPairValidator` | messages.transform | Validate tool call/result pairing |
 | `monitorStatusInjector` | messages.transform | Inject running Monitor watch status into context (`monitor.enabled`) |
@@ -109,19 +109,19 @@ Hook name allowlist for `disabled_hooks`: all configurable hook names enumerated
 | `team-mode-status-injector` | Transform | [`create-transform-hooks.ts`](../plugin/hooks/create-transform-hooks.ts) | Inject `<team_mode_status>` block into messages |
 | `team-mailbox-injector` | Transform | [`create-transform-hooks.ts`](../plugin/hooks/create-transform-hooks.ts) | Pull pending team mailbox messages into agent context |
 | `team-tool-gating` | Tool Guard | [`create-tool-guard-hooks.ts`](../plugin/hooks/create-tool-guard-hooks.ts) | Restrict `team_*` tools based on member role + permissions |
-| `team-idle-wake-hint` | event handler | [`src/plugin/event.ts`](../plugin/event.ts) | Nudge idle team members back to work |
-| `team-lead-orphan-handler` | event handler | [`src/plugin/event.ts`](../plugin/event.ts) | Detect lead departure → orphan members |
-| `team-member-error-handler` | event handler | [`src/plugin/event.ts`](../plugin/event.ts) | React to member session errors |
-| `team-member-status-handler` | event handler | [`src/plugin/event.ts`](../plugin/event.ts) | Track member status transitions |
+| `team-idle-wake-hint` | event handler | [`src/plugin/event-team-handlers.ts`](../plugin/event-team-handlers.ts) | Nudge idle team members back to work |
+| `team-lead-orphan-handler` | event handler | [`src/plugin/event-team-handlers.ts`](../plugin/event-team-handlers.ts) | Detect lead departure → orphan members |
+| `team-member-error-handler` | event handler | [`src/plugin/event-team-handlers.ts`](../plugin/event-team-handlers.ts) | React to member session errors |
+| `team-member-status-handler` | event handler | [`src/plugin/event-team-handlers.ts`](../plugin/event-team-handlers.ts) | Track member status transitions |
 
-The 4 `team-session-events/` handlers live in `src/hooks/team-session-events/` (separate files: `team-idle-wake-hint.ts`, `team-lead-orphan-handler.ts`, `team-member-error-handler.ts`, `team-member-status-handler.ts`) and are wired into `src/plugin/event.ts` directly, not through a tier composer.
+The 4 `team-session-events/` handlers live in `src/hooks/team-session-events/` (separate files, no `index.ts`: `team-idle-wake-hint.ts`, `team-lead-orphan-handler.ts`, `team-member-error-handler.ts`, `team-member-status-handler.ts`) and are imported by file path into `src/plugin/event-team-handlers.ts`, not through a tier composer.
 
 ## STRUCTURE
 
 ```
 hooks/
-├── shared/                                  # Cross-hook helpers (timing, prompt builders, etc.)
-├── team-session-events/                     # 4 team event handlers (wired via src/plugin/event.ts)
+├── shared/                                  # Re-export shims over src/shared/ (prompt-async-gate, session-idle-settle) + compaction-model-resolver
+├── team-session-events/                     # 4 team event handlers (wired via src/plugin/event-team-handlers.ts)
 ├── (54 index.ts hook directories incl. `task-reminder/` and `ralph-loop/` unwired -- see tier tables above)
 ├── zauc-mocks-{bg,cache,ws}, zauc-sync-mocks  # 4 test mocks (NOT hooks; named for sort-order isolation)
 └── (each hook dir)/

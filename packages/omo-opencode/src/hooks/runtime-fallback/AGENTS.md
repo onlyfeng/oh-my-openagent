@@ -1,10 +1,10 @@
 # src/hooks/runtime-fallback/ (Reactive Provider Error Recovery)
 
-**Generated:** 2026-07-17 (7d664b96b)
+**Generated:** 2026-07-17 (7d664b96b) | **Updated:** 2026-10-13 (dc373d26f)
 
 ## OVERVIEW
 
-~60 files (~14k LOC incl. tests). Session Tier hook that **reactively** switches to fallback models when API providers return errors at runtime (429, 503, quota exhausted, cooldown signals). Distinct from `model-fallback` (which applies preemptively at chat.params).
+61 `.ts` files (~12.2k LOC incl. tests; `index.test.ts` alone ~3.3k). Session Tier hook that **reactively** switches to fallback models when API providers return errors at runtime (429, 503, quota exhausted, cooldown signals). Distinct from `model-fallback` (which applies preemptively at chat.params).
 
 ## RUNTIME-FALLBACK vs MODEL-FALLBACK
 

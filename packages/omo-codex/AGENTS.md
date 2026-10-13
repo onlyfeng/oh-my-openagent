@@ -1,6 +1,6 @@
 # packages/omo-codex/ - Codex CLI Light Edition (lazycodex)
 
-**Generated:** 2026-08-24 / f3642fcda (refresh pass)
+**Generated:** 2026-10-13 / dc373d26f (init-deep update)
 
 ## STOP. THIS IS THE CODEX EDITION. QA IS MANDATORY. EVERY SINGLE TIME. INSTALL THE LOCAL BUILD INTO AN ISOLATED `CODEX_HOME`.
 
@@ -27,20 +27,20 @@
 
 `bun run install:codex-dev` swaps your real install for this repo's local build stamped as version `dev` (env `LAZYCODEX_DEV_VERSION`, default `dev`). Everywhere the plugin version shows (cache dir `.../omo/dev/`, `plugin.json`, and the per-turn `(OmO dev)` hook prefix) reads `dev`, so you can SEE which build is loaded. This is dogfooding on your REAL home; it is NOT a substitute for the mandatory isolated-`CODEX_HOME` QA above. Impl: `resolveLazyCodexPluginVersion` `versionOverride` (`src/install/lazycodex-version-stamp.ts`) fed from `env.LAZYCODEX_DEV_VERSION` in `runCodexInstaller`; display in `get-local-version` (`dev` status on a non-semver stamp).
 
-
 ## OVERVIEW
 
-`@oh-my-opencode/omo-codex` (private, v5.0.0-beta.18): the Codex harness adapter = the **Light Edition** (omo for the OpenAI Codex CLI). Vendors a Codex plugin namespace `omo` + a TypeScript installer + telemetry. Public distribution = the live `lazycodex-ai` npm package/bin alias. `lazycodex` remains a root bin alias and the [`code-yeongyu/lazycodex`](https://github.com/code-yeongyu/lazycodex) repository identity, but is not an npm package. Codex marketplace identity = `sisyphuslabs` / plugin `omo` (`omo@sisyphuslabs`). Full identity + the publish/deploy pipeline live in the root [`AGENTS.md`](../../AGENTS.md) "CODEX LIGHT EDITION" section.
+`@oh-my-opencode/omo-codex` (private, v5.1.32): the Codex harness adapter = the **Light Edition** (omo for the OpenAI Codex CLI). Vendors a Codex plugin namespace `omo` + a TypeScript installer + telemetry. Public distribution = the live `lazycodex-ai` npm package/bin alias. `lazycodex` remains a root bin alias and the [`code-yeongyu/lazycodex`](https://github.com/code-yeongyu/lazycodex) repository identity, but is not an npm package. Codex marketplace identity = `sisyphuslabs` / plugin `omo` (`omo@sisyphuslabs`). Full identity + the publish/deploy pipeline live in the root [`AGENTS.md`](../../AGENTS.md) "CODEX LIGHT EDITION" section.
 
 ## LAYOUT
 
 | Path | Purpose |
 |------|---------|
-| `package.json` | `@oh-my-opencode/omo-codex` (private). Deps: `@oh-my-opencode/utils`. Scripts: `typecheck`, `test`, `build:plugin`, `sync:skills`. |
-| `marketplace.json` | Codex marketplace manifest. Declares marketplace `sisyphuslabs`, single installable plugin `omo`. |
-| `MARKETPLACE.md` | Native Codex marketplace notes for `sisyphuslabs` / `omo`. |
+| `package.json` | `@oh-my-opencode/omo-codex` (private). Deps: `@oh-my-opencode/utils`, `@oh-my-opencode/shared-skills`. Exports `.`, `./telemetry`, `./install`, `./install/*`, `./marketplace.json`. Scripts: `typecheck`, `test`, `build:plugin`, `sync:skills`. |
+| `marketplace.json` + `MARKETPLACE.md` | Codex marketplace manifest (marketplace `sisyphuslabs`, single installable plugin `omo`) + native marketplace notes. |
+| `SUBAGENT-ROUTING.md` | Role routing contract: pick roles by the exposed native spawn schema (`agent_type`, V2 `fork_turns: "none"`, V1 `fork_context: false`); the 12 bundled TOMLs are the role registry. |
+| `lazycodex-repository/` | Files mirrored into `code-yeongyu/lazycodex` (`.github/workflows/pr-source-guidance.yml`). |
 | `index.d.ts` | Type barrel re-exporting `src/`. |
-| `plugin/` | Vendored Codex plugin namespace `omo`; pkg `@sisyphuslabs/omo-codex-plugin` (dep `@oh-my-opencode/shared-skills`). Holds `.codex-plugin/plugin.json` (brandColor `#7C3AED`), the `.codex-plugin/plugin.json` `hooks` array wiring 23 individual hook JSON files in `hooks/` (each component's own `hooks/hooks.json` is assembled into those files by the build), `components/` (11 workspaces + bootstrap + test-support + lcx), generated aggregate `skills/` (gitignored, built by sync-skills), `.mcp.json`. |
+| `plugin/` | Vendored Codex plugin namespace `omo`; pkg `@sisyphuslabs/omo-codex-plugin` (dep `@oh-my-opencode/shared-skills`). Holds `.codex-plugin/plugin.json` (brandColor `#7C3AED`), the `.codex-plugin/plugin.json` `hooks` array wiring 21 individual hook JSON files in `hooks/` (each component's own `hooks/hooks.json` is assembled into those files by the build), `components/` (10 workspaces + bootstrap + test-support + lcx), generated aggregate `skills/` (gitignored, built by sync-skills), `.mcp.json`. |
 | `scripts/` | Generated/bundled Node ESM install entrypoints and parity tests. Published paths such as `scripts/install-local.mjs` stay stable while source lives in `src/install/`. |
 | `src/` | TypeScript runtime consumed by the CLI: `install/` (Codex cache install, config mutation, agent links, local marketplace snapshot, cleanup, routing) + `telemetry/`. |
 | `tsconfig.json` | Bun-targeted strict config; included in root `typecheck:packages`. |
@@ -49,7 +49,7 @@
 
 Per `plugin/package.json` `workspaces[]`: `comment-checker`, `git-bash`, `lazycodex-executor-verify`, `lsp`, `rules`, `ulw-execute-continuation`, `teammode`, `telemetry`, `ultrawork`, `ulw-loop`. Special cases: `bootstrap` (runtime provisioner with its own package.json, deliberately OUTSIDE the workspaces array, built standalone by `plugin/scripts/build-components.mjs`), `test-support` (test helper dir, no package.json, not a component), and `lcx` (skills-only carrier under `plugin/components/lcx/`, no package.json and not a workspace; holds the `lcx-report-bug` / `lcx-contribute-bug-fix` / `lcx-doctor` skills that `sync-skills` copies from `components/lcx/skills/`). `workflow-selector` was removed 2026-06-29 (only an untracked `dist/` residue may linger locally). Each component is an isolated workspace under `plugin/components/<name>/` with its own `AGENTS.md` + `hooks/hooks.json` when it owns hook behavior. Wired to Codex lifecycle events `SessionStart` / `UserPromptSubmit` / `PreToolUse` / `PostToolUse` / `PostCompact` / `Stop` / `SubagentStop`. Older components originate from `code-yeongyu/codex-{rules,comment-checker,lsp,ultrawork,ulw-loop,ulw-execute-continuation}`; `teammode`, `bootstrap`, `lazycodex-executor-verify` are repo-native.
 
-**sync-skills pipeline** (`plugin/scripts/sync-skills.mjs`, run by the plugin build): wipes `plugin/skills/` → copies 10 COMPONENT skills first (`comment-checker`, `lcx-report-bug`, `lcx-contribute-bug-fix`, `lcx-doctor`, `lsp`, `rules`, `teammode`, `ulw-loop`, `ulw-plan`, `ultrawork` from `plugin/components/*/skills/*`; same-named shared skills are skipped) → copies remaining shared skills → `adaptSkillForCodex()` inserts Codex Harness Tool Compatibility guidance, applies overlays (`ulw-execute` / `review-work`), and writes `agents/openai.yaml` display metadata with the `(OmO) ` prefix.
+**sync-skills pipeline** (`plugin/scripts/sync-skills.mjs`, run by the plugin build): wipes `plugin/skills/` → copies 9 COMPONENT skills first (`comment-checker`, `lcx-report-bug`, `lcx-contribute-bug-fix`, `lcx-doctor`, `lsp`, `rules`, `teammode`, `ulw-loop`, `ulw-plan` from `plugin/components/*/skills/*`) and composes `ultrawork` from the canonical prompt (path resolved by `plugin/scripts/canonical-ultrawork-directive.mjs`: repo checkout first, else the installer-materialized copy under the plugin root); same-named shared skills are skipped → copies remaining shared skills → `adaptSkillForCodex()` inserts Codex Harness Tool Compatibility guidance, applies overlays (`ulw-execute` / `review-work`), and writes `agents/openai.yaml` display metadata with the `(OmO) ` prefix.
 
 **Ultrawork skill pointer:** the ultrawork `UserPromptSubmit` hook injects a compact `<ultrawork-mode>` pointer (<4096 bytes; Codex App truncates large hook output) directing the model to read the full directive from the bundled `ultrawork` skill; full-directive fallback when the skills tree is absent. Mirror copy in `ulw-loop/src/ultrawork-skill-pointer.ts`; byte-identity pinned by `plugin/test/ultrawork-skill-pointer.test.mjs`.
 

@@ -1,6 +1,6 @@
 # src/features/ — 24 Feature Modules
 
-**Generated:** 2026-08-07
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -11,27 +11,28 @@ Standalone feature modules wired into `plugin/` layer. Each is self-contained wi
 | Module | Complexity | Has sub-AGENTS.md | Purpose |
 |--------|------------|-------------------|---------|
 | **team-mode** | HIGH | yes | Parallel multi-agent coordination — 12 `team_*` tools; domain primitives live in `packages/team-core/` with OpenCode runtime/session wiring here |
-| **background-agent** | HIGH | yes | Task lifecycle, concurrency (5/key), 3s polling, spawner pattern, circuit breaker. Newer files include `parent-wake-notifier.ts`, `loop-detector`, `error-classifier`, `fallback-retry-handler`, `process-cleanup`, `subagent-spawn-limits`, `session-status-classifier`, and `compaction-aware-message-resolver`. |
-| **btw-side** | HIGH | no | Codex-aligned ephemeral side conversations: TUI commands and controls, bounded parent-context injection, session metadata, lifecycle cleanup, and isolation guards |
+| **background-agent** | HIGH | yes | Task lifecycle, concurrency (5/key), 3s polling, spawner pattern, circuit breaker; `manager.ts` (3.4k LOC) is the hotspot, parent-wake logic split across `parent-wake-*.ts` |
+| **btw-side** | HIGH | yes | Codex-aligned ephemeral side conversations: TUI commands and controls, bounded parent-context injection, session metadata, lifecycle cleanup, and isolation guards |
 | **tmux-subagent** | HIGH | yes | Tmux pane management, grid planning, session orchestration via `runTmuxCommand`; reusable tmux primitives live in `packages/tmux-core/` |
-| **opencode-skill-loader** | HIGH | yes | OpenCode adapter for YAML frontmatter skill discovery; reusable loader primitives live in `packages/skills-loader-core/` |
-| **skill-mcp-manager** | HIGH | yes | OpenCode adapter for tier-3 MCP client lifecycle; reusable client/OAuth primitives live in `packages/mcp-client-core/` |
-| **builtin-commands** | LOW | yes | Command templates: refactor, init-deep, handoff, ulw-loop, etc. |
-| **mcp-oauth** | HIGH | yes | OAuth 2.0 + PKCE + DCR (RFC 7591) + step-up auth for MCP servers |
+| **opencode-skill-loader** | MEDIUM | yes | Re-export shims over `packages/skills-loader-core/`; only `opencode-shell-skill-content.ts` is local |
+| **skill-mcp-manager** | MEDIUM | yes | Re-export shims over `packages/mcp-client-core/` tier-3 MCP client lifecycle (every `.ts` is a shim) |
+| **builtin-commands** | LOW | yes | 7 command templates: goal, refactor, ulw-execute, stop-continuation, handoff, remove-ai-slops, hyperplan |
+| **mcp-oauth** | LOW | yes | Re-export shims over `mcp-client-core/mcp-oauth` (PKCE + DCR + step-up) |
 | **claude-code-agent-loader** | LOW | yes | OpenCode adapter for agents from `.opencode/agents/` and Claude Code plugins; shared loader lives in `packages/claude-code-compat-core/` |
 | **claude-code-mcp-loader** | MEDIUM | yes | OpenCode adapter for tier-2 MCP loader; `.mcp.json` parse + `${VAR}` env expansion live in `packages/claude-code-compat-core/` |
 | **tool-metadata-store** | LOW–MED | no | Tool execution metadata cache; publish/recover lifecycle + task metadata contract |
-| **boulder-state** | LOW | yes | Persistent state for boulder (active work plan tracking across sessions/worktrees) |
+| **boulder-state** | LOW | yes | Re-export shims over `packages/boulder-state/` (active work plan tracking) |
 | **context-injector** | LOW | no | AGENTS.md/README.md injection into session context |
 | **hook-message-injector** | LOW | no | System message injection helper used by hooks |
 | **run-continuation-state** | LOW | no | Persistent state for `oh-my-opencode run` continuation across invocations |
 | **opencode-runtime-skills** | LOW–MED | no | Runtime security-skill source — `selectRuntimeSecuritySkills()` + `createRuntimeSkillSourceServer()` serve security skills to sessions at runtime |
 | **claude-code-command-loader** | LOW | no | Load `/commands` from `.opencode/commands/` and Claude Code plugins |
-| **claude-tasks** | MEDIUM | yes | Sisyphus task schema + atomic file storage + OpenCode todo API sync |
+| **claude-tasks** | LOW | yes | Strict Zod task schema + atomic file storage/locking consumed by `tools/task/` |
 | **task-toast-manager** | MEDIUM | no | Task progress notifications |
 | **claude-code-session-state** | LOW | no | Subagent session state tracking |
-| **monitor** | MEDIUM | no | `monitor_*` tools backend: managed watcher processes, line filtering, ring buffer, batched output injection (gated on `monitor.enabled`) |
-| **tui-sidebar** | MEDIUM | no | TUI sidebar snapshot builder + mirror manager (roster/state derivers rendered into the OpenCode TUI; gated on `tui.sidebar.enabled`) |
+| **monitor** | MEDIUM | yes | `monitor_*` tools backend: managed watcher processes, line filtering, ring buffer, batched output injection (gated on `monitor.enabled`) |
+| **tui-sidebar** | MEDIUM | yes | TUI sidebar snapshot builder + mirror manager (roster/state derivers rendered into the OpenCode TUI; gated on `tui.sidebar.enabled`) |
+| **native-edition-nudge** | LOW | no | TUI dialog nudging toward OmO Native (install / guide / later / never); registered from `src/tui.ts`, state store in `hooks/native-edition-nudge/` |
 | **opengateway-provider** | LOW | no | Injects the `opengateway` provider into opencode's live config when a credential exists (`OPENGATEWAY_API_KEY` env or `opengateway` auth.json entry); fills only missing keys, ships bundled `opengateway-models.json` catalog |
 
 ## KEY MODULES
@@ -44,9 +45,9 @@ Core orchestration engine. `BackgroundManager` manages task lifecycle:
 - Polling: 3s interval, completion detected via idle event AND stability detection (10s unchanged)
 - Circuit breaker: automatic failure detection and recovery in `manager-circuit-breaker.test.ts`
 - `spawner/`: focused files composing via `SpawnerContext` interface
-- Parent-wake state extracted to `parent-wake-notifier.ts` (587 LOC, dependency-injected client + enqueue callback)
+- Parent-wake coordinator `parent-wake-notifier.ts` (193 LOC, dependency-injected client + enqueue callback) over sibling `parent-wake-*.ts` helpers
 
-### team-mode (~13k LOC)
+### team-mode (~9.7k LOC incl. tests)
 
 Parallel multi-agent coordination, OFF by default. Harness-neutral domain primitives are extracted to `packages/team-core/`; this directory owns OpenCode-specific spawning, tool registration, and hook integration. Subdirs:
 - `team-registry/` — load/validate `~/.omo/teams/{name}/config.json`
@@ -58,16 +59,16 @@ Parallel multi-agent coordination, OFF by default. Harness-neutral domain primit
 - `team-layout-tmux/` — optional tmux pane visualization
 - `tools/` — 12 `team_*` tool implementations
 
-Eligible members: sisyphus, atlas, sisyphus-junior, hephaestus only. See [`team-mode/AGENTS.md`](team-mode/AGENTS.md).
+Eligible members: sisyphus, atlas, sisyphus-junior; hephaestus is conditional. See [`team-mode/AGENTS.md`](team-mode/AGENTS.md).
 
-### opencode-skill-loader (~2.8k LOC)
+### opencode-skill-loader (~2k LOC, shims)
 
-4-scope skill discovery (project > opencode > user > global):
-- YAML frontmatter parsing from SKILL.md files
-- Skill merger with priority deduplication
+Numeric `SCOPE_PRIORITY` (in skills-loader-core): opencode-project 6 > project 5 > opencode 4 > user 3 > config 2 > builtin = shared 1.
+- YAML frontmatter parsing, merger dedup, and template resolution all live in Core
+- Adapter keeps only OpenCode shell selection (`opencode-shell-skill-content.ts`)
 - Provider gating for model-specific skills
 
-### tmux-subagent (~3.6k LOC)
+### tmux-subagent (~9.8k LOC incl. tests; `manager.ts` 1.4k)
 
 State-first tmux integration. Shared tmux primitives are extracted to `packages/tmux-core/`, while this feature owns OpenCode session tracking and pane decisions. Centralized tmux command execution goes through the shared runner. Direct `Bun.spawn(["tmux", ...])` is FORBIDDEN — would drift from retry/timeout discipline.
 

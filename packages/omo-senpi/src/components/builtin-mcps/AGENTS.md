@@ -28,3 +28,7 @@ Three switches, in precedence order:
    The same entry shape also lets a user pin their own URL, headers, or tool filters.
 2. `--omo-senpi-builtin-mcps-disabled` (the per-component compose flag) drops both declarations.
 3. `--omo-senpi-disabled` drops every omo-senpi component.
+
+## Tests
+
+Colocated, both against the real component: `index.test.ts` (declarations, key normalization, disable precedence) and `host-declaration-contract.test.ts`, which validates both declarations through the REAL installed host validator (`validateMcpServerDeclaration` imported from the `@code-yeongyu/senpi` dist) because the installed host owns MCP declaration validation - a mock proves nothing. Run: `bun test packages/omo-senpi/src/components/builtin-mcps`.

@@ -1,6 +1,6 @@
 # comment-checker-core — apply-patch Parser + Checker Runner (Core)
 
-**Generated:** 2026-06-17
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -13,15 +13,18 @@ Two responsibilities: (1) parse LLM apply-patch edits into structured `CheckerEd
 | `parseApplyPatchRequests(patch)` | `apply-patch-edits.ts` | parse `*** Add/Update/Delete File:` + `*** Move to:` protocol with `@@` context + `+`/`-` markers |
 | `extractApplyPatchEdits(details, args?)` | `apply-patch-edits.ts` | high-level extractor (patch text OR metadata files) |
 | `getApplyPatchMetadataFiles(details)` | `apply-patch-edits.ts` | read files from nested `details.files` / `result.files` / `metadata.files` |
-| `resolveCommentCheckerBinary(input)` | `runner.ts` | locate binary via `createRequire(@code-yeongyu/comment-checker)` |
+| `resolveCommentCheckerBinary(input)` | `runner.ts` | cached binary path first, else `createRequire(@code-yeongyu/comment-checker/package.json)` then `findCommentCheckerPackageBinary` (`package-binary.ts`); module-resolution miss returns `null` |
+| `COMMENT_CHECKER_RELEASE_VERSION` (`0.8.0`), `COMMENT_CHECKER_RELEASE_REPO`, `resolveCommentCheckerReleaseAsset`, `commentCheckerBinaryName`, `commentCheckerCacheDir` | `release.ts` | GitHub release asset (`tar.gz`/`zip`) + per-platform binary name + shared cache dir |
 | `runCommentChecker(input, options)` | `runner.ts` | pipe `HookInput` JSON to stdin, read stdout/stderr, return `CheckResult` |
+| `sendAndCloseStdin` | `stdin-delivery.ts` | write + close with a permanent stdin `error` listener (#6396) |
 | `COMMENT_CHECKER_VERSION_MARKER`, `isCachedCommentCheckerCurrent(cacheDir)`, `recordCachedCommentCheckerRelease(cacheDir)` | `cached-release.ts` | version marker beside the binary in the shared cache slot; a missing or different marker means the cached checker is stale and must be re-downloaded (#8850) |
-| types (17) | `types.ts` | `CheckerEdit`, `HookInput`, `CheckResult`, `SpawnFn`/`SpawnProcess`/`SpawnSignal`, `ApplyPatchFileMetadata`, … |
+| types (19 + 3 release types) | `types.ts`, `release.ts` | `CheckerEdit`, `HookInput`, `CheckResult`, `SpawnFn`/`SpawnProcess`/`SpawnSignal`, `ApplyPatchFileMetadata`, ... |
 
 ## DEPENDENCIES & CONSUMERS
 
 - **Depends on:** `@oh-my-opencode/utils` (`isRecord` from `utils/record-type-guard`).
-- **Consumed by BOTH editions:** `omo-opencode/src/hooks/comment-checker/{hook,types,cli}.ts` and `omo-codex/plugin/components/comment-checker/src/{core,core-values,apply-patch,request-extractor}.ts`.
+- **Consumed by all three adapters:** `omo-opencode/src/hooks/comment-checker/` (+ `cli/doctor/checks`), `omo-codex/plugin/components/comment-checker/src/`, and `omo-senpi/src/components/{comment-checker,post-mutation}/`.
+- **Published types:** `package.json` `types` points at the hand-maintained root `index.d.ts` (not `src/index.ts`); keep it in sync with the barrel when exports change.
 
 ## NOTES
 

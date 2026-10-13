@@ -1,10 +1,10 @@
 # src/features/background-agent/ — Core Orchestration Engine
 
-**Generated:** 2026-05-20
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-50 non-test files (~110 `.ts` total incl. tests + `spawner/`). Manages async task lifecycle: launch → queue → run → poll → complete/error. Concurrency limited per model/provider (default 5). Central to multi-agent orchestration.
+48 direct non-test files + 70 co-located tests, plus `spawner/` (4 files + 1 test). Manages async task lifecycle: launch → queue → run → poll → complete/error. Concurrency limited per model/provider (default 5). Central to multi-agent orchestration.
 
 ## TASK LIFECYCLE
 
@@ -16,8 +16,8 @@ LaunchInput → pending → [ConcurrencyManager queue] → running → polling �
 
 | File | Purpose |
 |------|---------|
-| `manager.ts` | `BackgroundManager` — main class (3.2k LOC, the production hotspot): launch, cancel, resume, getTask, listTasks, event handling, stale cleanup, archive |
-| `spawner.ts` | Task spawning: create session → inject prompt → start polling |
+| `manager.ts` | `BackgroundManager`, main class (3.4k LOC, the production hotspot; `manager.test.ts` is 8.8k): launch, cancel, resume, getTask, listTasks, event handling, stale cleanup, archive |
+| `spawner.ts` | `SpawnerContext` interface + `createTask` / `startTask` / `resumeTask`: create session, inject prompt, start polling |
 | `concurrency.ts` | `ConcurrencyManager` — FIFO queue per concurrency key, slot acquisition/release |
 | `task-poller.ts` | 3s interval polling, completion via idle events + stability detection (10s unchanged) |
 | `types.ts` | `BackgroundTask`, `LaunchInput`, `ResumeInput`, `BackgroundTaskStatus` |
@@ -41,10 +41,12 @@ LaunchInput → pending → [ConcurrencyManager queue] → running → polling �
 
 | File | Purpose |
 |------|---------|
-| `spawner-context.ts` | `SpawnerContext` interface composing all spawner deps |
-| `background-session-creator.ts` | Create OpenCode session for background task |
-| `concurrency-key-from-launch-input.ts` | Derive concurrency key from model/provider |
+| `fallback-agent.ts` | `FALLBACK_AGENT`, `isAgentNotFoundError`, `buildFallbackBody` (retry with fallback agent) |
+| `task-prompt-body.ts` | `buildTaskPromptBody` / `TaskPromptBody` |
+| `task-record.ts` | `buildTaskRecord` |
 | `tmux-callback-invoker.ts` | Notify TmuxSessionManager on session creation |
+
+`SpawnerContext` itself lives in `../spawner.ts`.
 
 ## COMPLETION DETECTION
 
@@ -64,5 +66,5 @@ Both must agree before marking a task complete. Prevents premature completion on
 ## NOTIFICATION FLOW
 
 ```
-task completed → result-handler → parent-session-notifier → inject system message into parent session
+task completed -> parent-wake-notifier (pending queue, dedupe, flush runner) -> parent-wake-prompt-dispatch -> prompt-async gate into parent session
 ```

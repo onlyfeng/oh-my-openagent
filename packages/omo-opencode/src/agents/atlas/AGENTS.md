@@ -5,7 +5,7 @@ description: Developer reference for the Atlas todo-list orchestrator agent -- m
 
 # src/agents/atlas/ -- Todo-List Orchestrator
 
-**Generated:** 2026-05-18
+**Generated:** 2026-05-18 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -59,7 +59,8 @@ The markdown files keep live OpenCode sections as placeholders. `agent.ts` resol
 - Mode: `primary` (respects UI model selection)
 - Temperature: 0.1
 - Default model: `claude-sonnet-5`
-- Denied tools: `task`, `call_omo_agent` (Atlas delegates; it does not run subagents directly)
+- Permissions (overlay in `plugin-handlers/tool-config-handler.ts`, not a static denylist): `task` and `task_*` allowed, `call_omo_agent` and todo tools denied, `teammate: "allow"`
+- Prompt rule: `category` and `agent` are mutually exclusive in one `task()` call (`prompt-section-builder.ts`)
 - Checkbox enforcement in prompts
 - Auto-continue: never asks user for approval between plan steps
 - Parallel fan-out by default; sequential only for named blocking dependencies

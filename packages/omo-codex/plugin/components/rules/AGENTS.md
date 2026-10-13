@@ -1,6 +1,6 @@
-# Repository Conventions
+# rules - Codex rules-injection component
 
-Conventions for human contributors and AI agents working on this repository.
+**Score 13** (80 files, ~7.2k LOC, 7 subdirs incl. `bundled-rules/`, `hooks/`, `scripts/`, `skills/`, `src/`, `test/`; distinct domain: rules-engine bridge spanning four Codex lifecycle hooks). Package `@code-yeongyu/codex-rules` (standalone); bin `omo-rules`.
 
 ## Style
 
@@ -17,8 +17,10 @@ Conventions for human contributors and AI agents working on this repository.
 - `src/persistent-cache.ts` + `src/session-state-lock.ts`: persisted static/dynamic dedup, target fingerprints, post-compact claims (`withPostCompactBudget`, `claimPostCompactPending`), `withSessionStateLock` (`SESSION_STATE_LOCK_CONTENDED`).
 - `src/tool-paths.ts`: Codex file path extraction for reads, edits, `apply_patch`, shell-style tools (`extractCodexToolPaths`).
 - `src/transcript-search.ts` / `src/transcript-rule-filter.ts`: transcript scanning and filtering.
-- `src/rules-engine-factory.ts`: bridges `@oh-my-opencode/rules-engine` (discovery, parsing, matching, config).
-- `bundled-rules/`: shipped Markdown rules (`hephaestus/`, `windows-git-bash.md`); ordering and platform candidates pinned by tests.
+- `src/rules-engine-factory.ts`: bridges `@oh-my-opencode/rules-engine/engine` (discovery, parsing, matching, config).
+- `src/static-injection.ts`, `src/event-budget.ts`, `src/hook-output.ts`, `src/codex-hook-options.ts`, `src/config.ts`: static injection, per-event budgets, output shaping, option/env config.
+- `src/post-compact-{budget,claim,directive,state}.ts` + `src/context-pressure.ts`: post-compact re-injection budget (per-model context table), claims, and pressure detection.
+- `bundled-rules/`: shipped Markdown rules (`hephaestus/gpt-5.5.md`, `gpt-5.6.md`, `gpt-6.md`; `windows-git-bash.md`); ordering and platform candidates pinned by tests.
 - `hooks/hooks.json`: registration. `scripts/bench-codex-rules.mjs`: benchmark.
 
 ## Commands

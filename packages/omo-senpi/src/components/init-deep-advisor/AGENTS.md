@@ -1,6 +1,6 @@
 # init-deep-advisor component
 
-Session-start advisor that reads `.omo/init-deep.json` and proposes rerunning the `init-deep` skill when the repo has drifted since the snapshot (or was never initialized). UI-only: no UI, no proposal. Decision state (declines, cooldowns, last-proposed HEAD) lives under `<omo-state>/init-deep-advisor-state/`, keyed by a sha256 of the repo's realpathed git common dir, so worktrees of one repo share state.
+Session-start advisor that reads `.omo/init-deep.json` and proposes rerunning the `init-deep` skill when the repo has drifted since the snapshot (or was never initialized). Requires an interactive UI: without `hasUI` it never proposes. Score ~16 (28 files: 20 TS, 4 qa shell scripts, 2 mjs, 2 md). Decision state (declines, cooldowns, last-proposed HEAD) lives under `<omo-state>/init-deep-advisor-state/`, keyed by a sha256 of the repo's realpathed git common dir, so worktrees of one repo share state.
 
 ## Anatomy
 
@@ -16,7 +16,8 @@ Session-start advisor that reads `.omo/init-deep.json` and proposes rerunning th
 | `git-helpers.ts` | NUL-separated git plumbing: head, commit count, touched files, churn LOC, tracked totals; drift excludes `AGENTS.md`, `**/AGENTS.md`, `.omo/init-deep.json` themselves. |
 | `git-exclude.ts` | Appends paths to `.git/info/exclude` (idempotent) for local-mode output. |
 | `constants.ts` | Every threshold below, plus source extensions and excluded dir names. |
-| `qa-*.sh` / `qa-rpc-*.mjs` | Manual QA harness for sandboxed end-to-end runs. |
+| `qa-snapshot.sh` / `qa-managed-block.sh` / `qa-sandbox.sh` / `qa-init-deep-amendments.sh` / `qa-rpc-driver.mjs` + `qa-rpc-support.mjs` | Manual QA harness for sandboxed end-to-end runs. |
+| `init-deep-pre-amendment.md` | Pinned pre-amendment copy of the `init-deep` skill body (~304 LOC), kept beside the QA harness. |
 
 ## Drift model (constants.ts values, verify there before citing)
 

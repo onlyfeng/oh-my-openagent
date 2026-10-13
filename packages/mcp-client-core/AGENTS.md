@@ -1,10 +1,10 @@
 # mcp-client-core — MCP Client + Skill-Embedded MCP (Core)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Harness-neutral MCP client lifecycle and OAuth primitives. Consumed by `omo-opencode` via `features/skill-mcp-manager` and `features/mcp-oauth` / `cli/mcp-oauth`. Private package `@oh-my-opencode/mcp-client-core`; 30 source files under `src/`.
+Harness-neutral MCP client lifecycle and OAuth primitives. Consumed by `omo-opencode` via `features/skill-mcp-manager` and `features/mcp-oauth` / `cli/mcp-oauth`. Private package `@oh-my-opencode/mcp-client-core`; 27 non-test source files under `src/` (2 modules + 3 root helpers). Deps: `@modelcontextprotocol/sdk`, `zod`, `utils`, and `claude-code-compat-core` (`ClaudeCodeMcpServer` type + `expandEnvVarsInObject` from its `claude-code-mcp-loader` subpaths). Exports `.` plus `./mcp-oauth`, `./skill-mcp-manager` and their `/*` wildcards, all pointing at source `.ts`.
 
 ## KEY FILES
 
@@ -41,6 +41,7 @@ Harness-neutral MCP client lifecycle and OAuth primitives. Consumed by `omo-open
 - **OAuth flow:** PKCE + optional DCR. Step-up authentication on 403 merges new scopes and re-authenticates. Refresh mutex prevents concurrent refresh storms.
 - **Env hygiene is a security boundary:** stdio servers never receive npm/pnpm/yarn config vars or secret-bearing env vars (`env-cleaner.ts`); errors leaving the manager are token-redacted (`error-redaction.ts`). Preserve both when touching client construction or error paths.
 - **Cleanup:** idle clients evicted after 5 minutes. Process signal handlers close all transports on SIGINT/SIGTERM. `disconnectAll()` is safe across plugin reloads.
-- **Consumers:** `packages/omo-opencode/src/features/skill-mcp-manager/`, `packages/omo-opencode/src/features/mcp-oauth/`, and `packages/omo-opencode/src/cli/mcp-oauth/` import this Core package.
+- **Consumers:** `packages/omo-opencode/src/features/skill-mcp-manager/`, `packages/omo-opencode/src/features/mcp-oauth/`, `packages/omo-opencode/src/cli/mcp-oauth/`, and `tools/skill` + `tools/skill-mcp` import this Core package (omo-opencode is the only consumer).
+- **Tests:** `skill-mcp-manager/core-behavior.test.ts`, `mcp-oauth/{callback-server,callback-server.port,storage}.test.ts`; run `bun test src/*.test.ts src/**/*.test.ts`.
 
 Parent: [`packages/AGENTS.md`](../AGENTS.md)

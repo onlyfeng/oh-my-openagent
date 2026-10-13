@@ -11,11 +11,11 @@ Harness-neutral domain primitives for team-mode: registry, mailbox, tasklist, st
 | Area | Files | Purpose |
 |------|-------|---------|
 | **Registry** | `team-registry/paths.ts`, `loader.ts`, `validator.ts`, `team-spec-input-normalizer.ts` | Discover/load `config.json` from `~/.omo/teams/{name}/` and `<project>/.omo/teams/{name}/`. Validate member eligibility, hyperplan composition, and path traversal guards. |
-| **Mailbox** | `team-mailbox/send.ts`, `inbox.ts`, `poll.ts`, `ack.ts`, `reservation.ts` | Async member messaging with payload caps, broadcast gating, unread polling, delivery reservations, and pending-delivery recovery. |
+| **Mailbox** | `team-mailbox/send.ts`, `inbox.ts`, `poll.ts`, `ack.ts`, `reservation.ts`, `consumed-ledger.ts`, `consumer-lease.ts`, `pending-delivery-recovery.ts` | Async member messaging with payload caps, broadcast gating, unread polling, delivery reservations, consumed-message ledger, consumer leases, and pending-delivery recovery. |
 | **Tasklist** | `team-tasklist/store.ts`, `list.ts`, `get.ts`, `claim.ts`, `update.ts`, `dependencies.ts` | Shared task CRUD with atomic claiming, dependency tracking, and status transitions. |
-| **State Store** | `team-state-store/store.ts`, `locks.ts`, `resume.ts`, `runtime-cleanup.ts`, `session-liveness.ts` | Durable runtime `state.json` with atomic file locks, allowed status transitions, resume/recovery, and stale-run cleanup. |
+| **State Store** | `team-state-store/store.ts`, `locks.ts` (+ `lock-publish.ts`, `lock-record.ts`, `lock-reclaim.ts`), `resume.ts` (+ `active-resume.ts`, `creating-resume.ts`, `deleting-resume.ts`, `resume-report.ts`, `worker-resume-status.ts`), `reservation-reconciliation.ts`, `runtime-cleanup.ts`, `session-liveness.ts` | Durable runtime `state.json` with atomic file locks, allowed status transitions, per-status resume/recovery, reservation reconciliation, and stale-run cleanup. |
 | **Worktree** | `team-worktree/manager.ts`, `cleanup.ts` | Per-member git worktree creation, validation, and orphan removal. |
-| **Tmux Layout** | `team-layout-tmux/layout.ts`, `resolve-caller-tmux-session.ts`, `rebalance-team-window.ts`, `sweep-stale-team-sessions.ts` | Optional tmux focus + grid pane layout, stale session sweep, and pane cleanup. |
+| **Tmux Layout** | `team-layout-tmux/layout.ts`, `resolve-caller-tmux-session.ts`, `rebalance-team-window.ts`, `sweep-stale-team-sessions.ts`, `close-team-member-pane.ts` | Optional tmux focus + grid pane layout, stale session sweep, and pane cleanup. |
 
 ## STORAGE
 
@@ -35,10 +35,11 @@ A member mailbox inbox is `<stateDir>/teams/runtime/<teamRunId>/inboxes/<memberN
 
 ## NOTES
 
-- **82 TypeScript files** across the 6 primitives plus shared top-level modules (`types.ts`, `config.ts`, `logger.ts`, `member-parser.ts`, `session-client.ts`, `shell-quote.ts`, `tolerant-fsync.ts`, `resolve-caller-team-lead.ts`).
+- **88 TypeScript files** (incl. tests) across the 6 primitives plus shared top-level modules (`types.ts`, `config.ts`, `logger.ts`, `member-parser.ts`, `session-client.ts`, `shell-quote.ts`, `tolerant-fsync.ts`, `resolve-caller-team-lead.ts`). Package subpaths: `.`, `./config`, one per primitive, and wildcard `./*`.
+- **Consumers:** `omo-opencode` `src/features/team-mode/`, `senpi-task` `src/team/`, and `omo-senpi` `src/components/task/`.
 - **Zod schemas** in `types.ts` define `TeamSpec`, `Member`, `Message`, `Task`, `RuntimeState`, and `AGENT_ELIGIBILITY_REGISTRY`.
 - **Eligible agents** are sisyphus, atlas, sisyphus-junior, and hephaestus (conditional). Hard-reject agents are blocked at parse time.
-- **Atomic writes** via `team-state-store/locks.ts`: temp file + rename, with file-based locking for task claims and state transitions.
+- **Atomic writes** via `team-state-store/locks.ts` (publish/record/reclaim split into `lock-*.ts`): temp file + rename, with file-based locking for task claims and state transitions.
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).
 
 ## QA

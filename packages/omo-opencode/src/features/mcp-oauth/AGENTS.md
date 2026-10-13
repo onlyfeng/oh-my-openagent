@@ -1,10 +1,12 @@
 # src/features/mcp-oauth/ — OAuth 2.0 + PKCE + DCR for MCP Servers
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-Full OAuth 2.0 authorization flow for MCP servers requiring authentication. Implements PKCE (RFC 7636) and Dynamic Client Registration (DCR, RFC 7591). Used by `bunx oh-my-opencode mcp-oauth login`.
+Full OAuth 2.0 authorization flow for MCP servers requiring authentication. Implements PKCE (RFC 7636) and Dynamic Client Registration (DCR, RFC 7591). Used by `bunx oh-my-opencode mcp oauth login` (`src/cli/mcp-oauth/`) and the skill MCP manager.
+
+Adapter shim: all 10 non-test `.ts` files are one-line re-exports of `@oh-my-opencode/mcp-client-core/mcp-oauth/*` (no local barrel). Edit `packages/mcp-client-core/src/mcp-oauth/`; the 7 co-located tests here pin adapter behavior.
 
 ## AUTHORIZATION FLOW
 
@@ -16,7 +18,7 @@ Full OAuth 2.0 authorization flow for MCP servers requiring authentication. Impl
 5. Open browser → authorization URL
 6. callback-server.ts → receive code + state
 7. provider.ts → exchange code for token (with PKCE verifier)
-8. storage.ts → persist token to ~/.config/opencode/mcp-oauth/
+8. storage.ts -> persist token under <opencode config dir>/mcp-oauth/
 9. step-up.ts → handle step-up auth if initial token insufficient
 ```
 
@@ -30,7 +32,10 @@ Full OAuth 2.0 authorization flow for MCP servers requiring authentication. Impl
 | `discovery.ts` | Fetch + parse OAuth server metadata from well-known endpoint |
 | `dcr.ts` | Dynamic Client Registration — register this app with OAuth server |
 | `step-up.ts` | Handle step-up authentication challenges |
-| `storage.ts` | Persist tokens to `~/.config/opencode/mcp-oauth/{server-hash}.json` |
+| `storage.ts` | Persist tokens to `<opencode config dir>/mcp-oauth/{server-hash}.json`; reads legacy `mcp-oauth.json` |
+| `refresh-mutex.ts` | Serializes concurrent token refreshes |
+| `resource-indicator.ts` | RFC 8707 resource indicator handling (hash key includes resource) |
+| `schema.ts` | Token / metadata schemas |
 
 ## PKCE IMPLEMENTATION
 
@@ -40,13 +45,13 @@ Full OAuth 2.0 authorization flow for MCP servers requiring authentication. Impl
 
 ## TOKEN STORAGE
 
-Location: `~/.config/opencode/mcp-oauth/` — one JSON file per MCP server (keyed by server URL hash).
+Location: `getOpenCodeCliConfigDir()/mcp-oauth/`, one JSON file per MCP server (keyed by server host + resource hash).
 Fields: `access_token`, `refresh_token`, `expires_at`, `client_id`.
 
 ## CLI COMMANDS
 
 ```bash
-bunx oh-my-opencode mcp-oauth login <server-url>   # Full PKCE flow
-bunx oh-my-opencode mcp-oauth logout <server-url>  # Revoke + delete token
-bunx oh-my-opencode mcp-oauth status               # List stored tokens
+bunx oh-my-opencode mcp oauth login <server-name>    # Full PKCE flow
+bunx oh-my-opencode mcp oauth logout <server-name>   # Revoke + delete token
+bunx oh-my-opencode mcp oauth status [server-name]   # List stored tokens
 ```

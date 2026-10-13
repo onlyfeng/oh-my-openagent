@@ -1,6 +1,6 @@
 # delegate-core — Delegate Model Selection + Retry Guidance (Core)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -33,4 +33,6 @@ Two harness-neutral primitives for the `task`/delegate tool: (1) resolve which m
 - **`-high` models** are matched on their base model exactly, never fuzzy-downgraded to a non-high variant.
 - **Variant propagation:** a matched `DelegateFallbackEntry`'s variant flows through to the result.
 - **Fallback-chain provider shaping:** each entry's model passes through `transformModelForProvider` before exact matching, so provider-prefixed IDs (e.g. Vercel `openai/gpt-5.6-sol`) resolve on the owning entry. A rung resolves only on the providers it lists (#9146): a gateway re-publishing the model (`openrouter/anthropic/claude-opus-5.5`) or any other unlisted provider is never selected. `allowUnlistedProviders: true` opts back into cross-provider fuzzy matching for callers whose rungs are the user's own selection (the omo-senpi `model_profile` matcher); that step skips providers holding a later dedicated rung for the same model, so the earlier variant is kept.
+- **Dangling types path:** `package.json` `types` / `exports["."].types` name `./index.d.ts`, which does not exist (imports resolve through `src/index.ts`). Same for `hashline-core` and `model-core`; `comment-checker-core` is the one that ships its `.d.ts`.
+- **Commands:** `bun test src/*.test.ts`; `tsgo --noEmit -p tsconfig.json`.
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

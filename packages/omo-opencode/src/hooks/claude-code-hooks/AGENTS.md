@@ -1,10 +1,10 @@
 # src/hooks/claude-code-hooks/ (Claude Code Compatibility)
 
-**Generated:** 2026-07-17 (7d664b96b)
+**Generated:** 2026-07-17 (7d664b96b) | **Updated:** 2026-10-13 (dc373d26f)
 
 ## OVERVIEW
 
-~5.9k LOC across 39 `.ts` files (incl. `handlers/` subdir). Claude Code `settings.json` compatibility layer. Parses CC hooks config and maps CC hook events (PreToolUse, PostToolUse, Stop, Notification, PreCompact, Session*) to OpenCode event handlers.
+~6.2k LOC across 40 `.ts` files (incl. `handlers/` subdir and tests). Claude Code `settings.json` compatibility layer. Parses CC hooks config and maps CC hook events (PreToolUse, PostToolUse, Stop, Notification, PreCompact, Session*) to OpenCode event handlers.
 
 ## WHAT IT DOES
 

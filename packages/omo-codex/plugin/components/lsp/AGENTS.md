@@ -1,6 +1,6 @@
 # lsp — Codex LSP integration (PostToolUse diagnostics + MCP routing)
 
-**Generated:** 2026-08-24 (refresh pass)
+**Generated:** 2026-08-24 (refresh pass; verified 2026-10-13 / dc373d26f)
 
 ## OVERVIEW
 
@@ -13,11 +13,12 @@ Deletes are ignored (cannot introduce new diagnostics); unsupported extensions a
 | File | Role |
 |------|------|
 | `src/cli.ts` | Entry: routes `mcp` to the upstream runtime; `hook post-tool-use` / `hook post-compact` stay local |
+| `src/codex-hook-cli.ts` | stdin/stdout CLI wrappers `runPostToolUseHookCli` / `runPostCompactHookCli` |
 | `src/codex-hook.ts` | Hook logic: request context, mutated-file extraction, daemon diagnostics call, output shaping (`runLspPostToolUseHook`, `runLspPostCompactHook`, `codexLspRequestContext`) |
 | `src/mutated-file-paths.ts` | Tool-input → file path extraction (`path`/`filePath`/`file_path` aliases, `apply_patch` command parsing) |
 | `src/lsp-session-state.ts` | Per-session post-edit cache, compaction marking, daemon-unreachable detection |
 | `src/daemon-cli-path.ts` | Resolves/vets the lsp-daemon CLI and its env (`resolveLspDaemonCliPath`, `ensureLspDaemonCliEnv`) |
-| `scripts/build-lsp-tools.mjs`, `build-lsp-daemon.mjs`, `build-runtime.mjs` | Vendored upstream builds (run by `prebuild`/`pretest` hooks) |
+| `scripts/build-lsp-tools.mjs`, `build-lsp-daemon.mjs`, `build-runtime.mjs` | Vendored upstream builds (run by `prebuild`/`pretest` hooks); each has a colocated `*.test.mjs`; `clean-dist.mjs` wipes `dist/` |
 | `scripts/test.mjs` | Test driver behind `npm test` |
 
 ## COMMANDS

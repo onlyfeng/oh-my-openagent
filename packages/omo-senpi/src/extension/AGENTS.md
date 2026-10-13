@@ -16,14 +16,16 @@ Senpi ExtensionAPI composition layer: validates the host surface, registers comp
 | `tool-hook-status.ts` | `reportToolHookStatus(eventContext, message)` - shared "(OmO) Checking ..." tool-hook status reporting; silently no-ops without the host method. |
 | `sdk-root-provisioning.ts` / `dag-sdk-root-provisioning.ts` | Publish existing SDK directories only. The DAG compatibility wrapper preserves its packaged/source-tree resolution and `DAG_SDK_ROOT_ENV` export; compose also publishes the agent toolkit SDK root. |
 | `agent-toolkit-sdk.ts` | Self-contained eval SDK entry built to `plugin/runtime/agent-toolkit-sdk/sdk.js`, also mapped by `#omo-agent-toolkit-sdk` for host status reads. Exports the per-call session-bound singleton, explicit-context factory, env binder, manifest, operations, version and source-only types. |
-| `toolkit-path-provisioning.ts` | Prepends `OMO_AGENT_TOOLKIT_BIN` / PATH for the packaged `../runtime/agent-toolkit` so component spawns resolve it without global bins. |
+| `thread-sdk.ts` | Script-callable thread SDK entry built to `plugin/runtime/thread-sdk/sdk.js` (`omo thread` CLI, `omo daemon adopt`, `omo host status --all`); points the gateway store at the bundled store-worker sidecar. |
+| `startup-deferral.ts` / `disable-env.ts` | Startup primitives: registration (tools, commands, flags, hooks) stays in the factory phase, work built around it is deferred off the pre-first-prompt path; `OMO_SENPI_DISABLED=1` loads the plugin registering nothing (the env twin of `--omo-senpi-disabled`, used by memory children, #9175). |
+| `context-text-transform.ts` / `rollback-migrate-runtime.ts` | `transformContextText` keeps producer-owned segment boundaries when an earlier `context` hook rewrites text; the rollback runtime (host-session socket migration + store-index prune over senpi-task) is bundled by `plugin/scripts/build-extension-core.mjs`. |
 | `omo-task.ts` | Re-export shim for `createTaskComponent` (build-graph entry). |
 
 ## Conventions
 
 - Components reach the shared seams only through the injected `ComponentContext` (`logger`, `config.getFlag`, `getCapturedTools`, `idleCoordinator`) - never module singletons.
 - New cross-component seams are added here, not duplicated inside components.
-- `session-start-ordering.test.ts` pins registration order; `dag-sdk.test.ts` / `toolkit-path-provisioning.test.ts` pin the env provisioning seams.
+- `session-start-ordering.test.ts` pins registration order; `dag-sdk.test.ts` / `sdk-root-provisioning.test.ts` pin the env provisioning seams; `startup-deferral.test.ts` / `deferred-startup-work.test.ts` pin what stays off the startup path.
 
 ## Anti-patterns
 

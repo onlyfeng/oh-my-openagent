@@ -1,10 +1,10 @@
 # src/config/ - Zod v4 Schema System
 
-**Generated:** 2026-07-17 (7d664b96b)
+**Generated:** 2026-07-17 (7d664b96b) | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-36 non-test schema files composing `OhMyOpenCodeConfigSchema` (plus `schema/internal/permission.ts` for shared internal helpers). Zod v4 validation with `safeParse()`. All fields optional; omitted fields use defaults from the schema. Auto-emitted to `assets/oh-my-opencode.schema.json` via `bun run build:schema`.
+35 top-level schema files composing `OhMyOpenCodeConfigSchema` (plus `schema/internal/permission.ts` for shared internal helpers). Zod v4 validation with `safeParse()`. All fields optional; omitted fields use defaults from the schema. Auto-emitted to `assets/oh-my-opencode.schema.json` via `bun run build:schema`. Directory root: `index.ts` (schema + inferred types barrel), `schema.ts`, `validate.ts` (legacy shims: `ralph_loop` -> `goal`, `start_work` -> `ulw_execute`), `prune-plugin-view.ts`; `schema/core-schema-parity.test.ts` guards parity with `omo-config-core`.
 
 ## SCHEMA TREE
 
@@ -12,9 +12,9 @@
 config/schema/
 ├── oh-my-opencode-config.ts    # ROOT: composes all sub-schemas
 ├── agent-names.ts              # BuiltinAgentNameSchema enum (11 names: sisyphus, hephaestus, prometheus, oracle, librarian, explore, multimodal-looker, metis, momus, atlas, sisyphus-junior)
-├── agent-overrides.ts          # AgentOverrideConfigSchema (21 fields per agent)
+├── agent-overrides.ts          # AgentOverrideConfigSchema (25 fields per agent; also build/plan keys)
 ├── agent-definitions.ts        # custom agent definition schema
-├── categories.ts               # 8 built-in + custom categories
+├── categories.ts               # BuiltinCategoryNameSchema (8: visual-engineering, ultrabrain, deep, artistry, quick, unspecified-low, unspecified-high, writing) + custom; per-category `disable`, `warn_unavailable`
 ├── hooks.ts                    # HookNameSchema (56 enum values; `team-tool-gating` is the only team-* one in schema; others are wired by direct config gates)
 ├── skills.ts                   # SkillsConfigSchema (sources, paths, recursive)
 ├── commands.ts                 # BuiltinCommandNameSchema (goal, refactor, ulw-execute, stop-continuation, remove-ai-slops, hyperplan)
@@ -49,7 +49,7 @@ config/schema/
 
 ## ROOT SCHEMA FIELDS
 
-`$schema`, `new_task_system_enabled`, `default_run_agent`, `agent_order`, `agent_definitions`, `disabled_mcps`, `disabled_agents`, `disabled_skills`, `disabled_hooks`, `disabled_commands`, `disabled_tools`, `disabled_providers`, `mcp_env_allowlist`, `hashline_edit`, `telemetry`, `model_fallback`, `agents`, `categories`, `claude_code`, `sisyphus_agent`, `comment_checker`, `experimental`, `auto_update`, `skills`, **`goal`** (new; replaces `ralph_loop`), `ralph_loop` (deprecated; migrated to `goal` in `validate.ts`), `runtime_fallback`, `background_task`, `notification`, `model_capabilities`, `openclaw`, `i18n`, `monitor`, **`team_mode`**, `keyword_detector`, `babysitting`, `git_master`, `browser_automation_engine`, `websearch`, `tmux`, `tui`, `sisyphus`, `ulw_execute`, `default_mode`, `_migrations`.
+`$schema`, `new_task_system_enabled`, `default_run_agent`, `agent_order`, `agent_definitions`, `disabled_mcps`, `disabled_agents`, `disabled_skills`, `disabled_hooks`, `disabled_commands`, `disabled_tools`, `disabled_providers`, `mcp_env_allowlist`, `hashline_edit`, `telemetry`, `model_fallback`, `agents`, `categories`, `claude_code`, `sisyphus_agent`, `comment_checker`, `experimental`, `auto_update`, `skills`, **`goal`** (new; replaces `ralph_loop`), `ralph_loop` (deprecated; migrated to `goal` in `validate.ts`), `runtime_fallback`, `background_task`, `notification`, `model_capabilities`, `openclaw`, `i18n`, `monitor`, **`team_mode`**, `keyword_detector`, `babysitting`, `git_master`, `browser_automation_engine`, `websearch`, `tmux`, `tui`, `sisyphus`, `ulw_execute`, `start_work` (deprecated alias; migrated to `ulw_execute` in `validate.ts`), `default_mode`, `_migrations`.
 
 ## RALPH_LOOP -> GOAL MIGRATION
 
@@ -84,7 +84,7 @@ When `enabled: true`:
 
 ## AGENT OVERRIDE FIELDS (per-agent)
 
-`model`, `variant`, `category`, `skills`, `temperature`, `top_p`, `prompt`, `prompt_append`, `tools`, `disable`, `description`, `mode`, `color`, `permission`, `maxTokens`, `thinking`, `reasoningEffort`, `textVerbosity`, `providerOptions`, `fallback_models`, `ultrawork`.
+`model`, `models`, `fallback_models` (deprecated, folded into `models`), `reasoning`, `variant` (deprecated; `reasoning` wins), `category`, `skills`, `temperature`, `top_p`, `prompt`, `prompt_append`, `tools`, `disable`, `description`, `mode`, `color`, `displayName`, `permission`, `maxTokens`, `thinking`, `reasoningEffort`, `textVerbosity`, `providerOptions`, `ultrawork`, `compaction`. Fields marked `@deprecated` in `agent-overrides.ts` / `categories.ts` point at `models`, `reasoning` or `category`; `config migrate` rewrites them (`config-migration/reasoning-unification.ts`).
 
 ## HOW TO ADD A CONFIG FIELD
 

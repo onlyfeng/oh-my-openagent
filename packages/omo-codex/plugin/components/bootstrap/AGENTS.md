@@ -1,6 +1,6 @@
 # bootstrap: Codex SessionStart Runtime Provisioner
 
-**Generated:** 2026-07-03
+**Generated:** 2026-07-03 (verified 2026-10-13 / dc373d26f)
 
 ## OVERVIEW
 

@@ -1,6 +1,6 @@
 # git-bash-mcp — Windows Git Bash stdio MCP (MCP layer)
 
-**Generated:** 2026-06-17
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -20,6 +20,8 @@ Internal **Bun-targeted** MCP-layer package (`@oh-my-opencode/git-bash-mcp`, pri
 | `mcp.ts` | `handleGitBashMcpRequest()` + tool registration over `runJsonRpcStdioServer` |
 | `runner.ts` | `runGitBashCommand()` — spawns `bash.exe -lc`, temp-fd output capture, timeout kill |
 | `git-bash-resolver.ts` | re-exports `resolveGitBash(ForCurrentProcess)` from `@oh-my-opencode/utils/runtime` |
+
+Tests: `mcp*.test.ts` (protocol pin, schema, startup, timeout), `runner.test.ts`, `git-bash-resolver.test.ts`; run `bun test src/*.test.ts`.
 
 ## NOTES
 

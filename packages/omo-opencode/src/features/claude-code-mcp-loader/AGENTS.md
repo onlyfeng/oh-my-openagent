@@ -1,6 +1,6 @@
 # src/features/claude-code-mcp-loader/ — Tier 2 MCP Loader (.mcp.json)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -50,12 +50,13 @@ loadMcpConfigs(ctx)
 
 | File | Purpose |
 |------|---------|
-| `index.ts` | Barrel: `loadMcpConfigs`, types |
-| `loader.ts` | `loadMcpConfigs()` main entry |
-| `types.ts` | `ClaudeCodeMcpServer`, `LoadedMcpServer`, `McpScope` |
-| `env-expander.ts` | `expandEnvVarsInObject()` — recursive `${VAR}` substitution |
-| `transformer.ts` | Claude Code format → OpenCode `Mcp` shape |
-| `scope-filter.ts` | Project vs user scope precedence |
+| `index.ts` | Barrel: re-exports the compat-core loader |
+| `loader.ts` | Shim: `loadMcpConfigs()` main entry (compat-core) |
+| `types.ts` | Shim: `ClaudeCodeMcpServer`, `LoadedMcpServer`, `McpScope` |
+| `env-expander.ts` | LOCAL: recursive `${VAR}` substitution via `@oh-my-opencode/utils` `expandEnvReferences*`; defaults to `trusted: false`, checks `isAllowedMcpEnvVar`, logs blocked names (test: `env-expander.test.ts`) |
+| `configure-allowed-env-vars.ts` | Shim: allowlist configuration from `mcp_env_allowlist` |
+| `transformer.ts` | Shim: Claude Code format to OpenCode `Mcp` shape |
+| `scope-filter.ts` | Shim: project vs user scope precedence |
 
 ## THREE-TIER MCP CONTEXT
 

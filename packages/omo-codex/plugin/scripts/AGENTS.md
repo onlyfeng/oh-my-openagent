@@ -1,6 +1,6 @@
 # scripts — plugin build/sync/migration orchestration
 
-**Score 14** (29 files, ~3.5k LOC; distinct domain: executable orchestration layer between manifests and components).
+**Score 14** (28 files, ~3.3k LOC; distinct domain: executable orchestration layer between manifests and components).
 
 ## OVERVIEW
 
@@ -16,7 +16,8 @@ Executable Node ESM scripts driving the plugin build pipeline, SessionStart conf
 | `sync-skills.mjs` | Wipes + regenerates the aggregate `skills/` tree |
 | `build-bundled-mcp-runtimes.mjs`, `materialize-shared-upstreams.mjs` | Bundled MCP runtime dists; shared upstream copies |
 | `auto-update.mjs` (+ `-plan`, `-release-notes`, `-state`) | SessionStart update throttle/lock/notice flow |
-| `migrate-codex-config.mjs` + `migrate-codex-config/` | `~/.codex/config.toml` migration: reasoning profile sync, MultiAgentV2 guard, subagent limits, Context7 placeholder guard, root settings |
+| `migrate-codex-config.mjs` + `migrate-codex-config/` | `~/.codex/config.toml` migration: reasoning profile sync (`catalog.mjs`), MultiAgentV2 guard, multi-agent mode guard, subagent limits, Context7 placeholder guard, root settings, `config-paths.mjs` / `state.mjs` |
+| `canonical-ultrawork-directive.mjs` | Resolves the canonical ultrawork prompt for `sync-skills` (repo checkout path, else the installer-materialized copy under the plugin root; segments kept in lockstep with `src/install/codex-cache-install.ts`) |
 | `entry-guard.mjs` | `isCliEntry()` — the mandatory CLI guard |
 | `hook-status-message.mjs`, `install-flow.mjs`, `spawn-command.mjs` | Shared helpers (status formatting, install-flow detection, spawn invocation resolution) |
 

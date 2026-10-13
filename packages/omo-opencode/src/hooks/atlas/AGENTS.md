@@ -1,10 +1,10 @@
 # src/hooks/atlas/ — Master Boulder Orchestrator
 
-**Generated:** 2026-05-15
+**Generated:** 2026-05-15 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-~60 files (~14k LOC incl. tests; 34 production modules). The `atlasHook` — Continuation Tier hook that monitors session.idle events and forces continuation when boulder sessions (ralph-loop, task-spawned agents) have incomplete work. Also enforces write/edit policies for subagent sessions and runs a first-prompt watchdog (90s default) for sessions that never produce output.
+61 files (34 production `.ts`, 26 tests, own `tsconfig.json`; ~11.4k LOC). The `atlasHook`: Continuation Tier hook that monitors session.idle events and forces continuation when boulder sessions (task-spawned agents, plan work) have incomplete work. Also enforces write/edit policies for subagent sessions, tracks background launches, and gates final-wave approval. (The 90s first-prompt watchdog lives in `../runtime-fallback/`, not here.) Typecheck alone: `tsgo --noEmit -p packages/omo-opencode/src/hooks/atlas/tsconfig.json`.
 
 ## WHAT ATLAS DOES
 
@@ -32,7 +32,11 @@ session.idle event
 | File | Purpose |
 |------|---------|
 | `atlas-hook.ts` | `createAtlasHook()` — composes event + tool handlers, maintains session state |
-| `event-handler.ts` | `createAtlasEventHandler()` — decision gate for session.idle events |
+| `event-handler.ts` | `createAtlasEventHandler()`: routes events; idle path in `idle-event.ts` + `idle-continuation.ts` + `idle-session-eligibility.ts` |
+| `atlas-lifecycle-store.ts` | Per-session state + pending tool-call tracking |
+| `idle-constants.ts` | 5s cooldown, 5 min failure backoff, 10 max failures, retry at cooldown + 1s |
+| `final-wave-approval-gate.ts` / `final-wave-plan-state.ts` | Final-wave checkbox requires explicit user approval |
+| `tool-execute-after-{subagent-completion,plan-tasks,direct-work}.ts` | Post-tool split (subagent completion is the largest, ~246 lines) |
 | `boulder-continuation-injector.ts` | Build + inject continuation prompt into session |
 | `system-reminder-templates.ts` | Templates for continuation reminder messages |
 | `tool-execute-before.ts` | Block write/edit based on session policy |
@@ -44,16 +48,11 @@ session.idle event
 | `subagent-session-id.ts` | Detect if session is a subagent session |
 | `omo-path.ts` | Resolve `.omo/` directory path |
 | `is-abort-error.ts` | Detect abort signals in session output |
-| `types.ts` | `SessionState`, `AtlasHookOptions`, `AtlasContext` |
+| `types.ts` | `SessionState`, `AtlasHookOptions` (`directory`, `backgroundManager`, `isContinuationStopped`, `agentOverrides`, `idleSettleMs`, `autoCommit`) |
 
 ## STATE PER SESSION
 
-```typescript
-interface SessionState {
-  promptFailureCount: number  // Increments on failed continuations
-  // Resets on successful continuation
-}
-```
+`SessionState` (types.ts) is mutable per session: `promptFailureCount` + `lastFailureAt` + `pendingRetryTimer` (retry/backoff), `lastContinuationInjectedAt` / `isInjectingContinuation` (cooldown), final-wave approval counters, tool-progress stall tracking (`iterationsSinceLastToolProgress`, `activeContinuationPlanPath`), and `verifiedTaskKeys` (suppress repeat 4-phase reminders).
 
 Max consecutive failures before backoff pause: 10 (`MAX_CONSECUTIVE_PROMPT_FAILURES` in `idle-constants.ts`), then `FAILURE_BACKOFF_MS` = 5 min.
 

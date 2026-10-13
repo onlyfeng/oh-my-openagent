@@ -1,10 +1,10 @@
 # src/hooks/anthropic-context-window-limit-recovery/ (Multi-Strategy Context Recovery)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-05-15 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-~39 files (~5.5k LOC incl. tests; `storage/` subdir persists tool results). Most complex hook. Recovers from context window limit errors via multiple strategies applied in sequence.
+49 `.ts` files (35 production incl. 11 under `storage/`; ~5.7k LOC incl. tests; `storage/` subdir reads/patches stored messages and parts). Most complex hook. Recovers from context window limit errors via multiple strategies applied in sequence. `summarize-retry-strategy.ts` resolves its model via `../shared/compaction-model-resolver.ts`.
 
 ## RECOVERY STRATEGIES (in priority order)
 

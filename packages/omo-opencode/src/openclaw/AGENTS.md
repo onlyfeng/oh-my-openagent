@@ -1,6 +1,6 @@
 # src/openclaw/ — Bidirectional External Integration
 
-**Generated:** 2026-05-15
+**Generated:** 2026-05-15 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
@@ -26,18 +26,18 @@ Discord/Telegram API → reply-listener daemon (separate Bun process)
 
 ## KEY FILES
 
-| File | Purpose |
-|------|---------|
-| `index.ts` | `wakeOpenClaw()`, `initializeOpenClaw()` — main entry |
-| `types.ts` | `OpenClawConfig`, `OpenClawPayload`, `WakeResult` types |
-| `runtime-dispatch.ts` | Maps OpenCode events → OpenClaw events, orchestrates dispatch |
-| `reply-listener.ts` | Daemon lifecycle: start/stop, poll loop, state persistence |
-| `reply-listener-discord.ts` | Discord API polling |
-| `reply-listener-telegram.ts` | Telegram API polling |
-| `reply-listener-state.ts` | Daemon state: PID, config signature, poll tracking |
-| `daemon.ts` | Daemon entry point (runs as detached Bun process) |
+Every module `.ts` file here (22, excluding the 19-line `__tests__/config.test.ts`) is a one-line `export * from "@oh-my-opencode/openclaw-core/<same-name>"` shim kept so adapter import paths stay stable. ALL logic lives in `packages/openclaw-core/src/`; edit there, never here.
 
-Gateway resolution + URL validation (`config.ts`), HTTP/shell dispatch (`dispatcher.ts`), the session registry (`session-registry.ts`), reply injection (`reply-listener-injection.ts`), and the tmux helpers (`tmux.ts`) live only in `packages/openclaw-core/src/`; import them from `@oh-my-opencode/openclaw-core/*`.
+| Shim (forwards to openclaw-core) | Core responsibility |
+|------|---------|
+| `index.ts` | `wakeOpenClaw()`, `initializeOpenClaw()`, `startReplyListener` / `stopReplyListener` |
+| `types.ts` | `OpenClawConfig`, `OpenClawPayload`, `WakeResult` |
+| `runtime-dispatch.ts` | `dispatchOpenClawEvent()`: map OpenCode events to OpenClaw events |
+| `reply-listener.ts` + `reply-listener-{discord,telegram,poll-loop,process,spawn,startup,state,status,stop,signature,paths,log,sleep}.ts` | Daemon lifecycle, polling, PID/state, config signature |
+| `daemon.ts` | Detached daemon entry |
+| `session-registry-{storage,lock,paths,types}.ts` | Message ID to session/pane registry |
+
+Gateway resolution + URL validation (`config.ts`), HTTP/shell dispatch (`dispatcher.ts`), `session-registry.ts`, reply injection (`reply-listener-injection.ts`), and tmux helpers (`tmux.ts`) have no shim here; import them from `@oh-my-opencode/openclaw-core/*`.
 
 ## GATEWAY TYPES
 
@@ -52,9 +52,9 @@ Gateway resolution + URL validation (`config.ts`), HTTP/shell dispatch (`dispatc
 
 ## INTEGRATION POINTS
 
-- `src/index.ts` — calls `initializeOpenClaw(pluginConfig.openclaw)` at plugin startup (if `enabled`)
-- `src/plugin/event.ts` — calls `dispatchOpenClawEvent()` for session.created/deleted/idle
-- `src/config/schema/openclaw.ts` — Zod config schema
+- `src/testing/create-plugin-module.ts` - calls `initializeOpenClaw(pluginConfig.openclaw)` at plugin startup (if `enabled`; injectable dep)
+- `src/plugin/event-session-lifecycle.ts` - `dispatchOpenClawSessionEvent()` calls `dispatchOpenClawEvent()` for session.created/deleted/idle; `create-managers.ts` and `plugin/tool-registry-core-tools.ts` also dispatch
+- `src/config/schema/openclaw.ts` - Zod config schema
 
 ## DAEMON LIFECYCLE
 

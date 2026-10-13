@@ -1,10 +1,10 @@
 # src/hooks/ralph-loop/ -- Self-Referential Dev Loop
 
-**Generated:** 2026-07-17
+**Generated:** 2026-07-17 | **Updated:** 2026-10-13 / dc373d26f
 
 ## OVERVIEW
 
-**DEPRECATED.** Superseded by [`goal/`](../goal/) (PR #6184 "goal-replaces-ralph"). `ralphLoop` was removed from `HookNameSchema` and `create-session-hooks.ts`; the `/ralph-loop`, `/ulw-loop`, `/cancel-ralph` builtin commands and templates were removed; `ralph_loop` config is a deprecated passthrough for migration. The directory, `createRalphLoopHook` factory, and barrel export remain, but no composer imports them.
+**DEPRECATED.** Superseded by [`goal/`](../goal/) (PR #6184 "goal-replaces-ralph"). `ralphLoop` was removed from `HookNameSchema` and `create-session-hooks.ts`; the `/ralph-loop`, `/ulw-loop`, `/cancel-ralph` builtin commands and templates were removed; `ralph_loop` config is a deprecated passthrough for migration. The directory, `createRalphLoopHook` factory, and barrel export remain, but no hook composer imports them. Only consumer outside tests: `cli/run/continuation-state.ts` reads `storage.readState` so `omo run` still waits on a legacy active loop.
 
 ~52 .ts files (31 impl + 21 tests). Iterates a development loop until the agent emits `<promise>DONE</promise>` or max iterations reached. No longer wired into any tier.
 
