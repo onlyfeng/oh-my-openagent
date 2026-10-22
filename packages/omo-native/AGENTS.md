@@ -1,5 +1,7 @@
 # packages/omo-native
 
+**Generated:** 2026-10-22 / f9de7acf36
+
 **Role:** Adapter - distribution package for the senpi-based omo native edition.
 
 Publishes npm package `omo-ai` (bin `omo`) on the channel its version names: a prerelease on `beta`, a stable release on `latest`. The launcher in `bin/` runs the

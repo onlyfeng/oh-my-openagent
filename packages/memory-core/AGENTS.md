@@ -1,5 +1,7 @@
 # memory-core - Harness-Neutral Agent Memory Engine
 
+**Generated:** 2026-10-22 / f9de7acf36
+
 ## OVERVIEW
 
 `@oh-my-opencode/memory-core` owns the shared memory domain used by harness
@@ -21,6 +23,11 @@ The public API is the barrel at `src/index.ts`.
 | `src/people/` | People-card grammar: parse/serialize, slug rules, reserved slugs, observations. |
 | `src/soul/` | Soul-file paths and identity-scoped soul-notice watermark consumption. |
 | `src/agreements/` | The working-agreement ledger at `system/agreements.md` (#10780): one line per agreement with `id`/`by`/`n`/`since`/`last`/`status` in a trailing comment, id = sha256 of the normalized text (first 10 hex). `mutate.ts` counts repeat corrections, flags `needs-human` at the threshold, and at the cap evicts only the oldest never-reaffirmed, unflagged agent item (reported as an `AgreementEvent`, named in the facts commit as `Omo-Agreement-Evicted`) or refuses the new one - it never merges distinct rules; `guard.ts` refuses automation edits to `by: human` items; `render.ts` builds the compiled `<agreements>` section; `notice-watermark.ts` announces each newly flagged item once per identity. |
+| `src/recall/` | Recall candidate engine: BM25 store and term transfer, the query planner, excerpt selection, and the strategy chooser (`CJK_CORPUS_MIN_SHARE`, `LARGE_CORPUS_MIN_DOCUMENTS`). Consumed by the Senpi Kibitzer sidecar, read-only. |
+| `src/receipts/` | Durable per-mutation receipts (`appendMemoryReceipt` / `appendMemoryReceiptOnce` / `readMemoryReceipts`, identity by `receiptIdentity`, kill-point accounting) so a caller can prove a write landed. |
+| `src/audit/` | `auditMemoryRepo`: read-only repository audit returning `MemoryAuditReport` with typed `MemoryAuditCode` issues (`/doctor` and `/memory` surfaces). |
+| `src/personas/` | Persona manifest + loader for the four seeded personas (`persona`, `human`, `boundaries`, `self-aware` projection files). |
+| `src/crdt/` | Loro CRDT runtime for concurrent memory edits: `loro-runtime.ts` owns the wasm load and packaging contract, plus the test fixture. |
 | `src/reflection/` | Trigger evaluation, run reservation, worktree execution, completion validation, merge outcomes, the orphan sweep that reclaims worktrees/branches no live run owns, and the park policy that stops automatic reflection after repeated failures (one half-open probe per interval). |
 | `src/compile/` | Compile committed memory revisions into marked system-prompt blocks and cache them by template hash. |
 | `src/search/` | Query parsing, transcript providers, and ranked memory/session search. |

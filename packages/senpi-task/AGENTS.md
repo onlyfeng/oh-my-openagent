@@ -1,10 +1,10 @@
 # senpi-task - Senpi Task State Machine + Tool Surface
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 
-The Senpi-coupled engine behind the `omo-senpi` task component: a durable task state machine, a persistent record store, two child runners (in-process and RPC process), a residency/TTL/reconcile lifecycle, an exactly-once completion notifier, a steering engine, a named-team runtime, and the 4 task + 7 lead-team `ToolDefinition`s. Package: `@oh-my-opencode/senpi-task` (private, `sideEffects: false`). `@code-yeongyu/senpi` and `typebox` are optional peers (`package.json:62`) so pure state/store/schema code stays runnable without a live Senpi import; runner and tool code that needs the Senpi surface is isolated. Do not import `packages/omo-opencode` from here.
+The Senpi-coupled engine behind the `omo-senpi` task component: a durable task state machine, a persistent record store, three child runners (in-process, RPC process, and the in-session engine host), a residency/TTL/reconcile lifecycle, an exactly-once completion notifier, a steering engine, a named-team runtime, and the 4 task + 6 lead-only team `ToolDefinition`s (the `dag` tool is registered by `omo-senpi`). Package: `@oh-my-opencode/senpi-task` (private, `sideEffects: false`). `@code-yeongyu/senpi` and `typebox` are optional peers (`package.json:62`) so pure state/store/schema code stays runnable without a live Senpi import; runner and tool code that needs the Senpi surface is isolated. Do not import `packages/omo-opencode` from here.
 
 ## ANATOMY
 
@@ -24,6 +24,10 @@ The Senpi-coupled engine behind the `omo-senpi` task component: a durable task s
 | Agents | `src/agents/` | `loadAgents` + `mapOmoConfigAgents` - omo.json agent definitions to task-tool targets - plus the builtin curated agents (`agents/builtin/`) and `resolveAgent` agent-aware model/persona resolution (`resolve-agent-categories.ts`). |
 | Category | `src/category/` | `resolveCategory` + per-provider builtin category tables (anthropic/openai/google/kimi), including the `requiresModel` activation gate. `openai-categories.ts` carries the per-model `resolvePromptAppend` hooks: `ultrabrain` and `unspecified-high` get GPT-6 Astra-specific `<Category_Context>` appends (`*_GPT_6_ASTRA`, dispatched by `isGpt6Model`), `deep-low` and `deep-high` each get a GPT append covering the whole GPT-5.5/5.6/6 family plus a generic one, everything else uses the generic append. Only the `deep-low` appends carry the `ESCALATE: deep-high` contract, and no deep append names a category to route to. |
 | Adversarial | `src/__adversarial__/` | Seeded 200-iteration chaos bench asserting the four W1 invariants (`chaos-bench.test.ts`). |
+| Workpool | `src/workpool/` | Keyed work-queue schema, admission, reconcile, default mode and yield semantics behind the `workpool` tool. |
+| Kernel tools | `src/kernel-tools/` | Kernel tool contract, bindings, nested-host scope, transcript names and error codes for tools invoked inside the eval kernel. |
+| Eval handles | `src/eval-handles/` | `createEvalHandleHost` plus the update queue, ref pool and run-after-engine sequencing that lets eval cells hand work to live child sessions. |
+| Lazy surfaces | `src/lazy/`, `src/senpi/`, `src/config/` | Deferred-import barrels (`senpi-barrel`, `pi-tui`) that keep the entry graph flat, explicit senpi pins plus thinking-level and minimal resource loading, and the settings resolver. |
 
 ## PUBLIC API (`src/index.ts` barrel)
 

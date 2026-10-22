@@ -1,6 +1,6 @@
 # src/hooks/ -- ~54 Lifecycle Hooks Across 60 Dirs
 
-**Generated:** 2026-07-17
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 

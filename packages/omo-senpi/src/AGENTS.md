@@ -9,17 +9,24 @@ Source root of the Senpi adapter package. The package barrel (`index.ts`) export
 | Extension entry / composition | `extension/` | `index.ts` (source entry, eager task), `bundled-index.ts` (built entry, lazy task runtime). Own AGENTS.md. |
 | Install / uninstall | `install/` | `runSenpiInstaller` / `runSenpiUninstaller`, local launcher, atomic settings writes. |
 | Real host modules for tests | `senpi-test-runtime.ts` | Resolves the installed `@code-yeongyu/senpi` dist and imports real theme/ModelRegistry/ModelRuntime at load time. |
-| Deep components | `components/{task,memory,lsp,telemetry,init-deep-advisor}/` | Each has its own AGENTS.md; `memory/` additionally documents `worker/`, `commands/`, `palace/`. |
+| Deep components | `components/{memory,task,lsp,telemetry,init-deep-advisor,thread,gateway}/` | Each has its own AGENTS.md; `memory/` additionally documents `worker/`, `commands/`, `palace/`, `kibitzer/`. |
 | Bundled remote MCPs | `components/builtin-mcps/` | `context7` + `grep_app` HTTP declarations, `CONTEXT7_API_KEY` bearer gating, and the disable switches. Own AGENTS.md. |
 | X search | `components/x-search/` | Credential-gated `x_search` tool and conditional skill (files, gating, contract, error codes, backtest pointer). Own AGENTS.md. |
-| Small components | `components/*` | Single-purpose factories (ulw-loop, config-watch, onboarding, fallback-architect, ...) documented in `../AGENTS.md`. |
+| Small components | `components/*` | Single-purpose factories (ulw-loop, side-panel, onboarding, config-watch, fallback-architect, ...) documented in `../AGENTS.md`. |
+
+`src/components/` holds 35 component dirs; 9 of them carry their own AGENTS.md (the deep rows above plus `builtin-mcps` and `x-search`). A new component registers in `extension/component-list.ts` and gets documented in `../AGENTS.md` unless it earns a deeper file.
 
 ## Root audit gates
 
-Colocated at `src/` root. These are executable package-contract tests, not documentation:
+Colocated at `src/` root: 17 executable package-contract tests, not documentation:
 
 - `bundle-purity.test.ts` - import allowlist for the extension bundle; keep aligned with `SENPI_LOADER_ALIASES` in `plugin/scripts/build-extension.mjs` (peer-external rule in `../AGENTS.md`).
 - `bundle-size.test.ts` - raw byte budget for built `plugin/extensions/omo.js`. Every ceiling increase requires a separate measured PR with bundle sizes before/after and the reason; never fold it into a feature PR.
+- `bundle-lazy-barrel.test.ts` - lazy dynamic imports survive minification in the emitted bundle.
+- `bundled-skill-disable.test.ts` - a `disabled_skills` entry drops that skill from the resolved native skill set.
+- `computer-use-lazy-runtime.test.ts` - asserted on the EMITTED artifacts: computer-use keeps only its registration shell in `omo.js`; the desktop client and handle ship in `omo-computer-use.js` and load on first use.
+- `hermetic-types.test.ts` - type surface stays hermetic for the packaged build.
+- `posthog-sidecar.test.ts`, `posthog-packed-install.test.ts` - the telemetry transport sidecar resolves and ships correctly in a packed install.
 - `package-shape.test.ts` - adapter manifest contract; license/notice files must ship with generated artifacts.
 - `plugin-manifest.test.ts` - packaged plugin manifest.
 - `runtime-dependency-resolution.test.ts` - a symlinked plugin without host hoisting still resolves runtime deps from the real path.

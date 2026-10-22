@@ -1,6 +1,6 @@
 # src/ - Plugin Source
 
-**Generated:** 2026-08-07 / 51ab1e5b6
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## STOP. THIS IS THE OPENCODE PLUGIN. QA IS MANDATORY. EVERY SINGLE TIME YOU CHANGE ANYTHING HERE.
 
@@ -21,13 +21,15 @@
 
 ## OVERVIEW
 
-Entry `index.ts` orchestrates a staged initialization across the directories below. Cross-cutting adapter helpers live in `shared/`; barrel `index.ts` files establish module boundaries. Several former implementation directories now act partly as OpenCode-facing shims over extracted Core packages.
+Entry `index.ts` is a thin wrapper: it builds the `PluginModule` via `createPluginModule()` from `testing/create-plugin-module.ts` and default-exports it (plus `opencode-v2/server-entry` `setup`). The staged initialization lives in that factory, across the directories below. Cross-cutting adapter helpers live in `shared/`; barrel `index.ts` files establish module boundaries. Several former implementation directories now act partly as OpenCode-facing shims over extracted Core packages.
 
 ## KEY FILES
 
 | File | Purpose |
 |------|---------|
-| `index.ts` | Plugin entry; default-exports `pluginModule: PluginModule` with `{ id, server }` |
+| `index.ts` | Plugin entry; default-exports the `PluginModule` with `{ id, server }` plus the v2 `setup` |
+| `testing/create-plugin-module.ts` | The real staged `serverPlugin()`: config, telemetry, i18n, managers, tools, hooks, interface, dispose |
+| `opencode-v2/server-entry.ts` | OpenCode v2 server entry (`opencodeV2Server.setup`) |
 | `plugin-config.ts` | JSONC parse, multi-level merge (user + walked project), Zod v4 validation, migration |
 | `plugin-state.ts` | `createModelCacheState()`: model resolution cache shared across handlers |
 | `plugin-interface.ts` | 12 OpenCode hook handlers wired into `Hooks` (a further 2, `experimental.session.compacting` + `experimental.compaction.autocontinue`, are wired in `src/testing/create-plugin-module.ts`, for 14 total) |
@@ -36,18 +38,29 @@ Entry `index.ts` orchestrates a staged initialization across the directories bel
 | `create-hooks.ts` | 5-tier composition: `createCoreHooks() + createContinuationHooks() + createSkillHooks()` |
 | `create-runtime-tmux-config.ts` | `isTmuxIntegrationEnabled()` + `createRuntimeTmuxConfig()` |
 
-## INITIALIZATION (7 STEPS)
+## INITIALIZATION (`createPluginModule()`)
 
 ```
 serverPlugin(input, options)
-  1. installAgentSortShim()        # patches Array.prototype.{toSorted,sort} for canonical agent ordering
-  2. initConfigContext()           # detects opencode-vs-openagent config layout
-  3. detectExternalSkillPlugin()   # warn if conflicting plugin loaded
-  4. injectServerAuthIntoClient()  # wire auth headers into shared SDK client
-  5. loadPluginConfig()            # walk project + user JSONC → Zod safeParse → migrate
-  6a. initializeOpenClaw()         # if openclaw config present (start reply-listener daemon)
-  6b. checkTeamModeDependencies()  # if team_mode.enabled (verify git, tmux, ensure ~/.omo/teams/)
-  7. createManagers/Tools/Hooks/PluginInterface
+  installAgentSortShim()           # canonical agent ordering shim over Array.prototype.{toSorted,sort}
+  initConfigContext()              # opencode-vs-openagent layout flag
+  logLegacyPluginStartupWarning()  # warn on the legacy oh-my-opencode entry
+  migrateLegacyWorkspaceDirectory()# copy .sisyphus/ state forward to .omo/
+  detectDuplicateOmoPlugin()       # early exit on a duplicate omo/openagent plugin
+  detectExternalSkillPlugin()      # warn on skill-plugin conflicts
+  injectServerAuthIntoClient()     # auth headers into the shared SDK client
+  loadPluginConfig()               # user + walked project JSONC -> Zod safeParse -> migrate
+  recordPluginTelemetry()
+  ensureTuiPluginEntry()           # always; BTW stays available when the sidebar is off
+  initLiveServerRoute() + setLiveParentWakeRoutingDisabled() + warmLiveServerProbe()
+  selectRuntimeSecuritySkills() + createRuntimeSkillSourceServer()
+  initI18n()                       # locales/ strings
+  setAgentSortOrder()              # configured agent_order
+  initializeOpenClaw()             # only when openclaw config exists
+  checkTeamModeDependencies()      # only when team_mode.enabled
+  startTmuxCheck()                 # only when tmux integration is on
+  createManagers() -> createTools() -> createHooks() -> createPluginInterface()
+  createPluginDispose()            # adds session.compacting + compaction.autocontinue + dispose
 ```
 
 ## CONFIG LOADING (Phase pipeline)

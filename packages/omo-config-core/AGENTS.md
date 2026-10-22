@@ -1,6 +1,6 @@
 # omo-config-core - Harness-Neutral omo.json Config Core
 
-**Generated:** 2026-07-07
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 

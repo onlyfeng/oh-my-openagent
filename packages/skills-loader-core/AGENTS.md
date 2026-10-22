@@ -1,6 +1,6 @@
 # skills-loader-core — Skill Loading + Matching (Core)
 
-**Generated:** 2026-08-24 (f3642fcda)
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 

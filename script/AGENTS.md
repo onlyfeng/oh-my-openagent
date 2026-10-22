@@ -1,6 +1,6 @@
 # script/ -- Build/Publish Automation
 
-**Generated:** 2026-08-24
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 
