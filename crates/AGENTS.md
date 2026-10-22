@@ -12,9 +12,9 @@ Member list lives in the root `Cargo.toml` `[workspace] members`; `crates/deskto
 
 | Crate | Role |
 |-------|------|
-| `senpi-desktop-core` | Types, errors, frames, keys, AX registry, backend traits, and the frozen JSON-RPC contract. Has `schema/`, `docs/`, `fixtures/`. |
-| `senpi-desktop-safety` | Fail-closed `Supervisor`, stop-path registry, `gate()`. |
-| `senpi-desktop-session` | Session loop, the `mutate()` choke point, screenshot budget, audit. |
+| [`senpi-desktop-core`](senpi-desktop-core/AGENTS.md) | Types, errors, frames, keys, AX registry, backend traits, and the frozen JSON-RPC contract. Has `schema/`, `docs/`, `fixtures/`. |
+| [`senpi-desktop-safety`](senpi-desktop-safety/AGENTS.md) | Fail-closed `Supervisor`, stop-path registry, `gate()`. |
+| [`senpi-desktop-session`](senpi-desktop-session/AGENTS.md) | Session loop, the `mutate()` choke point, screenshot budget, audit. |
 | `senpi-desktop-engine` | The binary: wires a session to a backend and serves the RPC contract. |
 | `senpi-desktop-backend-fake` | Deterministic in-process backend for tests (`fixtures/`). |
 | `senpi-desktop-backend-macos` | macOS backend; `native/` + `build.rs` for the Objective-C/C bridge; has `examples/`. |

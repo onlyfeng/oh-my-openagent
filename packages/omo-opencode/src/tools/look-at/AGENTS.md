@@ -1,6 +1,6 @@
 # src/tools/look-at/ -- Image and PDF Analysis Tool
 
-**Generated:** 2026-05-18
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 
@@ -44,7 +44,7 @@ PDFs, screenshots, diagrams -- quick summary extraction. NOT for visual precisio
 
 ## DISTINCTION
 
-This is the TOOL that DELEGATES TO the `multimodal-looker` AGENT. The agent lives in `src/agents/builtin-agents/multimodal-looker.ts`; this tool is the invocation harness.
+This is the TOOL that DELEGATES TO the `multimodal-looker` AGENT. The agent lives in `src/agents/multimodal-looker.ts`; this tool is the invocation harness.
 
 ## NOTES
 

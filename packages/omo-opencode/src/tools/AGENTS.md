@@ -1,6 +1,6 @@
 # src/tools/ — 12–38 Native Tools Across 14 Tool Directories (+ shared utilities)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 
