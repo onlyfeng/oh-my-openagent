@@ -1,16 +1,18 @@
 # shared-skills — Cross-Harness SKILL.md Bundle (Skills)
 
-**Generated:** 2026-08-24 (f3642fcda)
+**Generated:** 2026-10-22 / f9de7acf36
 
 ## OVERVIEW
 
 Hand-authored, cross-harness skill bundle shared between the OpenCode and Codex editions. Mostly authored skill data, with skill-owned scripts/assets when required and no transform inside the package. `index.mjs` exports `sharedSkillsRootPath()` returning the absolute path to `skills/`; it probes `SKILLS_PROBE_SPECIFIERS` (`./skills/`, `../skills/`, `../../skills/`) nearest-first and returns the first that exists, falling back to the sibling path. The three levels cover `dist/index.js` (sibling), `dist/cli/index.js` (parent), and the Codex marketplace layout `plugins/omo/dist/cli/` (grandparent). Package: `@oh-my-opencode/shared-skills` (`files`: `index.mjs`, `index.d.ts`, `skills`).
 
-## SKILLS (17 under `skills/<name>/`)
+## SKILLS (18 under `skills/<name>/`)
 
 `programming`, `debugging`, `frontend`, `visual-qa`, `ast-grep`, `coding-agent-sessions`, `data-scientist`, `git-master`, `refactor`, `review-work`, `ulw-execute`, `ulw-plan`, `ulw-research`, `init-deep`, `remove-ai-slops`, `lsp-setup`, `ultimate-browsing`, `browser`.
 
 `browser` carries a staged runtime: `stage-omowright-runtime.mjs` bundles the root `omowright` devDependency (one ESM file plus its `page-bundle.js` and a digest manifest) into `skills/browser/runtime/omowright/` at build/prepack time (`materialize-shared-upstreams.mjs` calls it). The directory is gitignored and packed through the skill's `.npmignore`; `--check` is the freshness gate. Every shipped browser instruction (visual-qa, debugging, frontend, review-work, ulw-*, ultimate-browsing Tier 2, the ultrawork directives) routes to that runtime through the skill's `scripts/omowright.mjs` loader.
+
+Two package-level dirs sit beside `skills/`: `scripts/` holds the staging and gate code (`materialize-frontend-refs.mjs`, `stage-omowright-runtime.mjs`, `skill-source-filter.mjs` and their manifests) plus the `*.test.ts` contract tests; `upstreams/` holds the pinned third-party skill sources the frontend/design skills are materialized from (`ui-ux-pro-max`, `open-design`, `designpowers`, `taste-skill`). Never edit a materialized copy under `skills/` by hand when it is generated from `upstreams/`; regenerate instead.
 
 `ultimate-browsing` is the one skill carrying a real sub-project: `skills/ultimate-browsing/engine/` is a 17-module Python package with its own CLI, config schemas, and test suite. It is a deliberately pinned, locally diverged snapshot of `fivetaku/insane-search`, not a follow-HEAD mirror. Before changing or re-vendoring it, read [`skills/ultimate-browsing/engine/AGENTS.md` §UPSTREAM BASELINE AND VERSION POLICY](skills/ultimate-browsing/engine/AGENTS.md#upstream-baseline-and-version-policy).
 
