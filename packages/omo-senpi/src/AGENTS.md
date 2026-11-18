@@ -12,9 +12,9 @@ Source root of the Senpi adapter package. The package barrel (`index.ts`) export
 | Deep components | `components/{memory,task,lsp,telemetry,init-deep-advisor,thread,gateway}/` | Each has its own AGENTS.md; `memory/` additionally documents `worker/`, `commands/`, `palace/`, `kibitzer/`. |
 | Bundled remote MCPs | `components/builtin-mcps/` | `context7` + `grep_app` HTTP declarations, `CONTEXT7_API_KEY` bearer gating, and the disable switches. Own AGENTS.md. |
 | X search | `components/x-search/` | Credential-gated `x_search` tool and conditional skill (files, gating, contract, error codes, backtest pointer). Own AGENTS.md. |
-| Small components | `components/*` | Single-purpose factories (ulw-loop, side-panel, onboarding, config-watch, fallback-architect, ...) documented in `../AGENTS.md`. |
+| Small components | `components/*` | Single-purpose factories (ulw-loop, onboarding, config-watch, ...) documented in `../AGENTS.md`; `fallback-architect/` and `model-profile/` now have their own files. |
 
-`src/components/` holds 35 component dirs; 9 of them carry their own AGENTS.md (the deep rows above plus `builtin-mcps` and `x-search`). A new component registers in `extension/component-list.ts` and gets documented in `../AGENTS.md` unless it earns a deeper file.
+`src/components/` holds 35 component dirs; 11 of them carry their own AGENTS.md (the deep rows above plus `builtin-mcps`, `x-search`, `fallback-architect`, and `model-profile`); nested files exist under `memory/desktop-sync/`, `side-panel/data/`, and `thread/gateway/testing/`. A new component registers in `extension/component-list.ts` and gets documented in `../AGENTS.md` unless it earns a deeper file.
 
 ## Root audit gates
 

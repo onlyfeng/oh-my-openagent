@@ -1,5 +1,7 @@
 # init-deep-advisor component
 
+**Generated:** 2026-11-18 / c2691818a9 (update pass; thresholds verified against `constants.ts`)
+
 Session-start advisor that reads `.omo/init-deep.json` and proposes rerunning the `init-deep` skill when the repo has drifted since the snapshot (or was never initialized). UI-only: no UI, no proposal. Decision state (declines, cooldowns, last-proposed HEAD) lives under `<omo-state>/init-deep-advisor-state/`, keyed by a sha256 of the repo's realpathed git common dir, so worktrees of one repo share state.
 
 ## Anatomy

@@ -1,5 +1,7 @@
 # lsp component
 
+**Generated:** 2026-11-18 / c2691818a9 (update pass)
+
 ## Overview
 
 Daemon-backed Senpi LSP adapter. This component retains only Senpi-facing descriptors, schemas, renderers, path extraction, post-edit wiring, and migration-warning helpers adapted from `pi-lsp-client` / oh-my-pi by Yeongyu Kim. Client, transport, JSON-RPC, manager, server-resolution, project-trust, diagnostics, workspace-edit, and process execution live in `@oh-my-opencode/lsp-core` plus the packaged `@code-yeongyu/lsp-daemon` runtime. Every tool call is forwarded out of process: the component never spawns language servers itself.

@@ -1,6 +1,6 @@
 # plugin scripts
 
-Build, staging, sync, and install pipeline for the `@code-yeongyu/omo-senpi` Pi package. All hand-authored Node ESM `.mjs` (built-ins only, no runtime deps), tests colocated as `.test.mjs`. Earned by score: 22 files, the plugin's symbol-density and reference hub (sibling tests plus root build wiring import these exports).
+Build, staging, sync, and install pipeline for the `@code-yeongyu/omo-senpi` Pi package. All hand-authored Node ESM `.mjs` (built-ins only, no runtime deps), tests colocated as `.test.mjs`. Earned by score: 39 files, the plugin's symbol-density and reference hub (sibling tests plus root build wiring import these exports).
 
 ## WHERE TO LOOK
 

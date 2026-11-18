@@ -7,7 +7,7 @@ Registers the two remote MCP servers the OpenCode edition injects at runtime (`p
 | `context7` | `http` | `https://mcp.context7.com/mcp` | anonymous; `bearer` via `bearerTokenEnv: CONTEXT7_API_KEY` when that variable holds a real key |
 | `grep_app` | `http` | `https://mcp.grep.app` | none |
 
-Both are declared `enabled: true`, `lifecycle: "lazy"`, so nothing connects until a tool call needs it.
+Both are declared `enabled: true`, `lifecycle: "lazy"`, `exposure: "search"` — nothing connects until a tool call needs it, and their schemas stay out of the resident tool list until called by name (both servers run in well under 1% of sessions while their schemas cost ~1.7K prompt tokens per request).
 
 ## Rules
 

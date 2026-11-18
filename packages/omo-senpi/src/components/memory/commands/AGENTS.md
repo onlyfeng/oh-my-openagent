@@ -1,6 +1,6 @@
 # memory commands
 
-The fourteen memory slash commands, registered once by the memory component through `register.ts` (`registerMemoryCommands(pi, deps)`). `MEMORY_COMMAND_NAMES`: `/memory /memfs /remember /init /doctor /recompile /memory-repository /sleeptime /reflect /dream /search /people /facts /agreements`. Score ~24 (53 files, DI surface, central registration).
+The fourteen memory slash commands, registered once by the memory component through `register.ts` (`registerMemoryCommands(pi, deps)`). `MEMORY_COMMAND_NAMES`: `/memory /memfs /remember /init /doctor /recompile /memory-repository /sleeptime /reflect /dream /search /people /facts /agreements`. Score ~24 (74 files incl. 29 test suites, 9.4k LOC, DI surface, central registration). Largest suites: `doctor.test.ts` (1,090 LOC), `doctor-checks.ts` (480 LOC).
 
 ## Anatomy
 
