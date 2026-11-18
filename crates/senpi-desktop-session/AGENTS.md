@@ -1,6 +1,6 @@
 # senpi-desktop-session
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
@@ -23,6 +23,12 @@ Invariants this crate owns:
 | `src/selection.rs` | `BackendFactory`, `BackendSelection`, `SelectionError`: picking the platform backend (fake for tests) at session start. |
 | `src/grant.rs`, `src/grant/` | `ControlSlot`: what the session may touch for this run. |
 | `src/timeouts.rs` | `SessionTimeouts`, `OPERATION_TIMEOUT`, `CLOSE_TIMEOUT`: the bounded waits every operation honours. |
+| `src/lock.rs` | The machine-wide `InteractionLock`: one user's desktop engines never interleave input across processes; unusable lock dirs are structured errors, never a temp-dir fallback. |
+| `src/epoch.rs` | The coordinate epoch: display reconfig / lock / sleep / Space switch moves it; a move supersedes frames and expires refs. |
+| `src/budget/` | The screenshot budget: dimension caps (clamped to 1280x896 when coordinate-safe), then PNG → JPEG q70 → artifact-only; every degradation carries a note. |
+| `src/actionability.rs` (+ `actionability/`) | The actionability battery run before AX actions in object-mode sessions. |
+| `src/user_input_watch.rs` (+ `/`), `src/intervention/`, `src/display_awake.rs`, `src/idle.rs` | Lazily-installed user-input watch, intervention admission, display-awake and idle checks. |
+| `src/report.rs` (+ `report/`) | Object-mode action reports (`Settled` → `Disposition`); a null-mode session never reaches it. |
 | `src/audit/` | The audit sink: one record per mutation with its outcome. |
 | `src/worker*.rs`, `src/worker_*/` | Per-domain workers: capture, input, ax, menus, clipboard, zoom, observe, holds. |
 | `src/restore.rs`, `src/restore/` | Focus and cursor restoration after an action. |
@@ -41,6 +47,8 @@ Capture is budgeted per session (see `tests/capture_budget.rs`): the engine retu
 - **Panics are contained.** The action runs under `catch_unwind`; a backend panic becomes a typed error plus `release_all`, never a dead session with held keys down.
 - **Audit before you return.** A code path that mutates without writing its audit event is a bug.
 - **Restore on every exit path.** Focus/cursor restore and hold release belong in guards, not in happy-path code.
+- **Zoom data is pixel-only.** `worker_zoom` captures fresh native detail but keeps the full screenshot's coordinate frame and frame ID; never use zoom pixels for input coordinates.
+- **Audit hashes secrets.** Audit is JSONL with size rotation and owner-only permissions; typed text is recorded as length + digest, never raw clipboard/grant text. Screenshot GC deletes only stale artifact PNGs.
 
 ## COMMANDS
 

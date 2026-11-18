@@ -1,6 +1,6 @@
 # senpi-desktop-core
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
@@ -17,7 +17,10 @@ The JSON-RPC contract is FROZEN. `schema/engine.schema.json` is the machine-read
 | `src/protocol_holds.rs` | Invariants that must hold across every method (the conformance harness). |
 | `src/backend.rs` | The `Backend` / `AxBackend` traits plus `DeliveryMode`; the platform boundary. |
 | `src/types/` | Target kinds, coordinate frames, tiers, approvals, capability descriptors. |
-| `src/frame/`, `src/ax/`, `src/keys/`, `src/menus/`, `src/holds/` | Capture frames, the AX node registry, key/chord parsing, menu trees, hold bookkeeping. |
+| `src/frame/`, `src/ax/`, `src/keys/`, `src/menus/`, `src/holds.rs` | Capture frames, the AX node registry, key/chord parsing, menu trees, hold bookkeeping. |
+| `src/report.rs` (+ `report_tests.rs`, `protocol_disposition_test.rs`) | Object-mode action reports: the one mapping from how a request settled (`Settled`) to its `Disposition`. |
+| `src/intervention.rs` | The user-intervention seam (#11459): backends call `check_press` before every key/pointer press. |
+| `src/user_input.rs`, `src/text_range.rs` | The user's own presses/clicks feed; text-location math for AX text selection. |
 | `src/error.rs` | `DesktopError` / `ErrorCode` / `TccPermission`: the single error vocabulary all backends return. |
 | `src/clipboard.rs` | Clipboard access behind the `system-clipboard` feature (off by default so hermetic tests never touch the real clipboard). |
 | `docs/engine-protocol.md` | The prose description of the protocol. |

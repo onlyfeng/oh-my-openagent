@@ -1,6 +1,6 @@
 # senpi-desktop-safety
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
@@ -21,8 +21,9 @@ Two rules decide everything here:
 | `src/stop_path.rs`, `src/stop_path/` | `StopPathListener`, `Chord`, `HostRelay`, `StopPathError`: registration and heartbeat of each stop source. |
 | `src/hold_signal.rs`, `src/hold_signal/` | `HoldSignal`: the hold/release signalling used by long presses. |
 | `src/reset.rs` | `ResumeToken`, `UserReset`: the only path out of a latched suspension. |
+| `src/authority_reset.rs` | `AuthorityReset`: the local half of an authority activation - NOT a user resume token. No production constructor until the authenticated broker client validates the full instance/transaction binding. |
 | `src/clock.rs` | `Clock` / `MonotonicClock` / `FakeClock`: freshness is measured on an injectable clock so tests never depend on wall time. |
-| `src/lib.rs` | Re-exports: `MutatingAction`, `HoldSignal`, `Clock`, `gate`, `PermissionGate`, `ResumeToken`, `UserReset`, `Chord`, `HostRelay`, `StopPathListener`. |
+| `src/lib.rs` | Re-exports: `MutatingAction`, `AuthorityReset`, `HoldSignal`, `Clock`, `gate`, `PermissionGate`, `ResumeToken`, `UserReset`, `Chord`, `HostRelay`, `StopPathListener`. |
 
 ## CONVENTIONS
 

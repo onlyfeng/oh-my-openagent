@@ -1,12 +1,15 @@
 # crates/ - Rust computer-use engine workspace
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
-The Rust side of omo's `computer` tool: a 12-crate Cargo workspace producing the `senpi-desktop-engine` binary that the TypeScript packages `packages/senpi-desktop-{protocol,engine,service,tool,prelude}` drive over a frozen JSON-RPC contract. Crate naming follows the senpi integration convention (like `senpi-task`); the design is tracked in code-yeongyu/oh-my-openagent#8893.
+The Rust side of omo's `computer` tool. TWO crate families coexist while the v3 rewrite lands:
 
-Member list lives in the root `Cargo.toml` `[workspace] members`; `crates/desktop/README.md` is the human-facing crate-role map and is not duplicated here.
+- **`senpi-desktop-*` (v2, shipping)** - 11 crates behind the `senpi-desktop-engine` binary that the TypeScript packages `packages/senpi-desktop-{protocol,engine,service,tool,prelude}` drive over a frozen JSON-RPC contract (design: code-yeongyu/oh-my-openagent#8893).
+- **`omo-computer-*` (v3, port in progress)** - 10 crates mirroring the same layering (core / safety / session / per-OS backends / engine) behind the `omo-computer-engine` binary. `omo-computer-backend-{atspi,x11,win32}` are still stubs; the port is tracked row-by-row in `omo-computer-core/parity/test-parity-manifest.tsv`.
+
+Plus `senpi-desktop-xpc` (macOS XPC transport), `omo-engine-trust-helper` / `omo-git-job-helper` (sandboxed helpers), and `desktop` (docs-only README crate map). Member list lives in the root `Cargo.toml` `[workspace] members`; `crates/desktop/README.md` is the human-facing v2 crate-role map and is not duplicated here.
 
 ## STRUCTURE
 
@@ -15,15 +18,18 @@ Member list lives in the root `Cargo.toml` `[workspace] members`; `crates/deskto
 | [`senpi-desktop-core`](senpi-desktop-core/AGENTS.md) | Types, errors, frames, keys, AX registry, backend traits, and the frozen JSON-RPC contract. Has `schema/`, `docs/`, `fixtures/`. |
 | [`senpi-desktop-safety`](senpi-desktop-safety/AGENTS.md) | Fail-closed `Supervisor`, stop-path registry, `gate()`. |
 | [`senpi-desktop-session`](senpi-desktop-session/AGENTS.md) | Session loop, the `mutate()` choke point, screenshot budget, audit. |
-| `senpi-desktop-engine` | The binary: wires a session to a backend and serves the RPC contract. |
-| `senpi-desktop-backend-fake` | Deterministic in-process backend for tests (`fixtures/`). |
-| `senpi-desktop-backend-macos` | macOS backend; `native/` + `build.rs` for the Objective-C/C bridge; has `examples/`. |
-| `senpi-desktop-backend-x11` | X11/XTEST backend (CI runs it under `xvfb-run`). |
-| `senpi-desktop-backend-atspi` | AT-SPI accessibility backend for Linux (CI runs it under `dbus-run-session` + `xvfb-run`). |
-| `senpi-desktop-backend-wayland` | Wayland backend (`testdata/`). |
-| `senpi-desktop-backend-win32` | Windows backend (CI QA job `desktop-windows-qa.yml`). |
+| [`senpi-desktop-engine`](senpi-desktop-engine/AGENTS.md) | The binary: wires a session to a backend and serves the RPC contract. |
+| [`senpi-desktop-backend-fake`](senpi-desktop-backend-fake/AGENTS.md) | Deterministic in-process backend for tests (`fixtures/`). |
+| [`senpi-desktop-backend-macos`](senpi-desktop-backend-macos/AGENTS.md) | macOS backend; `native/` + `build.rs` for the Objective-C/C bridge; has `examples/`. |
+| [`senpi-desktop-backend-x11`](senpi-desktop-backend-x11/AGENTS.md) | X11/XTEST backend (CI runs it under `xvfb-run`). |
+| [`senpi-desktop-backend-atspi`](senpi-desktop-backend-atspi/AGENTS.md) | AT-SPI accessibility backend for Linux (CI runs it under `dbus-run-session` + `xvfb-run`). |
+| [`senpi-desktop-backend-wayland`](senpi-desktop-backend-wayland/AGENTS.md) | Wayland backend (`testdata/`). |
+| [`senpi-desktop-backend-win32`](senpi-desktop-backend-win32/AGENTS.md) | Windows backend (CI QA job `desktop-windows-qa.yml`). |
 | `senpi-desktop-xpc` | macOS XPC transport (`TRANSPORT.md`, `scripts/`). |
 | `desktop` | Docs-only crate holding the README crate map. |
+| `omo-computer-core` / `omo-computer-safety` / `omo-computer-session` / `omo-computer-engine` | v3 twins of core/safety/session/engine; the module map lives in [`omo-computer-core/src/AGENTS.md`](omo-computer-core/src/AGENTS.md). |
+| [`omo-computer-backend-fake`](omo-computer-backend-fake/AGENTS.md), `omo-computer-backend-{macos,wayland}` | v3 backend twins (fake = scripted scenarios; macos/wayland ported). |
+| `omo-computer-backend-{x11,atspi,win32}` | v3 stubs; the live implementations are still the `senpi-desktop-backend-*` twins. |
 
 ## WHERE TO LOOK
 
@@ -35,9 +41,12 @@ Member list lives in the root `Cargo.toml` `[workspace] members`; `crates/deskto
 | Screenshot budget and audit | `crates/senpi-desktop-session/src/` |
 | Adding a platform backend | Implement the traits from `senpi-desktop-core`, add a workspace member, register it in `senpi-desktop-engine` |
 | TS side that consumes it | `packages/senpi-desktop-{protocol,engine,service,tool}/` |
+| v3 contract module map | `crates/omo-computer-core/src/AGENTS.md` |
+| v2→v3 test port state | `crates/omo-computer-core/parity/` (guard: `bun script/computer-v3-guards.ts --parity`) |
 
 ## CONVENTIONS
 
+- **The rules below bind BOTH families.** Pinning, contract freeze, fail-closed, hermetic tests, and the trait boundary apply to `senpi-desktop-*` and `omo-computer-*` alike.
 - **Every dependency is an exact `=` pin.** `bun script/check-cargo-pinned-deps.mjs` (wired into `bun run test:desktop`) fails on an unpinned or caret/tilde version anywhere in the workspace.
 - **The JSON-RPC contract is frozen.** Changing a frame, key, or method means changing `senpi-desktop-core` and every TS consumer together; the TS types in `packages/senpi-desktop-protocol` must match.
 - **Fail closed.** Safety decisions live in `senpi-desktop-safety` and the `mutate()` choke point; a backend never bypasses them.
@@ -54,6 +63,9 @@ cargo build --release -p senpi-desktop-engine --locked
 
 # the TS half of the same surface
 bun run test:desktop
+
+# v3 parity guard (pending rows allowed; --final rejects them)
+bun script/computer-v3-guards.ts --parity
 ```
 
 CI: `.github/workflows/desktop-engine.yml` (Linux clippy + test + per-platform release builds, plus the ignored live tests under `xvfb-run` / `dbus-run-session`) and `.github/workflows/desktop-windows-qa.yml` (Windows backend QA).
