@@ -10,40 +10,40 @@
 
 | Page | Group | Role |
 |------|-------|------|
-| [configuration.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/configuration.md) | Config | Field reference (1,626 lines); layering: user layer lowest, nearest project file wins |
-| [omo-json.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/omo-json.md) | Config | Harness-neutral `omo.json`/`omo.jsonc`; strict typed blocks, precedence, `[opencode]`/`[native]`/`[codex]` blocks (`[senpi]` = legacy spelling for `[native]`) |
-| [opencode-config.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/opencode-config.md) | Config | LEGACY: `[opencode]` keys only the OpenCode edition reads (verbatim moves from configuration.md/features.md) |
-| [cli.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/cli.md) | CLI | CLI command reference |
-| [omo-daemon.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/omo-daemon.md) | CLI | Engine hosts per session, `omo daemon`, migration and rollback |
-| [omob-dev-binary.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/omob-dev-binary.md) | CLI | `omob`: single-file dev binary built from latest mainline commits (`bun run omob`) |
-| [omo-thread.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/omo-thread.md) | Threads | `omo thread` CLI + thread SDK; JSON shapes, exit codes, outbox contract |
-| [remote-sessions.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/remote-sessions.md) | Threads | `omo remote`: verbs, states, command outcomes, device service install |
-| [computer.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/computer.md) | Security | Native `computer` tool contract |
-| [computer-stop-authority.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/computer-stop-authority.md) | Security | Protected computer-use stop authority design (#10238, revision 2, local admission slice) |
-| [computer-run-sandbox-threat-model.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/computer-run-sandbox-threat-model.md) | Security | `computer.run` QuickJS sandbox threat model + compatibility matrix |
-| [computer-use-eval.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/computer-use-eval.md) | Security | 7-task / 3-arm eval + latency bench baselines (fake engine, never a real model) |
-| [desktop-attach-threat-model.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/desktop-attach-threat-model.md) | Security | Desktop engine attach and `--serve` multi-connection threat model |
-| [keychain-helper-custody-threat-model.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/keychain-helper-custody-threat-model.md) | Security | macOS keychain helper custody (where the helper runs, what the ACL trusts) |
-| [engine-trust-user-namespaces.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/engine-trust-user-namespaces.md) | Security | Engine trust under user namespaces: bwrap sandbox + inode attestation - design, under review |
-| [features.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/features.md) | Product | Feature-by-feature reference (1,212 lines) |
-| [monitor.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/monitor.md) | Product | Monitor tool reference |
-| [mass-ulw-protocol.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/mass-ulw-protocol.md) | Product | mass-ULW dag protocol: events, catch-up, overflow |
-| [senpi-telemetry.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/senpi-telemetry.md) | Telemetry | Senpi telemetry internals |
-| [codex-telemetry.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/codex-telemetry.md) | Telemetry | Codex telemetry internals |
-| [release-process.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/release-process.md) | Ops | Release process (`bun run typecheck` gate) |
-| [operator-built-darwin-release.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/operator-built-darwin-release.md) | Ops | Operator-built darwin artifacts replacing hosted macOS legs; verification, provenance |
-| [changelog-fragments.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/changelog-fragments.md) | Ops | Per-PR `changes/unreleased/<n>.md` fragments, migration, batches |
-| [omo-ai-publishing.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/omo-ai-publishing.md) | Ops | npm publishing via GitHub Actions + npm OIDC ONLY |
-| [lazycodex-npm-reservation.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/lazycodex-npm-reservation.md) | Ops | Claiming the lazycodex npm name through `publish.yml` |
-| [known-issues.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/known-issues.md) | Ops | Known issues & workarounds |
-| [prompt-async-gate-rfc.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/prompt-async-gate-rfc.md) | Internal | `prompt_async_gate` deep-dive |
-| [opencode-prompt-composition.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/opencode-prompt-composition.md) | Internal | Engine-owned prompt presets; the adapter never selects a local model body |
-| [rpc-relay-parity.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/rpc-relay-parity.md) | Internal | GENERATED engine RPC local-vs-relay parity table - regenerate, never hand-edit |
-| [re-export-shim-inventory.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/re-export-shim-inventory.md) | Internal | Snapshot inventory of adapter re-export shims (`@oh-my-opencode/*`) |
-| [shared-core-multi-pr.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/shared-core-multi-pr.md) | Internal | Shared-core multi-PR extraction QA |
-| [rules-injection-cross-module-comparison.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/rules-injection-cross-module-comparison.md) | Internal | Rules-injector cross-module comparison |
-| [web-terminal-visual-qa.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/web-terminal-visual-qa.md) | Internal | Real-pty + xterm.js visual QA helper (`script/qa/web-terminal-visual-qa.mjs`) |
-| [github-attachment-upload.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/github-attachment-upload.md) | Internal | GitHub PR evidence attachments |
+| [configuration.md](file://./docs/reference/configuration.md) | Config | Field reference (1,626 lines); layering: user layer lowest, nearest project file wins |
+| [omo-json.md](file://./docs/reference/omo-json.md) | Config | Harness-neutral `omo.json`/`omo.jsonc`; strict typed blocks, precedence, `[opencode]`/`[native]`/`[codex]` blocks (`[senpi]` = legacy spelling for `[native]`) |
+| [opencode-config.md](file://./docs/reference/opencode-config.md) | Config | LEGACY: `[opencode]` keys only the OpenCode edition reads (verbatim moves from configuration.md/features.md) |
+| [cli.md](file://./docs/reference/cli.md) | CLI | CLI command reference |
+| [omo-daemon.md](file://./docs/reference/omo-daemon.md) | CLI | Engine hosts per session, `omo daemon`, migration and rollback |
+| [omob-dev-binary.md](file://./docs/reference/omob-dev-binary.md) | CLI | `omob`: single-file dev binary built from latest mainline commits (`bun run omob`) |
+| [omo-thread.md](file://./docs/reference/omo-thread.md) | Threads | `omo thread` CLI + thread SDK; JSON shapes, exit codes, outbox contract |
+| [remote-sessions.md](file://./docs/reference/remote-sessions.md) | Threads | `omo remote`: verbs, states, command outcomes, device service install |
+| [computer.md](file://./docs/reference/computer.md) | Security | Native `computer` tool contract |
+| [computer-stop-authority.md](file://./docs/reference/computer-stop-authority.md) | Security | Protected computer-use stop authority design (#10238, revision 2, local admission slice) |
+| [computer-run-sandbox-threat-model.md](file://./docs/reference/computer-run-sandbox-threat-model.md) | Security | `computer.run` QuickJS sandbox threat model + compatibility matrix |
+| [computer-use-eval.md](file://./docs/reference/computer-use-eval.md) | Security | 7-task / 3-arm eval + latency bench baselines (fake engine, never a real model) |
+| [desktop-attach-threat-model.md](file://./docs/reference/desktop-attach-threat-model.md) | Security | Desktop engine attach and `--serve` multi-connection threat model |
+| [keychain-helper-custody-threat-model.md](file://./docs/reference/keychain-helper-custody-threat-model.md) | Security | macOS keychain helper custody (where the helper runs, what the ACL trusts) |
+| [engine-trust-user-namespaces.md](file://./docs/reference/engine-trust-user-namespaces.md) | Security | Engine trust under user namespaces: bwrap sandbox + inode attestation - design, under review |
+| [features.md](file://./docs/reference/features.md) | Product | Feature-by-feature reference (1,212 lines) |
+| [monitor.md](file://./docs/reference/monitor.md) | Product | Monitor tool reference |
+| [mass-ulw-protocol.md](file://./docs/reference/mass-ulw-protocol.md) | Product | mass-ULW dag protocol: events, catch-up, overflow |
+| [senpi-telemetry.md](file://./docs/reference/senpi-telemetry.md) | Telemetry | Senpi telemetry internals |
+| [codex-telemetry.md](file://./docs/reference/codex-telemetry.md) | Telemetry | Codex telemetry internals |
+| [release-process.md](file://./docs/reference/release-process.md) | Ops | Release process (`bun run typecheck` gate) |
+| [operator-built-darwin-release.md](file://./docs/reference/operator-built-darwin-release.md) | Ops | Operator-built darwin artifacts replacing hosted macOS legs; verification, provenance |
+| [changelog-fragments.md](file://./docs/reference/changelog-fragments.md) | Ops | Per-PR `changes/unreleased/<n>.md` fragments, migration, batches |
+| [omo-ai-publishing.md](file://./docs/reference/omo-ai-publishing.md) | Ops | npm publishing via GitHub Actions + npm OIDC ONLY |
+| [lazycodex-npm-reservation.md](file://./docs/reference/lazycodex-npm-reservation.md) | Ops | Claiming the lazycodex npm name through `publish.yml` |
+| [known-issues.md](file://./docs/reference/known-issues.md) | Ops | Known issues & workarounds |
+| [prompt-async-gate-rfc.md](file://./docs/reference/prompt-async-gate-rfc.md) | Internal | `prompt_async_gate` deep-dive |
+| [opencode-prompt-composition.md](file://./docs/reference/opencode-prompt-composition.md) | Internal | Engine-owned prompt presets; the adapter never selects a local model body |
+| [rpc-relay-parity.md](file://./docs/reference/rpc-relay-parity.md) | Internal | GENERATED engine RPC local-vs-relay parity table - regenerate, never hand-edit |
+| [re-export-shim-inventory.md](file://./docs/reference/re-export-shim-inventory.md) | Internal | Snapshot inventory of adapter re-export shims (`@oh-my-opencode/*`) |
+| [shared-core-multi-pr.md](file://./docs/reference/shared-core-multi-pr.md) | Internal | Shared-core multi-PR extraction QA |
+| [rules-injection-cross-module-comparison.md](file://./docs/reference/rules-injection-cross-module-comparison.md) | Internal | Rules-injector cross-module comparison |
+| [web-terminal-visual-qa.md](file://./docs/reference/web-terminal-visual-qa.md) | Internal | Real-pty + xterm.js visual QA helper (`script/qa/web-terminal-visual-qa.mjs`) |
+| [github-attachment-upload.md](file://./docs/reference/github-attachment-upload.md) | Internal | GitHub PR evidence attachments |
 
 ## CONVENTIONS
 
@@ -53,10 +53,10 @@
 
 ## ANTI-PATTERNS
 
-- Never hand-edit [rpc-relay-parity.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/rpc-relay-parity.md): record a relay verdict or pair test in `script/rpc-relay-parity.rows.json`, then run `bun script/rpc-relay-parity.ts` - `script/rpc-relay-parity.test.ts` fails until the table is regenerated.
+- Never hand-edit [rpc-relay-parity.md](file://./docs/reference/rpc-relay-parity.md): record a relay verdict or pair test in `script/rpc-relay-parity.rows.json`, then run `bun script/rpc-relay-parity.ts` - `script/rpc-relay-parity.test.ts` fails until the table is regenerated.
 - Never present `opencode-config.md` keys as cross-edition: omo-senpi ignores every one of them.
-- Publishing is GitHub Actions + npm OIDC only; never add a local publish path or a manual `NPM_AUTH_TOKEN` publish ([omo-ai-publishing.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/omo-ai-publishing.md), [lazycodex-npm-reservation.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/lazycodex-npm-reservation.md)).
-- PRs never edit root or package `changes.md` - one unreleased changelog fragment per shipping PR ([changelog-fragments.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/changelog-fragments.md)).
-- Compatibility re-export shims stay thin; remove one from the inventory only after in-repo consumers import the extracted package path directly ([re-export-shim-inventory.md](file:///D:/qf/ai/onlyfeng/oh-my-openagent/docs/reference/re-export-shim-inventory.md)).
+- Publishing is GitHub Actions + npm OIDC only; never add a local publish path or a manual `NPM_AUTH_TOKEN` publish ([omo-ai-publishing.md](file://./docs/reference/omo-ai-publishing.md), [lazycodex-npm-reservation.md](file://./docs/reference/lazycodex-npm-reservation.md)).
+- PRs never edit root or package `changes.md` - one unreleased changelog fragment per shipping PR ([changelog-fragments.md](file://./docs/reference/changelog-fragments.md)).
+- Compatibility re-export shims stay thin; remove one from the inventory only after in-repo consumers import the extracted package path directly ([re-export-shim-inventory.md](file://./docs/reference/re-export-shim-inventory.md)).
 - Config: `reasoning` is canonical; `reasoningEffort` and `variant` are deprecated compatibility inputs (precedence reasoning > reasoningEffort > variant). `mcp_env_allowlist` and `browser_automation_engine.playwright_mcp_args` are user-layer-only - project layers cannot extend them.
 - `omo thread` connectors: never run `outbox --ack` before posting rows (a crash loses the page); delivery is at-least-once, so deduplicate by `(binding_id, cursor)`; the SQLite WAL is not a supported wake signal.

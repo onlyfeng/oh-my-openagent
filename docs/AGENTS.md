@@ -39,7 +39,7 @@ docs/
 
 - **CI matrix label:** pull requests run Linux only; adding `ci:full-matrix` (the one opt-in label; honored only for a platform-path diff or a PR body line `Platform-reason: <why>`) launches a separate run with optional `full-matrix / ...` checks that do not gate merge. Keep the label and push a commit or reopen the PR to run the full matrix in the required checks.
 - **User-facing language only in `guide/` and `reference/`.** No `OmO` internal jargon without explanation.
-- **Path links** use the `file://` scheme so OpenCode renders them in TUI. Use absolute paths.
+- **Path links** use the `file://` scheme so OpenCode renders them in TUI. Repository-relative links use the checkout-independent project-root form `file://./...`; paths outside the repository use absolute `file:///...` URIs.
 - **No HTML.** Markdown only. No `<details>` / `<summary>` (causes rendering issues in some terminals).
 - **Code blocks** use language fences. Use `jsonc` for config snippets to preserve comments.
 - **Visual QA evidence** must come from the real-pty + xterm.js flow ([`script/qa/web-terminal-visual-qa.mjs`](../script/qa/web-terminal-visual-qa.mjs)). NEVER use `tmux capture-pane` for color/visual/CJK evidence; tmux is boot-smoke only.
