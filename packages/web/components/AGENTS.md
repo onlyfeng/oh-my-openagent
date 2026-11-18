@@ -8,16 +8,16 @@ The React component library for the `web` package, organized by feature (no sing
 
 ## STRUCTURE (>5 feature dirs)
 
-| Dir | Role |
-|-----|------|
-| `docs/` | `DocsShell`, `DocsSidebar`, `useDocsNavigation`, `wrapTables` |
-| `download/` | `DownloadExperience`, `InstallerList`, `PrimaryDownload`, `VerifyDownload`, `useDesktopVisitor` |
-| `home/` | Home page + `sections/*`, `styles/*` (tokens/base/chrome/hero/sections/motion), theme + nav + reveal |
-| `landing/` | `dag/` (DAG layout/scenario/motion, `computeDagLayout`, `useDagCamera`, `useDagPlayback`), `graph/` (`GraphHero`, `GraphScene`, palette/data) |
-| `ledger/` | `BentoGrid`/`BentoCell`, `Frame`, `LedgerRow`, `Reel` |
-| `manifesto/` | `ManifestoSection`, reading + section modules |
-| `support/` | `SupportReportPanel` |
-| `ui/` | shadcn-style `Badge`, `Button`, `Card*`, `Input`, `Separator`, `Section`, `Tooltip` |
+| Dir          | Role                                                                                                                                          |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/`      | `DocsShell`, `DocsSidebar`, `useDocsNavigation`, `wrapTables`                                                                                 |
+| `download/`  | `DownloadExperience`, `InstallerList`, `PrimaryDownload`, `VerifyDownload`, `useDesktopVisitor`                                               |
+| `home/`      | Home page + `sections/*`, `styles/*` (tokens/base/chrome/hero/sections/motion), theme + nav + reveal                                          |
+| `landing/`   | `dag/` (DAG layout/scenario/motion, `computeDagLayout`, `useDagCamera`, `useDagPlayback`), `graph/` (`GraphHero`, `GraphScene`, palette/data) |
+| `ledger/`    | `BentoGrid`/`BentoCell`, `Frame`, `LedgerRow`, `Reel`                                                                                         |
+| `manifesto/` | `ManifestoSection`, reading + section modules                                                                                                 |
+| `support/`   | `SupportReportPanel`                                                                                                                          |
+| `ui/`        | shadcn-style `Badge`, `Button`, `Card*`, `Input`, `Separator`, `Section`, `Tooltip`                                                           |
 
 ## CONVENTIONS
 

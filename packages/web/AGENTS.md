@@ -44,6 +44,7 @@ bun run test:e2e         # playwright: flag-off config first, then the default c
 bun run preview | deploy # opennextjs-cloudflare build + preview locally / deploy to Cloudflare
 bun run cf-typegen       # regenerate cloudflare-env.d.ts from wrangler.toml bindings
 ```
+
 Asset utilities: `icons:render` / `icons:check` (app icons), `poster:graph` / `check:graph-budget`.
 
 ## CI/CD

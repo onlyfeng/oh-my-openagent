@@ -8,14 +8,14 @@ The Next.js App Router tree for the `web` package: localized route groups, route
 
 ## WHERE TO LOOK
 
-| Area | Role |
-|------|------|
-| `layout.tsx` / `[locale]/layout.tsx` | App + localized home layout (`revalidate`, `viewport`, `generateMetadata`, `generateStaticParams`) |
-| `[locale]/.../page.tsx` | Localized site/docs/download/manifesto/etc. routes |
-| `app/api/*/route.ts` | API route handlers |
-| `manifest.ts` / `robots.ts` / `sitemap.ts` | Static metadata generators |
-| `_components/` | Shared route-level components |
-| `styles/design-system.css` | Design tokens (~1.6k lines — the design-system concentration) |
+| Area                                       | Role                                                                                               |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `layout.tsx` / `[locale]/layout.tsx`       | App + localized home layout (`revalidate`, `viewport`, `generateMetadata`, `generateStaticParams`) |
+| `[locale]/.../page.tsx`                    | Localized site/docs/download/manifesto/etc. routes                                                 |
+| `app/api/*/route.ts`                       | API route handlers                                                                                 |
+| `manifest.ts` / `robots.ts` / `sitemap.ts` | Static metadata generators                                                                         |
+| `_components/`                             | Shared route-level components                                                                      |
+| `styles/design-system.css`                 | Design tokens (~1.6k lines — the design-system concentration)                                      |
 
 ## CONVENTIONS
 

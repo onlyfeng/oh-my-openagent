@@ -8,15 +8,15 @@
 
 ## WHERE TO LOOK
 
-| File(s) | Role |
-|---------|------|
-| `download.spec.ts` (395 LOC) | Download-page flows. `test.describe.configure({ mode: "serial" })` — scenarios mutate the ONE shared fixture host; each test pins browser `userAgentData` so OS/arch asset selection is deterministic |
-| `download-flag-off.spec.ts` | Gate audit: with the launch flag off, no entry point may leak or 404 the download page |
-| `manifesto*.spec.ts` (5) + `manifesto-page.ts` + `manifesto-glyphs.ts` | Manifesto page behavior; helpers `waitForReadingBlocks` / `firstProgress` and the `expectUniformWordGlyphs` glyph oracle |
-| `secret-reading-state.ts` | `scrollSecret` — reading-reveal state driving the lit-depth/reading specs |
-| `support/download-fixture-server.ts` | Stands in for `get.omo.dev`: serves each channel's `manifest.json` + per-release `SHA256SUMS`; tests switch scenarios with `PUT /__scenario/<name>` |
-| `support/download-fixture-port.ts` | `FIXTURE_PORT = 4310` |
-| `landing`, `hero-*`, `responsive`, `focus-ring`, `tooltip-sheet`, `docs*`, `document-shell`, `work-surfaces`, `support.spec.ts`, `dag-dimmed-legibility` | Page-level visual/behavior specs |
+| File(s)                                                                                                                                                  | Role                                                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `download.spec.ts` (395 LOC)                                                                                                                             | Download-page flows. `test.describe.configure({ mode: "serial" })` — scenarios mutate the ONE shared fixture host; each test pins browser `userAgentData` so OS/arch asset selection is deterministic |
+| `download-flag-off.spec.ts`                                                                                                                              | Gate audit: with the launch flag off, no entry point may leak or 404 the download page                                                                                                                |
+| `manifesto*.spec.ts` (5) + `manifesto-page.ts` + `manifesto-glyphs.ts`                                                                                   | Manifesto page behavior; helpers `waitForReadingBlocks` / `firstProgress` and the `expectUniformWordGlyphs` glyph oracle                                                                              |
+| `secret-reading-state.ts`                                                                                                                                | `scrollSecret` — reading-reveal state driving the lit-depth/reading specs                                                                                                                             |
+| `support/download-fixture-server.ts`                                                                                                                     | Stands in for `get.omo.dev`: serves each channel's `manifest.json` + per-release `SHA256SUMS`; tests switch scenarios with `PUT /__scenario/<name>`                                                   |
+| `support/download-fixture-port.ts`                                                                                                                       | `FIXTURE_PORT = 4310`                                                                                                                                                                                 |
+| `landing`, `hero-*`, `responsive`, `focus-ring`, `tooltip-sheet`, `docs*`, `document-shell`, `work-surfaces`, `support.spec.ts`, `dag-dimmed-legibility` | Page-level visual/behavior specs                                                                                                                                                                      |
 
 ## CONVENTIONS
 
