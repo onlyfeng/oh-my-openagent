@@ -1,10 +1,10 @@
 # src/cli/config-manager/ — CLI Installation Utilities
 
-**Generated:** 2026-05-15
+**Generated:** 2026-05-15 (update pass 2026-11-18 / c2691818a9)
 
 ## OVERVIEW
 
-27 files. Stateless utility functions for the `install` command. Handles OpenCode config manipulation, provider configuration, JSONC operations, binary detection, and npm registry queries. No class — flat utility collection.
+30 files (23 source modules + colocated tests). Stateless utility functions for the `install` command. Handles OpenCode config manipulation, provider configuration, JSONC operations, binary detection, and npm registry queries. No class — flat utility collection.
 
 ## FILE CATALOG
 
@@ -28,6 +28,10 @@
 | `parse-opencode-config-file.ts` | Parse opencode.json/opencode.jsonc with fallback |
 | `plugin-name-with-version.ts` | Resolve `oh-my-opencode@X.Y.Z` for installation |
 | `write-omo-config.ts` | Write generated config to `~/.omo/omo.jsonc` |
+| `add-tui-plugin-to-tui-config.ts` | `ensureTuiPluginEntry()` — register the plugin in the TUI config |
+| `backup-config.ts` | `backupConfigFile()` — copy a config aside before modification |
+| `refresh-opencode-plugin-sandbox.ts` | `refreshOpenCodePluginSandboxes()` — sandbox lease refresh |
+| `version-compatibility.ts` | `checkVersionCompatibility()`, `extractVersionFromPluginEntry()` |
 
 ## USAGE PATTERN
 

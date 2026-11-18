@@ -1,6 +1,6 @@
 # src/hooks/goal/ -- Persistent Per-Session Goal
 
-**Generated:** 2026-07-17
+**Generated:** 2026-11-18 / c2691818a9 (update pass; content verified)
 
 ## OVERVIEW
 

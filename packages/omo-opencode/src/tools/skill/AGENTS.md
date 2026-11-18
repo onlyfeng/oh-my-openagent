@@ -17,6 +17,7 @@ The `skill` tool. Dual purpose: (1) load a skill by name to inject its SKILL.md 
 | `native-skills.ts` | Merges `PluginInput.skills` entries into discovered skill list |
 | `description-formatter.ts` | Builds LLM-visible `<available_items>` listing with scope tags |
 | `mcp-capability-formatter.ts` | Lists skill-embedded MCP tools/resources/prompts for `skill_mcp` calls |
+| `skill-mcp-authority.ts` | Builds `SkillMcpClientInfo` for a skill-embedded server: realpath/provenance + user-allowed-path checks, checked reads of SKILL.md and `.mcp.json` |
 | `session-skill-cache.ts` | Dedupes repeated skill loads per session via `seenSessionIDs` |
 | `types.ts` | `SkillArgs`, `SkillInfo`, `SkillLoadOptions` |
 | `constants.ts` | Tool name and description prefix |

@@ -1,4 +1,6 @@
-# src/config-migration/ - Legacy Config Discovery + Transforms
+# src/config-migration/ — Legacy Config Discovery + Transforms
+
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
@@ -11,13 +13,16 @@ Discovers legacy config files (oh-my-opencode/oh-my-openagent JSON[C], `~/.omo/c
 | Which files count as legacy | `discovery.ts` + `discovery-roots.ts` + `discovery-paths.ts` (ids `OPENCODE_CONFIG_MIGRATION_ID`, `CONFIG_JSONC_MIGRATION_ID`) |
 | Plan building | `migration-plans.ts` (`createLegacyConfigMigrationPlans`) |
 | Plan execution | `migration-executor.ts` (`executeLegacyConfigMigrationPlan`) |
-| Content transforms | `transform-opencode.ts` / `transform-config-jsonc.ts` |
-| Reasoning-key unification | `reasoning-unification.ts` (`REASONING_UNIFICATION_MIGRATION_ID`, fixtures under `2026-08-reasoning-unification/`) |
+| Content transforms | `transform-opencode.ts` / `transform-config-jsonc.ts` (shared shapes in `transform-types.ts`) |
+| Reasoning-key unification | `reasoning-unification.ts` (`REASONING_UNIFICATION_MIGRATION_ID`; fixtures `2026-08-reasoning-unification/`) |
+| Subscription provider rename | `subscription-provider-rename.ts` (fixtures `2026-09-subscription-provider-rename/`) |
+| Category deep split / harness rename | `category-deep-split.ts` / `harness-native-rename.ts` |
 | Historical migration ids | `legacy-history.ts` |
+| Support helpers | `record-values.ts`, `schema-url.ts`, barrel `index.ts` |
 
 ## CONVENTIONS
 
-- Transforms are pure: they take loaded sources and return `ConfigMigrationTransformResult`; all filesystem side effects go through the omo-config-core engine.
+- Transforms are pure: they take loaded sources and return typed transform results; all filesystem side effects go through the omo-config-core engine.
 - Every migration is identified by a stable id recorded in `_migrations`; never reuse or rename shipped ids (append to `legacy-history.ts` instead).
 - `deep-diff.ts` backs no-clobber semantics: existing target values always win over migrated values.
 

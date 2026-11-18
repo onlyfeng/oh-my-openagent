@@ -1,10 +1,10 @@
 # src/hooks/anthropic-context-window-limit-recovery/ (Multi-Strategy Context Recovery)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-05-15 · **Updated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
-~39 files (~5.5k LOC incl. tests; `storage/` subdir persists tool results). Most complex hook. Recovers from context window limit errors via multiple strategies applied in sequence.
+49 TS files + this doc (~5.5k LOC incl. tests; `storage/` subdir persists tool results). Most complex hook in `src/hooks/`. Recovers from context window limit errors via multiple strategies applied in sequence. Entry `index.ts` exports `createAnthropicContextWindowLimitRecoveryHook(ctx, options)` with an injectable-dependency seam (`executeCompact`, `getLastAssistant`, `log`, `parseAnthropicTokenLimitError`) used by tests.
 
 ## RECOVERY STRATEGIES (in priority order)
 
@@ -28,6 +28,11 @@
 | `storage.ts` | Persist tool results for later truncation |
 | `tool-result-storage.ts` | Store/retrieve individual tool call results |
 | `message-builder.ts` | Build retry messages after recovery |
+| `client.ts` | `Client` type the hook needs beyond `PluginInput`: `session.promptAsync` + `tui.showToast` |
+| `session-timeout-map.ts` | `clearSessionTimeout` / `clearAllSessionTimeouts` — per-session timers must be cleared (300 ms debounce before compaction) |
+| `message-storage-directory.ts` | `getMessageIds(sessionID)` over the shared `getMessageDir` |
+| `storage-paths.ts` | `MESSAGE_STORAGE_DIR` / `PART_STORAGE_DIR` re-exports + `TRUNCATION_MESSAGE` |
+| `tool-part-types.ts` | `StoredToolPart`, `ToolResultInfo` shapes |
 
 ## RETRY CONFIG
 
@@ -36,6 +41,7 @@
 - Max truncation attempts: 20
 - Target token ratio: 0.5 (truncate to 50% of limit)
 - Chars per token estimate: 4
+- Min output size eligible for truncation: 500 chars (`minOutputSizeToTruncate`)
 
 ## PRUNING SYSTEM
 
@@ -47,3 +53,7 @@
 ## SDK VARIANTS
 
 `empty-content-recovery-sdk.ts` and `tool-result-storage-sdk.ts` provide SDK-based implementations for OpenCode client interactions.
+
+## STORAGE SUBDIR (`storage/`, 11 files)
+
+Readers/writers over OpenCode's on-disk message/part storage: `messages-reader.ts` + `parts-reader.ts` (stream entries), `message-dir.ts`, `part-id.ts` / `part-content.ts`, `text-part-injector.ts`, `empty-messages.ts` / `empty-text.ts` (empty-content recovery primitives), `constants.ts`, `types.ts` (`StoredMessageMeta`, `StoredTextPart`, `StoredToolPart`); `readers-from-sdk.test.ts` pins the SDK parity.

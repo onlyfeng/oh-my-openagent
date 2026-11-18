@@ -1,6 +1,6 @@
 # src/features/claude-code-mcp-loader/ — Tier 2 MCP Loader (.mcp.json)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
@@ -56,6 +56,7 @@ loadMcpConfigs(ctx)
 | `env-expander.ts` | `expandEnvVarsInObject()` — recursive `${VAR}` substitution |
 | `transformer.ts` | Claude Code format → OpenCode `Mcp` shape |
 | `scope-filter.ts` | Project vs user scope precedence |
+| `configure-allowed-env-vars.ts` | Resolves the `mcp_env_allowlist` config into the expansion allowlist |
 
 ## THREE-TIER MCP CONTEXT
 

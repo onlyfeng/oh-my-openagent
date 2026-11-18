@@ -1,6 +1,6 @@
 # src/features/opencode-skill-loader/ — 4-Scope Skill Discovery
 
-**Generated:** 2026-05-15
+**Generated:** 2026-05-15 / refreshed 2026-11-18
 
 ## OVERVIEW
 
@@ -21,13 +21,19 @@ Same-named skill at higher scope overrides lower.
 
 | File | Purpose |
 |------|---------|
+| `index.ts` | Re-export shim over `@oh-my-opencode/skills-loader-core/opencode-skill-loader` |
 | `loader.ts` | Main `loadSkills()` — orchestrates discovery → parse → merge |
-| `merger.ts` | Priority-based deduplication across scopes |
+| `merger.ts` + `merger/` | Priority-based deduplication across scopes; the subdir holds the complex name/MCP overlap cases (see MERGER SUBDIRECTORY below) |
 | `skill-content.ts` | YAML frontmatter parsing from SKILL.md |
-| `skill-discovery.ts` | Find SKILL.md files in directory trees |
-| `skill-directory-loader.ts` | Load all skills from a single directory |
+| `skill-discovery.ts` / `skill-directory-loader.ts` | Find SKILL.md files in directory trees; load one directory |
+| `loaded-skill-from-path.ts` / `loaded-skill-template-extractor.ts` | Build a loaded skill from a single path; extract template bodies |
 | `skill-template-resolver.ts` | Variable substitution in skill templates |
 | `skill-mcp-config.ts` | Extract MCP configs from skill YAML |
+| `allowed-tools-parser.ts` | Parse `allowed-tools` frontmatter |
+| `skill-deduplication.ts` / `skill-definition-record.ts` | Post-merge dedup; per-skill definition records |
+| `git-master-template-injection.ts` | Git-master commit-attribution template injection |
+| `opencode-shell-skill-content.ts` | OpenCode shell-skill content shaping |
+| `skill-resolution-options.ts` | Resolution options plumbed through discovery/merge |
 | `types.ts` | `LoadedSkill`, `SkillScope`, `SkillDiscoveryResult` |
 
 ## SKILL FORMAT (SKILL.md)

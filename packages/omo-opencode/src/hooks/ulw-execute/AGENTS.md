@@ -1,6 +1,6 @@
 # src/hooks/ulw-execute/ -- /ulw-execute Command Handler
 
-**Generated:** 2026-08-17
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 

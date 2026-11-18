@@ -1,23 +1,10 @@
 # src/ - Plugin Source
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
-## STOP. THIS IS THE OPENCODE PLUGIN. QA IS MANDATORY. EVERY SINGLE TIME YOU CHANGE ANYTHING HERE.
+## QA (BINDING)
 
-> **EVERYTHING UNDER THIS `src/` IS WIRED DIRECTLY INTO OPENCODE. IF YOU EDIT A HOOK, A TOOL, AN AGENT, A FEATURE, A CONFIG SCHEMA, AN MCP, A CLI COMMAND, A PLUGIN HANDLER, OR ANYTHING ELSE IN HERE, YOU MUST QA IT AGAINST REAL OPENCODE. ALWAYS. EVERY SINGLE TIME. NO EXCEPTIONS.**
-
-**"It typechecks" is NOT QA. "`bun test` is green" is NOT QA.** YOU MUST DRIVE REAL OPENCODE AND RECORD THE EVIDENCE TO DISK. NO EVIDENCE == NO QA == NO COMMIT == NO PUSH.
-
-**ALWAYS RUN THE `opencode-qa` SKILL** (`.agents/skills/opencode-qa/`) to map the EXPECTED IMPACT and the FULL CHANGE SCOPE of your edit:
-
-1. **MAP THE BLAST RADIUS** with the skill router (CLI / server + SSE hook proof / TUI smoke / DB inspection), BEFORE and AFTER your change.
-2. **ISOLATE EVERYTHING.** Any QA that SPAWNS opencode MUST run in an isolated XDG sandbox (`XDG_DATA_HOME` / `XDG_CONFIG_HOME` / `XDG_STATE_HOME` / `XDG_CACHE_HOME` pointed at temp dirs). **NEVER pollute the real `~/.local/share/opencode/opencode.db`.** PROVE it: `SELECT count(*) FROM session` unchanged before vs after.
-3. **PROVE THE HOOK / EVENT FIRED.** Changed a lifecycle hook? Prove the matching event hit the wire (`scripts/sse-hook-probe.sh --event <name>`). Changed a tool? Drive it via `opencode run --format json` and assert on the structured events.
-4. **USE tmux** for TUI smoke (`scripts/tui-smoke.sh`) and interactive driving; assert REAL behavior via `opencode run` or the server API + SSE, not the TUI pane.
-
-**RECORD THE EVIDENCE UNDER `.omo/evidence/<YYYYMMDD>-<short-slug>/`** (one organized subfolder per change; the directory is gitignored, so the files stay local and the PR body carries the summary): WHY THERE IS NO REGRESSION (before/after + isolation proof + exact commands and output) and PROOF THAT EVERY INTENDED CHANGE LANDED (new behavior observed on real opencode). See the root [`AGENTS.md`](../../../AGENTS.md) "STOP. QA IS MANDATORY" section for the full mandate, which also covers the Codex side.
-
-**ALWAYS. EVERY TIME. NO EXCEPTIONS.**
+Everything under `src/` is wired directly into OpenCode: any change here (hook, tool, agent, feature, config schema, MCP, CLI command, plugin handler) MUST run the `opencode-qa` skill (`.agents/skills/opencode-qa/`) in an isolated XDG sandbox (never pollute the real `~/.local/share/opencode/opencode.db`) and record evidence under `.omo/evidence/<YYYYMMDD>-<short-slug>/`. "It typechecks" and "`bun test` is green" are NOT QA: drive real OpenCode and prove both no regression and that every intended change landed. Full mandate: root [`AGENTS.md`](../../../AGENTS.md) QA GATE.
 
 ## OVERVIEW
 
@@ -32,101 +19,46 @@ Entry `index.ts` is a thin wrapper: it builds the `PluginModule` via `createPlug
 | `opencode-v2/server-entry.ts` | OpenCode v2 server entry (`opencodeV2Server.setup`) |
 | `plugin-config.ts` | JSONC parse, multi-level merge (user + walked project), Zod v4 validation, migration |
 | `plugin-state.ts` | `createModelCacheState()`: model resolution cache shared across handlers |
-| `plugin-interface.ts` | 12 OpenCode hook handlers wired into `Hooks` (a further 2, `experimental.session.compacting` + `experimental.compaction.autocontinue`, are wired in `src/testing/create-plugin-module.ts`, for 14 total) |
+| `plugin-interface.ts` | 12 OpenCode hook handlers wired into `Hooks`; 2 more (`experimental.session.compacting` + `experimental.compaction.autocontinue`) wire in `create-plugin-module.ts` (14 total) |
 | `create-managers.ts` | TmuxSessionManager, BackgroundManager, SkillMcpManager, ConfigHandler |
 | `create-tools.ts` | SkillContext + AvailableCategories + ToolRegistry composition |
 | `create-hooks.ts` | 5-tier composition: `createCoreHooks() + createContinuationHooks() + createSkillHooks()` |
-| `create-runtime-tmux-config.ts` | `isTmuxIntegrationEnabled()` + `createRuntimeTmuxConfig()` |
 
 ## INITIALIZATION (`createPluginModule()`)
 
 ```
 serverPlugin(input, options)
-  installAgentSortShim()           # canonical agent ordering shim over Array.prototype.{toSorted,sort}
-  initConfigContext()              # opencode-vs-openagent layout flag
-  logLegacyPluginStartupWarning()  # warn on the legacy oh-my-opencode entry
-  migrateLegacyWorkspaceDirectory()# copy .sisyphus/ state forward to .omo/
-  detectDuplicateOmoPlugin()       # early exit on a duplicate omo/openagent plugin
-  detectExternalSkillPlugin()      # warn on skill-plugin conflicts
-  injectServerAuthIntoClient()     # auth headers into the shared SDK client
-  loadPluginConfig()               # user + walked project JSONC -> Zod safeParse -> migrate
-  recordPluginTelemetry()
-  ensureTuiPluginEntry()           # always; BTW stays available when the sidebar is off
+  installAgentSortShim() + initConfigContext() + logLegacyPluginStartupWarning()
+  migrateLegacyWorkspaceDirectory()   # copy .sisyphus/ state forward to .omo/
+  detectDuplicateOmoPlugin() + detectExternalSkillPlugin()   # dup-plugin early exit; skill-plugin warn
+  injectServerAuthIntoClient()       # auth headers into the shared SDK client
+  loadPluginConfig() + recordPluginTelemetry()
+  ensureTuiPluginEntry()             # always; BTW stays available when the sidebar is off
   initLiveServerRoute() + setLiveParentWakeRoutingDisabled() + warmLiveServerProbe()
   selectRuntimeSecuritySkills() + createRuntimeSkillSourceServer()
-  initI18n()                       # locales/ strings
-  setAgentSortOrder()              # configured agent_order
-  initializeOpenClaw()             # only when openclaw config exists
-  checkTeamModeDependencies()      # only when team_mode.enabled
-  startTmuxCheck()                 # only when tmux integration is on
+  initI18n() + setAgentSortOrder()   # locales/ strings; configured agent_order
+  initializeOpenClaw()               # only when openclaw config exists
+  checkTeamModeDependencies() + startTmuxCheck()   # only when team_mode.enabled / tmux on
   createManagers() -> createTools() -> createHooks() -> createPluginInterface()
-  createPluginDispose()            # adds session.compacting + compaction.autocontinue + dispose
+  createPluginDispose()              # session.compacting + compaction.autocontinue + dispose
 ```
 
-## CONFIG LOADING (Phase pipeline)
+## CONFIG LOADING
 
-```
-loadPluginConfig(directory, ctx)
-  1. User: ~/.omo/omo.jsonc
-  2. Walked configs: <pwd up to $HOME>/.omo/omo.jsonc
-  3. mergeConfigs(user, walked)
-     - agents/categories/claude_code: deepMerge (recursive, prototype-pollution safe)
-     - disabled_*: Set union
-     - mcp_env_allowlist: user-only (security)
-     - playwright_mcp_args: user-only (security)
-     - others: override replaces
-  4. Zod safeParse → defaults for omitted fields
-  5. Legacy configuration is migrated once at startup into the unified OMO chain
-```
+`loadPluginConfig(directory, ctx)`: 1. user `~/.omo/omo.jsonc`; 2. walked `<pwd up to $HOME>/.omo/omo.jsonc`; 3. `mergeConfigs` — `agents`/`categories`/`claude_code` deepMerge (recursive, prototype-pollution safe), `disabled_*` Set union, `mcp_env_allowlist` + `playwright_mcp_args` user-only (security), others override-replace; 4. Zod safeParse fills defaults; 5. legacy config migrated once at startup into the unified OMO chain.
 
 ## HOOK COMPOSITION (5-tier)
 
-Counts verified from each composer's return object. Numbers in brackets show counts when `team_mode.enabled`.
-
-```
-createHooks()
-  ├─→ createCoreHooks()
-  │   ├─ createSessionHooks()     # 23: preemptiveCompaction,
-  │   │                             sessionNotification, thinkMode, modelFallback,
-  │   │                             anthropicContextWindowLimitRecovery, autoUpdateChecker,
-  │   │                             astGrepSgProvision,
-  │   │                             agentUsageReminder, nonInteractiveEnv, interactiveBashSession,
-  │   │                             goal, editErrorRecovery, delegateTaskRetry, ulwExecute,
-  │   │                             prometheusMdOnly, sisyphusJuniorNotepad, noSisyphusGpt,
-  │   │                             noHephaestusNonGpt, hephaestusAgentsMdInjector,
-  │   │                             questionLabelTruncator, taskResumeInfo,
-  │   │                             runtimeFallback, legacyPluginToast
-  │   ├─ createToolGuardHooks()   # 17 [+1 with team-mode]: commentChecker, toolOutputTruncator,
-  │   │                             directoryAgentsInjector, directoryReadmeInjector,
-  │   │                             emptyTaskResponseDetector, rulesInjector, tasksTodowriteDisabler,
-  │   │                             writeExistingFileGuard, bashFileReadGuard, hashlineReadEnhancer,
-  │   │                             jsonErrorRecovery, readImageResizer, todoDescriptionOverride,
-  │   │                             webfetchRedirectGuard, fsyncSkipWarning,
-  │   │                             notepadWriteGuard, planFormatValidator [+ teamToolGating]
-  │   └─ createTransformHooks()   # 4 [+2 team-mode, +1 monitor-gated]: claudeCodeHooks,
-  │                                  keywordDetector, contextInjectorMessagesTransform,
-  │                                  toolPairValidator [+ teamModeStatusInjector,
-  │                                  teamMailboxInjector, monitorStatusInjector (monitor.enabled)]
-  ├─→ createContinuationHooks()   # 7: stopContinuationGuard, compactionContextInjector,
-  │                                  compactionTodoPreserver, todoContinuationEnforcer (boulder),
-  │                                  unstableAgentBabysitter, backgroundNotificationHook, atlasHook
-  └─→ createSkillHooks()          # 2: categorySkillReminder, autoSlashCommand
-
-  Direct event handlers (src/plugin/event.ts, when team_mode.enabled): +4
-    team-idle-wake-hint, team-lead-orphan-handler,
-    team-member-error-handler, team-member-status-handler
-```
-
-Total: 54 base, 61 with team-mode, 62 with monitor enabled. Authoritative per-tier breakdown: [`hooks/AGENTS.md`](hooks/AGENTS.md). Each tier produces an object whose values are `(input, output) => void` handlers; the matching OpenCode handler invokes them in registration order via `safeHook()` wrappers.
+`createHooks()` = `createCoreHooks()` (session 23 / tool-guard 17 [+1 team-mode] / transform 4 [+2 team-mode, +1 monitor-gated]) + `createContinuationHooks()` (7) + `createSkillHooks()` (2), plus 4 direct team event handlers in `plugin/event.ts` (team-idle-wake-hint, team-lead-orphan-handler, team-member-error-handler, team-member-status-handler). Totals: 54 base, 61 with team-mode, 62 with monitor. Authoritative per-tier roster: [`hooks/AGENTS.md`](hooks/AGENTS.md). Each tier produces an object whose values are `(input, output) => void` handlers; the matching OpenCode handler invokes them in registration order via `safeHook()` wrappers.
 
 ## SUBSYSTEM INVENTORY
 
 | Subdir | Purpose | Has AGENTS.md |
 |--------|---------|---------------|
-| `agents/` | 11 agent factories + dynamic prompt builder | yes (+ atlas, hephaestus, prometheus, sisyphus, sisyphus-junior, builtin-agents) |
-| `hooks/` | 54-62 lifecycle hooks across 62 dirs | yes (+ atlas, anthropic-context-window-limit-recovery, auto-update-checker, claude-code-hooks, comment-checker, compaction-context-injector, keyword-detector, ralph-loop, rules-injector, runtime-fallback, todo-continuation-enforcer) |
+| `agents/` | 11 agent factories + dynamic prompt builder | yes (+ atlas, hephaestus, prometheus, sisyphus-junior, builtin-agents) |
+| `hooks/` | 54-62 lifecycle hooks across 61 dirs | yes |
 | `tools/` | 14 native tool dirs (+1 shared utilities dir); LSP + AST-grep moved to built-in MCPs | yes (+ background-task, call-omo-agent, delegate-task, hashline-edit, look-at, skill) |
-| `features/` | 24 feature modules (including `btw-side`, `opengateway-provider`; some now shimming `team-core`, `tmux-core`, `skills-loader-core`, `mcp-client-core`, and `claude-code-compat-core`) | yes (+ 16 sub-AGENTS.md including team-mode, background-agent, btw-side, claude-code-*) |
+| `features/` | 24 feature modules (incl. `btw-side`, `opengateway-provider`; some now shimming `team-core`, `tmux-core`, `skills-loader-core`, `mcp-client-core`, `claude-code-compat-core`) | yes (+ 17 sub-AGENTS.md incl. team-mode, background-agent, btw-side, claude-code-*) |
 | `shared/` | Cross-cutting adapter utilities plus shims over extracted Core packages, barrel-exported | yes |
 | `cli/` | Commander.js CLI: install, run, doctor, mcp-oauth, boulder | yes (+ config-manager, doctor, run) |
 | `plugin/` | 12 OpenCode hook handlers + hook composition | yes |
@@ -137,9 +69,7 @@ Total: 54 base, 61 with team-mode, 62 with monitor enabled. Authoritative per-ti
 | `mcp/` | 4 built-in MCPs (3 remote + local stdio lsp) | yes |
 | `testing/` | Test utilities + `create-plugin-module.ts` | yes |
 | `config-migration/` | Legacy config discovery + transform plans (consumed by senpi config-startup + codex startup) | yes |
-| `types/` | Ambient `.d.ts` declarations (markdown modules) | no |
-| `help/` | CLI help schema definitions (acp, doctor, sandbox, status) | no |
-| `locales/` | i18n strings (en, zh): toasts + model-fallback labels | no |
+| `types/`, `help/`, `locales/` | Ambient `.d.ts` (markdown modules); CLI help schemas (acp, doctor, sandbox, status); i18n strings (en, zh) toasts + model-fallback labels | no |
 
 ## NOTES
 

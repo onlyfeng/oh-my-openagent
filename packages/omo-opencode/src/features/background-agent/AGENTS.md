@@ -1,10 +1,10 @@
 # src/features/background-agent/ — Core Orchestration Engine
 
-**Generated:** 2026-05-20
+**Generated:** 2026-05-20 · **Updated:** 2026-11-18
 
 ## OVERVIEW
 
-50 non-test files (~110 `.ts` total incl. tests + `spawner/`). Manages async task lifecycle: launch → queue → run → poll → complete/error. Concurrency limited per model/provider (default 5). Central to multi-agent orchestration.
+53 prod modules (49 top-level + 4 in `spawner/`); 125 `.ts` total incl. 72 test files. Manages async task lifecycle: launch → queue → run → poll → complete/error. Concurrency limited per model/provider (default 5). Central to multi-agent orchestration. `manager.ts` (3.6k LOC) and `manager.test.ts` (9.0k LOC) dominate the prod/test surfaces.
 
 ## TASK LIFECYCLE
 
@@ -16,8 +16,8 @@ LaunchInput → pending → [ConcurrencyManager queue] → running → polling �
 
 | File | Purpose |
 |------|---------|
-| `manager.ts` | `BackgroundManager` — main class (3.2k LOC, the production hotspot): launch, cancel, resume, getTask, listTasks, event handling, stale cleanup, archive |
-| `spawner.ts` | Task spawning: create session → inject prompt → start polling |
+| `manager.ts` | `BackgroundManager` — main class (3.6k LOC, the production hotspot): launch, cancel, resume, getTask, listTasks, event handling, stale cleanup, archive |
+| `spawner.ts` | Task spawning: `createTask`/`startTask`/`resumeTask` over `SpawnerContext`; prompt/record/fallback/tmux pieces live in `spawner/` |
 | `concurrency.ts` | `ConcurrencyManager` — FIFO queue per concurrency key, slot acquisition/release |
 | `task-poller.ts` | 3s interval polling, completion via idle events + stability detection (10s unchanged) |
 | `types.ts` | `BackgroundTask`, `LaunchInput`, `ResumeInput`, `BackgroundTaskStatus` |
@@ -36,15 +36,19 @@ LaunchInput → pending → [ConcurrencyManager queue] → running → polling �
 | `abort-with-timeout.ts` | Force-abort tasks past `syncPollTimeoutMs`. |
 | `remove-task-toast-tracking.ts` | Strips lingering toast tracker entries on task end. |
 | `background-task-notification-template.ts` | Template for parent-session result injection. |
+| `index.ts` | Feature barrel: `types.ts` re-exports + `BackgroundManager` + `waitForTaskSessionID`. |
+| `task-registry.ts` / `task-snapshot.ts` | Process-global active/completed task registry (100 completed cap) on `globalThis`; frozen UI snapshots. |
+| `wait-for-task-session.ts` | Bounded poll of `getTask` for the child session id (exported from the barrel). |
+| `session-stopped-on-error.ts` | `MIN_ERRORED_IDLE_POLLS` (10 ≈ 30s): an errored session only counts as stopped when nothing re-prompts it. |
 
 ## SPAWNER SUBDIRECTORY
 
 | File | Purpose |
 |------|---------|
-| `spawner-context.ts` | `SpawnerContext` interface composing all spawner deps |
-| `background-session-creator.ts` | Create OpenCode session for background task |
-| `concurrency-key-from-launch-input.ts` | Derive concurrency key from model/provider |
-| `tmux-callback-invoker.ts` | Notify TmuxSessionManager on session creation |
+| `fallback-agent.ts` | `FALLBACK_AGENT` + `buildFallbackBody` + `isAgentNotFoundError` for the runtime-fallback path |
+| `task-prompt-body.ts` | Builds the task prompt body |
+| `task-record.ts` | `buildTaskRecord` — the `bg_<uuid8>` task record |
+| `tmux-callback-invoker.ts` | `invokeTmuxSessionCreatedCallback`: fire-and-forget TmuxSessionManager notify on session creation, gated on `tmuxEnabled && !suppress`; fires immediately — `TMUX_CALLBACK_DELAY_MS = 200` sits in `constants.ts` but is no longer applied here |
 
 ## COMPLETION DETECTION
 
@@ -52,17 +56,19 @@ Two signals combined:
 1. **Session idle event** — OpenCode reports session became idle
 2. **Stability detection** — message count unchanged for 10s (3+ stable polls at 3s interval)
 
-Both must agree before marking a task complete. Prevents premature completion on brief pauses.
+Both must agree before marking a task complete. Prevents premature completion on brief pauses. On completion, `result-handler` → `parent-session-notifier` injects a system message into the parent session.
 
 ## CONCURRENCY MODEL
 
-- Key format: `{providerID}/{modelID}` (e.g., `anthropic/claude-opus-4-7`)
-- Default limit: 5 concurrent per key (configurable via `background_task` config)
+- Key format: `{providerID}/{modelID}` (e.g., `anthropic/claude-opus-4-7`), or the agent name when no model is set
+- Default limit: 5 concurrent per key (`BackgroundTaskConfig`; per-model `modelConcurrency` override, `0` = unlimited, provider-level fallback)
 - FIFO queue: tasks wait in order when slots full
 - Slot released on: completion, error, cancellation
 
-## NOTIFICATION FLOW
+## COMMANDS
 
+```bash
+bun test --timeout 20000 packages/omo-opencode/src/features/background-agent   # focused suite
 ```
-task completed → result-handler → parent-session-notifier → inject system message into parent session
-```
+
+`constants.ts`: poll 3s, stability 10s, min idle 5s, task TTL 30m, stale timeout 45m, max tool calls 4000, circuit breaker default-on at 20 consecutive failures.

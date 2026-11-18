@@ -1,10 +1,10 @@
 # src/hooks/auto-update-checker/ -- npm Update Detection
 
-**Generated:** 2026-05-18
+**Generated:** 2026-11-18 / c2691818a9 (update pass)
 
 ## OVERVIEW
 
-~41 code files. Session Tier hook on `session.created`. Checks the npm registry for newer plugin versions, compares against the installed version, and surfaces update availability via startup toasts. Caches results to avoid repeated registry fetches. Throttled per channel (`latest`, `next`, `beta`). Skips CLI run mode and subagent sessions.
+45 code files (12 top-level, `checker/` 22, `hook/` 11). Session Tier hook on `session.created`. Checks the npm registry for newer plugin versions, compares against the installed version, and surfaces update availability via startup toasts. Caches results to avoid repeated registry fetches. Throttled per channel (`latest`, `next`, `beta`). Skips CLI run mode and subagent sessions.
 
 ## FILE CATALOG
 
@@ -20,8 +20,8 @@
 
 ## SUBDIRECTORIES
 
-- `checker/` -- 11 files. Core version checking logic: `check-for-update.ts`, `latest-version.ts`, `local-dev-version.ts`, `plugin-entry.ts`, `cached-version.ts`, `pinned-version-updater.ts`, `sync-package-json.ts`, plus helpers.
-- `hook/` -- 9 files. Startup UX: `background-update-check.ts`, `deferred-startup-check.ts`, `startup-toasts.ts`, `update-toasts.ts`, `spinner-toast.ts`, `config-errors-toast.ts`, `connected-providers-status.ts`, `model-capabilities-status.ts`, `model-cache-warning.ts`.
+- `checker/` -- 22 files. Core version checking logic: `check-for-update.ts`, `latest-version.ts`, `local-dev-version.ts` (+ `local-dev-path.ts`), `plugin-entry.ts` (+ `package-json-locator.ts`), `cached-version.ts`, `bundled-version.ts`, `pinned-version-updater.ts`, `sync-package-json.ts`, `sandbox-refresh.ts`, `semver-compare.ts`, `config-paths.ts`, `jsonc-strip.ts`, `catch-fallbacks.ts`, plus tests.
+- `hook/` -- 11 files. Startup UX: `background-update-check.ts` (+ test), `deferred-startup-check.ts`, `startup-toasts.ts`, `update-toasts.ts`, `spinner-toast.ts`, `config-errors-toast.ts`, `connected-providers-status.ts`, `model-capabilities-status.ts`, `model-cache-warning.ts`, `ignore-toast-error.ts`.
 
 ## CACHE
 

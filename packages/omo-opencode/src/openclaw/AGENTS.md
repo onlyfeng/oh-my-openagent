@@ -1,75 +1,36 @@
-# src/openclaw/ — Bidirectional External Integration
+# src/openclaw/ — OpenClaw Adapter Shims (implementation in openclaw-core)
 
-**Generated:** 2026-05-15
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
-This module provides a bidirectional integration system: **outbound** session event notifications (Discord/Telegram/HTTP webhook/shell command) AND **inbound** reply handling (daemon polls chat apps, injects replies back into tmux session). Harness-neutral gateway, daemon, session registry, and tmux injection primitives are extracted to [`packages/openclaw-core/`](../../../../packages/openclaw-core); this directory keeps OpenCode startup/event wiring stable.
+Every `.ts` file here (except `AGENTS.md`) is a ONE-LINE re-export shim: `export * from "@oh-my-opencode/openclaw-core/<module>"`. The harness-neutral gateway, daemon, session registry, and tmux-injection primitives live in [`packages/openclaw-core/`](../../../openclaw-core/AGENTS.md); this directory exists only to keep the OpenCode import paths (`../openclaw`, `../openclaw/reply-listener-*`, ...) stable while the implementation moves. Do NOT add logic here — extend `openclaw-core` and keep the shim. `__tests__/config.test.ts` is the only real code (config parsing contract).
 
-## BIDIRECTIONAL FLOW
+## FLOW (semantics live in openclaw-core)
 
-### Outbound (OpenCode → External)
-```
-OpenCode session event → dispatchOpenClawEvent()
-  → runtime-dispatch.ts: map event to OpenClaw event
-  → openclaw-core dispatcher.ts: execute gateway (HTTP POST or shell command)
-  → openclaw-core session-registry.ts: record message ID ↔ sessionID ↔ tmux pane
-```
+- Outbound: OpenCode session event -> `runtime-dispatch.ts` (maps event -> OpenClaw event) -> core `dispatcher.ts` (HTTP POST or shell command) -> core `session-registry.ts` (records message id ↔ session ↔ tmux pane).
+- Inbound: Discord/Telegram API -> `reply-listener.ts` daemon (detached Bun process, `daemon.ts` entry; polls every 3s; state in `reply-listener-state.ts`) -> core session-registry lookup -> core `reply-listener-injection.ts` send-keys into the tmux pane (rate limited).
+- Gateways: HTTP webhook (`url`) or shell command (`command`); payload interpolation `{sessionId}`, `{projectPath}`, `{tmuxSession}`, `{timestamp}`, `{eventType}`, `{messageContent}`, `{promptSummary}`.
 
-### Inbound (External → OpenCode)
-```
-Discord/Telegram API → reply-listener daemon (separate Bun process)
-  → reply-listener-{discord,telegram}.ts: poll every 3s
-  → openclaw-core session-registry.ts: look up target tmux session from message ID
-  → openclaw-core reply-listener-injection.ts: send-keys into tmux pane (rate limited)
-```
+## WHERE TO LOOK
 
-## KEY FILES
+| Task | Location |
+|------|----------|
+| Change dispatch/daemon/registry/injection behavior | `packages/openclaw-core/src/` (this dir only re-exports) |
+| Startup wiring | `index.ts` shim re-exports `initializeOpenClaw()`; invoked as `deps.initializeOpenClaw(pluginConfig.openclaw)` in `src/testing/create-plugin-module.ts` (only when the openclaw config exists) |
+| Event wiring | `src/plugin/event.ts` calls `dispatchOpenClawEvent()` for session.created/deleted/idle |
+| Config schema | `src/config/schema/openclaw.ts` (Zod); URL validation (HTTPS except localhost) in core `config.ts` |
+| Daemon state | `.opencode/openclaw.state.json` (PID, config signature); `reply-listener-status.ts` / `-stop.ts` / `-startup.ts` / `-spawn.ts` / `-poll-loop.ts` / `-sleep.ts` / `-signature.ts` / `-log.ts` / `-paths.ts` / `-process.ts` cover the daemon lifecycle shims |
 
-| File | Purpose |
-|------|---------|
-| `index.ts` | `wakeOpenClaw()`, `initializeOpenClaw()` — main entry |
-| `types.ts` | `OpenClawConfig`, `OpenClawPayload`, `WakeResult` types |
-| `runtime-dispatch.ts` | Maps OpenCode events → OpenClaw events, orchestrates dispatch |
-| `reply-listener.ts` | Daemon lifecycle: start/stop, poll loop, state persistence |
-| `reply-listener-discord.ts` | Discord API polling |
-| `reply-listener-telegram.ts` | Telegram API polling |
-| `reply-listener-state.ts` | Daemon state: PID, config signature, poll tracking |
-| `daemon.ts` | Daemon entry point (runs as detached Bun process) |
+## ANTI-PATTERNS
 
-Gateway resolution + URL validation (`config.ts`), HTTP/shell dispatch (`dispatcher.ts`), the session registry (`session-registry.ts`), reply injection (`reply-listener-injection.ts`), and the tmux helpers (`tmux.ts`) live only in `packages/openclaw-core/src/`; import them from `@oh-my-opencode/openclaw-core/*`.
+- NEVER implement behavior in a shim file; a shim's whole body is the single `export * from` line.
+- Security invariants (enforced in core): HTTPS required except localhost; inbound replies filtered by authorized user id list; secrets masked in logs; per-pane rate limiting.
 
-## GATEWAY TYPES
+## COMMANDS
 
-| Type | Config | Execution |
-|------|--------|-----------|
-| **HTTP webhook** | `url` field | POST with JSON payload |
-| **Shell command** | `command` field | Execute with env vars (OPENCLAW_*) |
-
-## PAYLOAD VARIABLES (interpolation)
-
-`{sessionId}`, `{projectPath}`, `{tmuxSession}`, `{timestamp}`, `{eventType}` (session.created/deleted/idle), `{messageContent}`, `{promptSummary}`
-
-## INTEGRATION POINTS
-
-- `src/index.ts` — calls `initializeOpenClaw(pluginConfig.openclaw)` at plugin startup (if `enabled`)
-- `src/plugin/event.ts` — calls `dispatchOpenClawEvent()` for session.created/deleted/idle
-- `src/config/schema/openclaw.ts` — Zod config schema
-
-## DAEMON LIFECYCLE
-
-```
-initializeOpenClaw(config)
-  → wakeOpenClaw() if reply_listener.enabled
-  → spawn daemon.ts as detached process
-  → daemon writes PID to .opencode/openclaw.state.json
-  → daemon polls Discord/Telegram every 3s
-  → on reply: lookup in session-registry → inject into tmux via send-keys
+```bash
+bun test packages/omo-opencode/src/openclaw   # config.test.ts
 ```
 
-## SECURITY
-
-- **URL validation**: HTTPS required except localhost (openclaw-core `config.ts`)
-- **Authorized users**: Inbound replies filtered by allowed user ID list
-- **Token redaction**: Secrets masked in logs and error messages
-- **Rate limiting**: Reply injection throttled per pane
+Parent: [`../AGENTS.md`](../AGENTS.md).

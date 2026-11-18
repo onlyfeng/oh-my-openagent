@@ -1,10 +1,10 @@
 # src/cli/ — CLI: install, run, doctor, config, mcp (oauth), refresh-model-capabilities, get-local-version, version, boulder, worktree-sweep, cleanup, ulw-loop
 
-**Generated:** 2026-07-03
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
-Commander.js CLI with 12 commands (`sparkshell` removed 2026-07). Entry: `index.ts` → `runCli()` in `cli-program.ts`; runtime commands registered via `configureRuntimeCommands()` in `runtime-commands.ts`.
+Commander.js CLI: 12 user-facing commands plus an internal `account keys` group (`init`/`status`) and a hidden service-auth `login` (`sparkshell` removed 2026-07). Entry: `index.ts` → `runCli()` in `cli-program.ts`; runtime commands registered via `configureRuntimeCommands()` in `runtime-commands.ts`.
 
 ## COMMANDS
 
@@ -30,21 +30,21 @@ Commander.js CLI with 12 commands (`sparkshell` removed 2026-07). Entry: `index.
 ```
 cli/
 ├── index.ts                     # Entry point → runCli()
-├── cli-program.ts               # Commander.js program (10 commands)
+├── cli-program.ts               # Wires install/run/doctor/config/get-local-version + mcp, cleanup, account, service-auth
 ├── install.ts                   # Routes to TUI or CLI installer
 ├── cli-installer.ts             # Non-interactive (console output)
 ├── tui-installer.ts             # Interactive (@clack/prompts)
 ├── model-fallback.ts            # Model config gen by provider availability
 ├── provider-availability.ts     # Provider detection
 ├── fallback-chain-resolution.ts # Fallback chain logic
-├── config-manager/              # 27 config utilities
+├── config-manager/              # 18 config modules + colocated tests
 │   ├── plugin registration, provider config
 │   ├── JSONC operations, auth plugins
 │   └── npm dist-tags, binary detection
 ├── doctor/
 │   ├── runner.ts                # Parallel check execution
 │   ├── formatter.ts             # Output formatting
-│   └── checks/                  # 25 check files (8 registered + 3 Codex-only) — see [doctor/AGENTS.md](doctor/AGENTS.md)
+│   └── checks/                  # 27 check files (9 non-Codex + 3 Codex-only registered) — see [doctor/AGENTS.md](doctor/AGENTS.md)
 ├── run/                         # Session launcher
 │   ├── runner.ts                # Main orchestration
 │   ├── agent-resolver.ts        # Flag → env → config → Sisyphus
@@ -52,7 +52,9 @@ cli/
 │   ├── event-handlers.ts        # Event processing
 │   └── poll-for-completion.ts   # Wait for todos/background tasks
 ├── worktree-sweep/               # Stale git worktree classification + sweep
-└── mcp-oauth/                   # OAuth token management
+├── mcp-oauth/                    # OAuth token management
+├── account-keys/                 # `account keys init|status`: device keyring + OS keystore
+└── service-auth/                 # Hidden service-auth `login`: device flow, browser auth, credential locks
 ```
 
 ## MODEL FALLBACK SYSTEM

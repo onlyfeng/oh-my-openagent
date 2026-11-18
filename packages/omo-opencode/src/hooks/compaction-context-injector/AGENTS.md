@@ -1,6 +1,6 @@
 # src/hooks/compaction-context-injector/ -- Post-Compaction Context Recovery
 
-**Generated:** 2026-05-18
+**Generated:** 2026-05-18 (update pass 2026-11-18 / c2691818a9)
 
 ## OVERVIEW
 

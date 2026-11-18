@@ -1,10 +1,10 @@
 # src/hooks/claude-code-hooks/ (Claude Code Compatibility)
 
-**Generated:** 2026-07-17 (7d664b96b)
+**Generated:** 2026-11-18 / c2691818a (update pass)
 
 ## OVERVIEW
 
-~5.9k LOC across 39 `.ts` files (incl. `handlers/` subdir). Claude Code `settings.json` compatibility layer. Parses CC hooks config and maps CC hook events (PreToolUse, PostToolUse, Stop, Notification, PreCompact, Session*) to OpenCode event handlers.
+~5.9k LOC across 40 `.ts` files (18 top-level source + `handlers/` with 5 event handlers; tests colocated). Claude Code `settings.json` compatibility layer. Parses CC hooks config and maps CC hook events (PreToolUse, PostToolUse, Stop, Notification, PreCompact, Session*) to OpenCode event handlers.
 
 ## WHAT IT DOES
 
@@ -51,5 +51,7 @@
 | `execute-http-hook.ts` | Execute HTTP-type CC hooks |
 | `plugin-config.ts` | `DEFAULT_CONFIG` (forceZsh, zshPath) |
 | `pre-tool-use.ts` / `post-tool-use.ts` / `stop.ts` / `user-prompt-submit.ts` / `pre-compact.ts` | Per-event CC hook handlers |
-| `handlers/` | OpenCode event handlers (tool-execute-before/after, chat-message, pre-compact, session-event) |
+| `handlers/` | OpenCode event handlers: tool-execute-before/after, chat-message, pre-compact, session-event |
+| `transcript.ts` | `getTranscriptPath` / `appendTranscriptEntry` + 5-min transcript cache (reused by `hooks/ralph-loop`) |
+| `session-hook-state.ts`, `tool-input-cache.ts`, `hook-text.ts`, `todo.ts` | Cross-event state, tool-input memoization, hook text helpers, todo mapping |
 | `types.ts` | CC type definitions |

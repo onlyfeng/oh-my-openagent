@@ -5,7 +5,7 @@ description: Developer reference for the Prometheus strategic planner agent thin
 
 # src/agents/prometheus/ -- Strategic Planner
 
-**Generated:** 2026-05-24 | **Updated:** 2026-06-15 (single thin prompt)
+**Generated:** 2026-05-24 | **Updated:** 2026-11-18 / c2691818a9 (single thin prompt)
 
 ## OVERVIEW
 
@@ -21,14 +21,14 @@ This shape follows the package layering refactor in [`ROADMAP.md`](../../../../.
 | File | Purpose |
 |------|---------|
 | `index.ts` | Barrel exports |
-| `system-prompt.ts` | Thin loader using `loadPromptSync()` from `@oh-my-opencode/prompts-core`; `getPrometheusPrompt()` always loads the same `default.md` prompt body |
+| `system-prompt.ts` | Thin loader using `loadPromptSync()` from `@oh-my-opencode/prompts-core`; `getPrometheusPrompt()` always loads the same `default.md` body, filters a fixed tool list, and adapts framing per model via `buildNativeAgentPrompt()` (`../native-model-prompt.ts`) |
 | `system-prompt.test.ts` | Runtime behavior tests for the single-prompt loader contract |
 | `packages/prompts-core/prompts/prometheus/default.md` | The single Prometheus markdown prompt asset |
 | `packages/shared-skills/skills/ulw-plan/SKILL.md` | Path-backed skill containing the full planning workflow |
 
 ## PROMPT LOADING
 
-`getPrometheusPrompt(model, disabledTools)` ignores model family for prompt selection and always loads `packages/prompts-core/prompts/prometheus/default.md`. The `model` parameter is accepted for compatibility with the agent config path, but it does not choose different prompt text.
+`getPrometheusPrompt(model?, disabledTools?)` always loads `packages/prompts-core/prompts/prometheus/default.md` — model family never selects different markdown. The body is loaded once into `PROMETHEUS_SYSTEM_PROMPT`; each call filters the fixed tool list (`read`, `grep`, `glob`, `bash`, `edit`, `write`, `question`, `skill`) by `disabledTools` and runs `buildNativeAgentPrompt(model, body, tools)` from `../native-model-prompt.ts`, so `model` now shapes native prompt framing/preset resolution while the markdown asset stays single-variant.
 
 Keep prompt edits in `default.md`. Do not add model-specific markdown files, copied prompt bodies, or adapter-side routing. If the planning workflow changes, update the `ulw-plan` skill and its references rather than expanding the Prometheus prompt.
 

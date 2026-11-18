@@ -1,6 +1,6 @@
 # src/features/tui-sidebar/ — TUI Sidebar Snapshot + Mirror
 
-**Generated:** 2026-08-17
+**Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-08-17)
 
 ## OVERVIEW
 
@@ -31,6 +31,7 @@ TUI side:     1s poll → readMirror() → derivers → computeView() → viewKe
 | `element-helpers.ts` | `ViewNode` type + `box`/`text` constructors (renderer-agnostic) |
 | `config-validator.ts` | Re-export of `validatePluginConfig` |
 | `constants.ts` | All timing/size knobs: STALE_MS 6s, HEARTBEAT_MS 2s, POLL_INTERVAL_MS 1s, WRITE_DEBOUNCE_MS 250ms, LOOP_FRESH_MS 120s |
+| `qa/register-and-run.sh` | Real-harness QA driver: isolated OpenCode (XDG sandbox), asserts enabled/disabled mirror behavior and DB isolation |
 
 ## KEY EXPORTS
 

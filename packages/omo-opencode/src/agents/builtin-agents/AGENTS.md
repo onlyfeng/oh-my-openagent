@@ -5,7 +5,7 @@ description: Conditional factory wrappers that apply overrides, model resolution
 
 # src/agents/builtin-agents/ -- Conditional Factory Layer
 
-**Generated:** 2026-05-18
+**Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-05-18)
 
 ## OVERVIEW
 

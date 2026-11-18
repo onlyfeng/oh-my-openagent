@@ -1,6 +1,6 @@
 # src/features/claude-tasks/ — Task Schema + Storage
 
-**Generated:** 2026-05-15
+**Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-05-15)
 
 ## OVERVIEW
 
@@ -9,20 +9,17 @@
 ## TASK SCHEMA
 
 ```typescript
-interface Task {
-  id: string              // T-{uuid} auto-generated
-  subject: string         // Short title
-  description?: string    // Detailed description
+const TaskSchema = z.object({
+  id: string                    // T-{uuid} auto-generated
+  subject: string               // Short title
+  description: string           // Detailed description (required)
   status: "pending" | "in_progress" | "completed" | "deleted"
-  activeForm?: string     // Current form/template
-  blocks?: string[]       // Tasks this blocks
-  blockedBy?: string[]    // Tasks blocking this
-  owner?: string          // Agent/session
+  activeForm?: string           // Current form/template
+  blocks: string[]              // Tasks this blocks (required array)
+  blockedBy: string[]           // Tasks blocking this (required array)
+  owner?: string                // Agent/session
   metadata?: Record<string, unknown>
-  repoURL?: string        // Associated repository
-  parentID?: string       // Parent task ID
-  threadID?: string       // Session ID (auto-recorded)
-}
+}).strict()                     // unknown keys rejected
 ```
 
 ## FILES
@@ -30,7 +27,7 @@ interface Task {
 | File | Purpose |
 |------|---------|
 | `types.ts` | Task interface + status types |
-| `storage.ts` | `readJsonSafe()`, `writeJsonAtomic()`, `acquireLock()` (async, bounded wait), `generateTaskId()` |
+| `storage.ts` | `readJsonSafe()`, `writeJsonAtomic()`, `acquireLock()` (async, bounded wait), `resolveLockWaitTimeoutMs()`, `generateTaskId()`, `listTaskFiles()`, task dir/path helpers |
 | `index.ts` | Barrel exports |
 
 ## STORAGE

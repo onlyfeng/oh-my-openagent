@@ -1,64 +1,38 @@
-# src/cli/install-codex/ — Codex Light Edition Installer (39 Files)
+# src/cli/install-codex/ — Codex Installer Adapter Shims (canonical source in omo-codex)
 
-**Generated:** 2026-06-06
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
-Installs the `omo` plugin into `~/.codex/` for the Codex CLI Light edition. This directory is now an OpenCode CLI adapter shim over the canonical installer source in [`packages/omo-codex/src/install/`](../../../../../packages/omo-codex/src/install). Entry: `runCodexInstaller()` in `install-codex.ts`. Triggered by `bunx oh-my-openagent install --platform=codex` (alias `npx lazycodex-ai install`).
+Every `.ts` file here except `install-codex-test-fixtures.ts` is a ONE-LINE re-export shim: `export * from "@oh-my-opencode/omo-codex/install/<module>"`. The canonical installer lives in [`packages/omo-codex/src/install/`](../../../../omo-codex/src/install); this directory keeps the OpenCode CLI import paths (`src/cli/install-codex/*`) stable. Entry: `runCodexInstaller()` (re-exported from `install-codex.ts`), triggered by `bunx oh-my-openagent install --platform=codex` (alias `npx lazycodex-ai install`). `install-codex-test-fixtures.ts` (the only real file) builds the isolated `CODEX_HOME` fixture used by installer tests.
 
-## KEY FILES
+## WHERE TO LOOK
 
-| File | Purpose |
-|------|---------|
-| `install-codex.ts` | Main orchestrator `runCodexInstaller()` — resolves paths, loops over marketplace plugins, drives cache/install/config phases |
-| `types.ts` | `CodexInstallOptions`, `CodexInstallResult`, `MarketplaceManifest`, `PluginManifest`, `InstalledPlugin` |
-| `codex-marketplace.ts` | Reads `packages/omo-codex/marketplace.json` and per-plugin `.codex-plugin/plugin.json`; validates path segments |
-| `codex-cache-install.ts` | Builds source, copies to temp cache dir, runs `npm ci --omit=dev`, rewrites MCP manifest, atomically promotes to `~/.codex/plugins/cache/{marketplace}/{name}/{version}/` |
-| `codex-cache-bins.ts` | Discovers `package.json` `bin` entries, links component CLIs into bin dir; writes `omo` runtime wrapper (POSIX shell / Windows `.cmd`) |
-| `link-cached-plugin-agents.ts` | Discovers bundled agent TOMLs under `components/*/agents/`, copies to `~/.codex/agents/`, preserves existing `model_reasoning_effort` and `service_tier`, writes `.installed-agents.json` manifest |
-| `codex-marketplace-snapshot.ts` | Writes local marketplace snapshot to `~/.codex/.tmp/marketplaces/{marketplace}/` |
-| `codex-config-toml.ts` | Mutates `~/.codex/config.toml`: enables features, sets marketplace/plugin/agent/hook-trust blocks, optional autonomous permissions |
-| `codex-cleanup.ts` | Uninstall orchestrator: removes cache, agents, config blocks, project-local artifacts |
+| Task | Location |
+|------|----------|
+| Change install/cache/config/uninstall behavior | `packages/omo-codex/src/install/` (this dir only re-exports) |
+| Installer test isolation | `install-codex-test-fixtures.ts` (scratch `CODEX_HOME` + project dir) |
+| CLI wiring | `src/cli/` commander command for `install --platform=codex` |
+| Codex plugin bundle being installed | [`packages/omo-codex/plugin/`](../../../../omo-codex/plugin/AGENTS.md) (marketplace `sisyphuslabs`, plugin `omo`) |
 
-## INSTALL FLOW
+## WHAT INSTALLING WRITES (effect summary; implementation in omo-codex)
 
-```
-runCodexInstaller()
-  1. resolve repoRoot / codexHome / binDir / projectDirectory
-  2. git-bash.ts: Windows Git Bash preflight (discovery-first; no automatic winget/system install)
-  3. codex-marketplace.ts: read marketplace.json + plugin manifests
-  4. lazycodex-version-stamp.ts: resolve plugin version from distribution manifest
-  5. For each marketplace plugin:
-     a. codex-cache-install.ts: build, copy, npm ci, rewrite MCP manifest, promote to cache
-     b. codex-cache-bins.ts: link component CLIs + omo runtime wrapper
-     c. link-cached-plugin-agents.ts: copy agent TOMLs to ~/.codex/agents/
-  6. codex-cache-prune.ts: remove stale plugins + legacy marketplace caches
-  7. codex-config-toml.ts: mutate ~/.codex/config.toml
-  8. codex-project-local-cleanup-best-effort.ts: repair project-local .codex/config.toml conflicts
-  9. Telemetry: track install_completed
-```
-
-## WHAT IT WRITES
-
-| Path | What |
-|------|------|
-| `~/.codex/plugins/cache/{marketplace}/{plugin}/{version}/` | Built plugin cache (npm installed, MCP manifest rewritten) |
-| `~/.codex/.tmp/marketplaces/{marketplace}/` | Local marketplace snapshot (copied plugin sources + `marketplace.json`) |
-| `~/.codex/agents/*.toml` | Copied agent configurations from bundled components |
-| `~/.codex/config.toml` | Mutated with marketplace block, plugin enablement, feature flags, agent configs, hook trust hashes, MCP policies |
-| `~/.local/bin/` (or `~/.codex/bin` if custom home) | Symlinks or `.cmd` shims for component CLIs + `omo` wrapper |
-
-## CONVENTIONS
-
-- All TOML mutation is string-based via `toml-section-editor.ts` (no TOML parser dependency)
-- Atomic directory promotion: copy to temp sibling, then `rename()`; backup restored on failure
-- Windows uses `.cmd` shims; POSIX uses symlinks
-- Current managed Codex agent roster: `explorer`, `librarian`, `metis`, `momus`, `plan`
-- Legacy purge/back-compat code still tracks the retired reviewer agent so installs can remove stale config and agent files from older releases
-- Legacy marketplace cleanup: `lazycodex` and `code-yeongyu-codex-plugins` are pruned on `sisyphuslabs` install
+- `~/.codex/plugins/cache/{marketplace}/{plugin}/{version}/` — built plugin cache (npm-installed, MCP manifest rewritten, atomic temp-and-rename promotion)
+- `~/.codex/.tmp/marketplaces/{marketplace}/` — local marketplace snapshot
+- `~/.codex/agents/*.toml` — copied agent TOMLs (roster: `explorer`, `librarian`, `metis`, `momus`, `plan`; retired `reviewer` still tracked for cleanup)
+- `~/.codex/config.toml` — string-based TOML mutation (no parser dependency): marketplace block, plugin enablement, feature flags, agent configs, hook trust, MCP policies
+- `~/.local/bin/` (or `~/.codex/bin`) — symlinks (POSIX) / `.cmd` shims (Windows) for component CLIs + the `omo` wrapper
 
 ## ANTI-PATTERNS
 
-- Never use a real TOML parser for config edits; the text-manipulation layer is intentional to avoid dependencies
-- Never skip the temp-and-rename promotion in cache install; direct writes risk corrupting a live cache
-- Never hardcode new agent names without updating `MANAGED_CODEX_AGENT_NAMES` in both `codex-config-agents.ts` and `codex-cleanup-config.ts`
+- NEVER implement installer logic in a shim; extend `packages/omo-codex/src/install/` and keep the shim.
+- NEVER hand-edit `~/.codex/config.toml` semantics here: the text-manipulation layer (`toml-section-editor`) is intentional to avoid a TOML parser dependency — in the canonical package.
+- Codex-side QA: run the `codex-qa` skill (`install-verify.sh`, isolated `CODEX_HOME`; the real `~/.codex` must stay untouched) — see root AGENTS.md.
+
+## COMMANDS
+
+```bash
+bun test packages/omo-codex/src/install   # canonical installer suite (fixtures built by install-codex-test-fixtures.ts)
+```
+
+Parent: [`../../AGENTS.md`](../../AGENTS.md).

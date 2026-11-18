@@ -1,6 +1,6 @@
 # btw-side — Ephemeral Side Conversations (TUI)
 
-**Generated:** 2026-08-24
+**Generated:** 2026-11-18 / c2691818a9 (update pass; content verified)
 
 **Score:** 16 (32 files, ~6k LOC, distinct domain; parent `features/AGENTS.md` carries one line)
 

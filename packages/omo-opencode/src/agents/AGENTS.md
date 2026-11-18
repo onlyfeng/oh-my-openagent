@@ -5,21 +5,15 @@ description: Developer reference for all 11 Oh My OpenAgent agent definitions, f
 
 # src/agents/ — 11 Agent Definitions
 
-**Prompt ownership updated:** shared Native builders (PR #9856).
-
-Model-specific system cores come from `@code-yeongyu/senpi/prompt-presets` through
-`native-model-prompt.ts`. Existing OpenCode role builders and artifacts retain
-their instructions and runtime context. `native-prompt-frame.ts` lets system-transform rebuild
-the generated core for the actual request model without replacing user appends.
-Do not add copies of Native model bodies. Existing role variants are separate
-from Native model calibration. Explore, librarian and multimodal-looker keep
-their original prompts without a Native core.
+Model-specific system cores come from `@code-yeongyu/senpi/prompt-presets` via
+`native-model-prompt.ts` (PR #9856); `native-prompt-frame.ts` rebuilds the generated
+core for the request model without replacing user appends. Do not add copies of
+Native model bodies. Explore, librarian and multimodal-looker keep their original
+prompts without a Native core.
 
 ## OVERVIEW
 
-11 built-in agents. Type enum: [`src/config/schema/agent-names.ts`](../config/schema/agent-names.ts) `BuiltinAgentNameSchema`. 10 of them register via [`builtin-agents.ts`](builtin-agents.ts) `agentSources` record (factory functions). **Prometheus is special-cased** — it has no `createPrometheusAgent` factory; instead [`prometheus-agent-config-builder.ts`](../plugin-handlers/prometheus-agent-config-builder.ts) constructs its config directly during `agent-config-handler` Phase 3.
-
-All factories follow `createXXXAgent(model) → AgentConfig`. Each carries a static `mode` property (`AgentFactory` type in [`src/agents/types.ts`](types.ts)). Composed via `buildAgent()`.
+11 built-in agents. Type enum: [`src/config/schema/agent-names.ts`](../config/schema/agent-names.ts) `BuiltinAgentNameSchema`. 10 register via [`builtin-agents.ts`](builtin-agents.ts) `agentSources`. **Prometheus is special-cased** — no `createPrometheusAgent` factory; [`prometheus-agent-config-builder.ts`](../plugin-handlers/prometheus-agent-config-builder.ts) constructs its config directly during `agent-config-handler` Phase 3.
 
 ## AGENT INVENTORY
 
@@ -41,95 +35,36 @@ Modes verified from each agent file's `const MODE: AgentMode = ...` and (for Pro
 
 ## TOOL RESTRICTIONS
 
-Defined in [`src/shared/agent-tool-restrictions.ts`](../shared/agent-tool-restrictions.ts).
-
-| Agent | Denied Tools |
-|-------|-------------|
-| Oracle | write, edit, task, call_omo_agent |
-| Librarian | write, edit, task, call_omo_agent |
-| Explore | write, edit, task, call_omo_agent |
-| Multimodal-Looker | ALL except read |
-| Atlas | task, call_omo_agent |
-| Momus | write, edit, task |
-| Prometheus | enforces `.md`-only writes via `prometheus-md-only` hook (path-based, not tool-based) |
+Oracle/Librarian/Explore deny `write, edit, task, call_omo_agent`; Momus denies `write, edit, task`; Multimodal-Looker denies ALL except `read`; Atlas denies `task, call_omo_agent`; Prometheus enforces `.md`-only writes via the `prometheus-md-only` hook (path-based, not tool-based). Defined in [`src/shared/agent-tool-restrictions.ts`](../shared/agent-tool-restrictions.ts).
 
 ## TEAM-MODE ELIGIBILITY
 
-Authoritative registry: [`AGENT_ELIGIBILITY_REGISTRY`](../features/team-mode/types.ts) in `team-mode/types.ts`. Three verdict tiers:
-
-| Verdict | Agents |
-|---------|--------|
-| `eligible` | sisyphus, atlas, sisyphus-junior |
-| `conditional` | hephaestus (lacks `teammate: "allow"` permission by default — see D-36 / `tool-config-handler.ts`; use `subagent_type: "sisyphus"` instead) |
-| `hard-reject` | oracle, librarian, explore, multimodal-looker, metis, momus, prometheus (each with a specific rejection message) |
-
-Read-only agents are rejected at TeamSpec parse time. For those, the lead delegates via `task` (delegate-task) instead. See [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md).
+Registry: [`AGENT_ELIGIBILITY_REGISTRY`](../features/team-mode/types.ts). `eligible`: sisyphus, atlas, sisyphus-junior. `conditional`: hephaestus (lacks `teammate: "allow"` by default — D-36 / `tool-config-handler.ts`; use `subagent_type: "sisyphus"`). `hard-reject`: oracle, librarian, explore, multimodal-looker, metis, momus, prometheus — read-only agents are rejected at TeamSpec parse time; the lead delegates via `task` instead. See [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md).
 
 ## STRUCTURE
 
 ```
 agents/
-├── sisyphus.ts                                # Main orchestrator router
-├── hephaestus.ts                              # Routes to model variant
-├── oracle.ts                                  # Read-only consultant
-├── librarian.ts                               # External search
-├── explore.ts                                 # Codebase grep
-├── multimodal-looker.ts                       # Vision/PDF
-├── metis.ts                                   # Pre-planning
-├── momus.ts                                   # Plan review
-├── atlas/agent.ts                             # Todo orchestrator
-├── prometheus/                                # Strategic planner prompt router; prompt content in packages/prompts-core/prompts/prometheus/
-├── types.ts                                   # BuiltinAgentName, AgentMode, AgentConfig
-├── builtin-agents.ts                          # agentSources registry (10 → 11 with sisyphus-junior)
-├── builtin-agents/                            # maybeCreateXXXConfig conditional factories + general-agents.ts + available-skills.ts
-├── agent-builder.ts                           # buildAgent() composition
-├── utils.ts                                   # agent utilities
-├── env-context.ts                             # environment context for prompts
-├── dynamic-agent-prompt-builder.ts            # dynamic prompt builder
-├── dynamic-agent-core-sections.ts             # core prompt sections
-├── dynamic-agent-policy-sections.ts           # policy sections
-├── dynamic-agent-tool-categorization.ts       # tool categorization for prompt
-└── dynamic-agent-category-skills-guide.ts     # category-skill guidance
+├── {sisyphus,hephaestus,oracle,librarian,explore,multimodal-looker,metis,momus}.ts  # one file per simple agent
+├── atlas/ · hephaestus/ · prometheus/ · sisyphus/ · sisyphus-junior/   # multi-file agents (own AGENTS.md)
+├── types.ts · builtin-agents.ts        # BuiltinAgentName/AgentMode/AgentConfig; agentSources registry
+├── builtin-agents/                     # maybeCreateXXXConfig conditional factories + general-agents + available-skills
+├── agent-builder.ts · utils.ts · env-context.ts
+└── dynamic-agent-*.ts                  # prompt builder: core/policy sections, tool categorization, category-skills guide
 ```
 
 ## FACTORY PATTERN
 
-```typescript
-const createXXXAgent: AgentFactory = (model: string) => ({
-  instructions: "...",
-  model,
-  // Set temperature only when this agent pins a role-specific default.
-  // ...config
-})
-createXXXAgent.mode = "subagent" // or "primary" or "all"
-```
-
-Temperature is opt-in per agent. Most consultant and helper agents pin
-`0.1`, Metis pins `0.3`, and coordinator / role agents intentionally
-leave temperature unset when they should use the selected model's
-default. Sisyphus, Hephaestus, and Prometheus leave temperature unset
-unless an override or category config supplies one.
-
-Model resolution: 4-step pipeline → override → category-default → provider-fallback → system-default. Defined in [`shared/model-resolution-pipeline.ts`](../shared/model-resolution-pipeline.ts).
+`createXXXAgent: AgentFactory = (model) => ({ instructions, model, ...config })` with a static `mode` property, composed via `buildAgent()`. Temperature is opt-in: most consultants pin `0.1`, Metis `0.3`; sisyphus/hephaestus/prometheus leave it unset unless an override or category config supplies one. Model resolution: override → category-default → provider-fallback → system-default ([`shared/model-resolution-pipeline.ts`](../shared/model-resolution-pipeline.ts)).
 
 ## MODES
 
-Definition (from [`src/agents/types.ts`](types.ts)):
-
-- **`primary`** — respects user's UI-selected model. Used by: sisyphus, hephaestus, atlas, prometheus.
-- **`subagent`** — uses own fallback chain, ignores UI selection. Used by: oracle, librarian, explore, multimodal-looker, metis, momus, sisyphus-junior.
-- **`all`** — declared in the type for OpenCode compatibility but no built-in agent currently uses it.
+`primary` respects the UI-selected model (sisyphus, hephaestus, atlas, prometheus); `subagent` uses its own fallback chain and ignores UI selection (oracle, librarian, explore, multimodal-looker, metis, momus, sisyphus-junior); `all` exists for OpenCode compatibility but no built-in uses it.
 
 ## CANONICAL ORDER
 
-`Sisyphus → Hephaestus → Prometheus → Atlas` (primary core agents) then alphabetical for the rest. Enforced by [`installAgentSortShim()`](../shared/agent-sort-shim.ts) — patches `Array.prototype.{toSorted,sort}` narrowly when ≥2 canonical core agents are in the array. See [`src/plugin-handlers/AGENTS.md`](../plugin-handlers/AGENTS.md) for the full history.
+`Sisyphus → Hephaestus → Prometheus → Atlas`, then alphabetical. Enforced by [`installAgentSortShim()`](../shared/agent-sort-shim.ts); full history in [`src/plugin-handlers/AGENTS.md`](../plugin-handlers/AGENTS.md).
 
 ## DYNAMIC PROMPT BUILDER
 
-`dynamic-agent-prompt-builder.ts` supplies reusable OpenCode role-context sections:
-- Core sections (identity, mode, restrictions)
-- Policy sections (citation, verification, anti-patterns)
-- Tool categorization (per-domain tool guidance)
-- Category-skills guide (which skills load with which categories)
-
-This is what the Sisyphus prompt's "AGENTS / CATEGORY + SKILLS" tables come from.
+`dynamic-agent-*.ts` supply the reusable role-context sections — core (identity/mode/restrictions), policy (citation/verification/anti-patterns), tool categorization, category-skills guide. The Sisyphus prompt's "AGENTS / CATEGORY + SKILLS" tables come from here.

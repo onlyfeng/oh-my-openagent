@@ -1,6 +1,6 @@
 # src/features/builtin-commands/ -- Built-in Slash Commands
 
-**Generated:** 2026-07-17 / 7d664b96b
+**Generated:** 2026-07-17 / updated 2026-11-18 / 7d664b96b
 
 ## OVERVIEW
 
@@ -20,8 +20,8 @@ Registry of built-in commands shipped inside the plugin. Each command is a templ
 | Command | Source File | Notes |
 |---------|-------------|-------|
 | `goal` | `templates/goal.ts` | Persistent thread objective (set / pause / resume / clear); replaces removed `/ralph-loop`, `/ulw-loop`, `/cancel-ralph` |
-| `refactor` | `templates/refactor.ts` | LSP + AST-grep refactoring |
-| `ulw-execute` | `templates/ulw-execute.ts` | Prometheus plan executor |
+| `refactor` | `templates/refactor.ts` + `templates/refactor-sections/` | LSP + AST-grep refactoring; composes five section files |
+| `ulw-execute` | `templates/ulw-execute.ts` | Prometheus plan executor; agent `atlas` by default, falls back to `sisyphus` when `useRegisteredAgents` finds atlas unregistered |
 | `stop-continuation` | `templates/stop-continuation.ts` | Stop all continuations (todo enforcer, ralph loop, goal, boulder) |
 | `handoff` | `templates/handoff.ts` | Session context summary |
 | `remove-ai-slops` | `templates/remove-ai-slops.ts` | AI code smell cleanup |
@@ -37,4 +37,4 @@ Phase 6 of config loading (`command-config-handler.ts`) merges built-ins with us
 
 ## TESTS
 
-Co-located `.test.ts` files in `templates/` cover `goal` and `stop-continuation` logic.
+Co-located: `commands.test.ts` (registry, disabled filtering, agent fallback), `init-deep-migration.test.ts`, `templates/goal.test.ts`, `templates/stop-continuation.test.ts`.

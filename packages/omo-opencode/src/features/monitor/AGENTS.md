@@ -1,6 +1,6 @@
 # monitor — Managed Watcher Backend
 
-**Generated:** 2026-08-17
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 

@@ -1,6 +1,6 @@
 # src/tools/ — 12–38 Native Tools Across 14 Tool Directories (+ shared utilities)
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
@@ -30,71 +30,33 @@ Tools registered via [`createToolRegistry()`](../plugin/tool-registry.ts) in `sr
 | `monitor_start`, `monitor_stop`, `monitor_list`, `monitor_output` | `monitor.enabled` | `monitor/` (watcher engine: `../features/monitor/`) |
 | `edit` (hashline-edit) | `hashline_edit: true` | `hashline-edit/` |
 | `create_goal`, `update_goal`, `get_goal` | `goal.enabled` | [`../hooks/goal/tools.ts`](../hooks/goal/tools.ts) (registered in `tool-registry-core-tools.ts`) |
-| 12 `team_*` tools | `team_mode.enabled: true` | `../features/team-mode/tools/` |
-
-### 12 team_* Tools (when team_mode enabled)
-
-| Tool | Purpose |
-|------|---------|
-| `team_create` | Spawn team + member sessions from a TeamSpec (named or inline) |
-| `team_delete` | Tear down — removes mailbox, tasklist, worktrees, optional tmux layout |
-| `team_shutdown_request` | Member or lead requests its own shutdown |
-| `team_approve_shutdown` | Lead acks a pending shutdown |
-| `team_reject_shutdown` | Lead rejects a shutdown with reason |
-| `team_send_message` | Async message to specific member or `*` broadcast |
-| `team_task_create` | Create task on shared list |
-| `team_task_list` | List tasks (filter by status, owner) |
-| `team_task_update` | Claim/complete/delete (atomic file lock) |
-| `team_task_get` | Fetch single task |
-| `team_status` | Full team run status (members, tasks, mailbox) |
-| `team_list` | List declared + active teams |
+| 12 `team_*` tools: `team_create`, `team_delete`, `team_shutdown_request`, `team_approve_shutdown`, `team_reject_shutdown`, `team_send_message`, `team_task_create`, `team_task_list`, `team_task_update`, `team_task_get`, `team_status`, `team_list` (team lifecycle, async messaging, shared atomic-claim tasklist) | `team_mode.enabled: true` | `../features/team-mode/tools/` — see [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md) |
 
 ## DELEGATION CATEGORIES (built-in 9)
 
 `task` (delegate) selects model by category. Default category models live in provider-specific files under `src/tools/delegate-task/` and aggregate via `BUILTIN_CATEGORIES` in `builtin-categories.ts`. Authoritative fallback chains live in [`packages/model-core/src/category-model-requirements.ts`](../../../model-core/src/category-model-requirements.ts) `CATEGORY_MODEL_REQUIREMENTS`.
 
-| Category | Default Model | Source File | Domain |
-|----------|---------------|-------------|--------|
-| `visual-engineering` | anthropic/claude-fable-5-2 (variant: max) | google-categories.ts | Visual design, UI/UX, frontend |
-| `ultrabrain` | openai/gpt-6-astra (variant: max) | openai-categories.ts | Hard logic / heavy reasoning; GPT-6 Astra-specific prompt append |
-| `deep-low` | openai/gpt-6.1-sol (variant: medium) | openai-categories.ts | Default deep lane: 3D graphics, computer use, browser use, backend, logic, algorithms, CAPTCHA solving, multimodal, and autonomous multi-step work whose decisions the child can settle from evidence; gpt-6.1-sol-fast, then gpt-5.6-sol, then gpt-5.6-sol-fast medium fallback rungs, gated on any GPT-6.1 Sol or GPT-5.6 Sol tier |
-| `deep-high` | openai/gpt-6-astra (variant: high) | openai-categories.ts | Escalation deep lane: the goal's central decision cannot be settled from evidence (trade-off, cross-boundary contract, no in-repo pattern, correctness argued from invariants); single rung, gated on gpt-6-astra |
-| `artistry` | anthropic/claude-fable-5-2 (variant: max) | google-categories.ts | Creative / unconventional approaches |
-| `quick` | openai/gpt-6-luna-fast (variant: low) | openai-categories.ts | Trivial single-file changes |
-| `unspecified-low` | anthropic/claude-sonnet-5-5 (variant: medium) | openai-categories.ts | Moderate effort fallback |
-| `unspecified-high` | anthropic/claude-opus-5-5 (variant: medium) | openai-categories.ts | High effort fallback; keeps the GPT-6 Astra-specific prompt append for a user override onto a GPT-6 model |
-| `writing` | anthropic/claude-opus-5-5 (variant: low) | kimi-categories.ts | Documentation, prose |
+| Category | Default Model | Domain |
+|----------|---------------|--------|
+| `visual-engineering` | anthropic/claude-fable-5-2 (max) | Visual design, UI/UX, frontend |
+| `ultrabrain` | openai/gpt-6-astra (max) | Hard logic / heavy reasoning; GPT-6 Astra-specific prompt append |
+| `deep-low` | openai/gpt-6.1-sol (medium) | Default deep lane: 3D graphics, computer use, browser use, backend, logic, algorithms, CAPTCHA solving, multimodal, autonomous multi-step work settleable from evidence; gpt-6.1-sol-fast / gpt-5.6-sol / gpt-5.6-sol-fast medium fallback rungs gated on any GPT-6.1 Sol or GPT-5.6 Sol tier |
+| `deep-high` | openai/gpt-6-astra (high) | Escalation deep lane: the goal's central decision cannot be settled from evidence (trade-off, cross-boundary contract, no in-repo pattern, correctness argued from invariants); single rung, gated on gpt-6-astra |
+| `artistry` | anthropic/claude-fable-5-2 (max) | Creative / unconventional approaches |
+| `quick` | openai/gpt-6-luna-fast (low) | Trivial single-file changes |
+| `unspecified-low` | anthropic/claude-sonnet-5-5 (medium) | Moderate effort fallback |
+| `unspecified-high` | anthropic/claude-opus-5-5 (medium) | High effort fallback; keeps the GPT-6 Astra prompt append for a user override onto a GPT-6 model |
+| `writing` | anthropic/claude-opus-5-5 (low) | Documentation, prose |
 
 User-defined categories declared in `categories: { ... }` config override and extend this set.
 
 ## TOOL DIR LAYOUT
 
-```
-tools/
-├── background-task/      # background_output, background_cancel (LLM interface; engine in features/background-agent)
-├── call-omo-agent/       # call_omo_agent (explore + librarian only)
-├── delegate-task/        # task — full delegation with categories + skills
-├── glob/                 # glob (60s timeout, 100 file limit)
-├── grep/                 # grep (60s timeout, 10MB limit)
-├── hashline-edit/        # edit — hash-anchored line edits with LINE#ID validation
-├── interactive-bash/     # interactive_bash — tmux session control
-├── look-at/              # look_at — image/PDF analysis
-├── monitor/              # monitor_start, monitor_stop, monitor_list, monitor_output (engine in features/monitor)
-├── session-manager/      # 4 session_* tools
-├── skill/                # skill — load skill or run command
-├── skill-mcp/            # skill_mcp — call skill-embedded MCP servers
-├── slashcommand/         # discoverCommandsSync — feeds skill tool with /-command list
-├── task/                 # 4 task_* tools (Sisyphus task system)
-└── index.ts              # barrel exports
-```
+`background-task/` (background_output/cancel; LLM interface, engine in `../features/background-agent`), `call-omo-agent/` (explore + librarian only), `delegate-task/` (task — categories, skills, provider category files), `glob/` (60s timeout, 100 file limit), `grep/` (60s timeout, 10MB limit), `hashline-edit/` (edit — hash-anchored LINE#ID edits), `interactive-bash/` (tmux session control), `look-at/` (image/PDF analysis), `monitor/` (monitor_*; engine in `../features/monitor`), `session-manager/` (4 session_* tools), `skill/` (load skill or run command), `skill-mcp/` (skill-embedded MCP), `slashcommand/` (`discoverCommandsSync` feeds the skill tool with the /-command list), `task/` (4 task_* Sisyphus task-system tools), `index.ts` (barrel exports).
 
 ## ADDING A NEW TOOL
 
-1. Create `src/tools/{name}/index.ts` with factory `createXXXTool`
-2. Add `types.ts` for parameter Zod schemas
-3. Add `tools.ts` (or single index.ts) for implementation
-4. Export factory from `src/tools/index.ts`
-5. Register in `src/plugin/tool-registry.ts`:
-   - Always-on: spread into `allTools` directly
-   - Conditional: build a `Record<string, ToolDefinition>` and gate-spread
-6. If the tool needs disabling, ensure it appears in `filterDisabledTools` allow-list (its name will be matched against `disabled_tools`)
+1. Create `src/tools/{name}/index.ts` with factory `createXXXTool`; add `types.ts` for parameter Zod schemas and `tools.ts` (or a single index.ts) for the implementation.
+2. Export the factory from `src/tools/index.ts`.
+3. Register in `src/plugin/tool-registry.ts`: always-on tools spread into `allTools` directly; conditional tools build a `Record<string, ToolDefinition>` and gate-spread.
+4. If the tool needs disabling, ensure it appears in the `filterDisabledTools` allow-list (its name is matched against `disabled_tools`).

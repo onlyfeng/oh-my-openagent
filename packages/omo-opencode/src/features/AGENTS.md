@@ -1,6 +1,6 @@
 # src/features/ — 24 Feature Modules
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
@@ -33,6 +33,7 @@ Standalone feature modules wired into `plugin/` layer. Each is self-contained wi
 | **monitor** | MEDIUM | no | `monitor_*` tools backend: managed watcher processes, line filtering, ring buffer, batched output injection (gated on `monitor.enabled`) |
 | **tui-sidebar** | MEDIUM | no | TUI sidebar snapshot builder + mirror manager (roster/state derivers rendered into the OpenCode TUI; gated on `tui.sidebar.enabled`) |
 | **opengateway-provider** | LOW | no | Injects the `opengateway` provider into opencode's live config when a credential exists (`OPENGATEWAY_API_KEY` env or `opengateway` auth.json entry); fills only missing keys, ships bundled `opengateway-models.json` catalog |
+| **native-edition-nudge** | LOW | no | TUI dialog + action wiring (`registerNativeEditionNudgeTui`) nudging users toward the native (omo-ai) edition |
 
 ## KEY MODULES
 

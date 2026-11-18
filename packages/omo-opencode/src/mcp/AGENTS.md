@@ -44,3 +44,6 @@ Tier 1 of the three-tier MCP system. Built-ins are created by `createBuiltinMcps
 | `context7.ts` | Context7 with optional auth header |
 | `grep-app.ts` | Grep.app (no auth) |
 | `lsp.ts` | Local stdio MCP config for packaged `lsp-tools-mcp` |
+| `cli-suffix.ts` | Source-vs-dist CLI suffix resolution for the lsp command (`cli-suffix.test.ts`) |
+| `shared/` | Types/helpers shared across the four providers |
+| `zauc-mocks-mcp-index/` | `mock.module()` setup for MCP index tests (loads before consumers via the `zauc-` prefix) |

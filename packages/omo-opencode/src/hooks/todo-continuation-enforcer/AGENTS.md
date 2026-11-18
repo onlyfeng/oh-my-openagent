@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-~35 files (~6.7k LOC incl. tests). The "boulder" Continuation Tier hook: forces Sisyphus to keep rolling when incomplete todos remain. Fires on `session.idle`, injects a continuation prompt after a 2s countdown toast.
+36 files (~6.9k LOC incl. tests). The "boulder" Continuation Tier hook: forces Sisyphus to keep rolling when incomplete todos remain. Fires on `session.idle`, injects a continuation prompt after a 2s countdown toast.
 
 ## HOW IT WORKS
 
@@ -22,17 +22,12 @@ session.idle
 
 ## TURN-BOUNDARY PAUSE
 
-After injecting `CONTINUATION_PROMPT` the hook watches the next turn before
-rearming. `awaitingPostInjectionProgressCheck` is set on injection; assistant
-activity (`message.updated` / `message.part.updated` / `message.part.delta` with
-role=assistant, or `tool.execute.before/after`) marks `continuationResponseObserved`.
+After injecting `CONTINUATION_PROMPT` the hook watches the next turn before rearming: `awaitingPostInjectionProgressCheck` is set on injection; assistant activity (`message.updated` / `message.part.updated` / `message.part.delta` with role=assistant, or `tool.execute.before/after`) marks `continuationResponseObserved`. On the next `session.idle`, `trackContinuationProgress` resolves the pause:
 
-On the next `session.idle`, `trackContinuationProgress` resolves the pause:
+- No progress + `continuationResponseObserved` set: `continuationBlockReason = "directive-response"` -- rearming stops (the assistant answered without advancing todos).
+- Genuine user message inside the accepted-continuation window: `continuationBlockReason = "user-interruption"` (synthetic continuation echoes / system directives filtered out; a part-less user `message.updated` defers classification to `message.part.updated` by stashing `pendingUserMessageID`).
 
-- No progress + `continuationResponseObserved` set: `continuationBlockReason = "directive-response"`. The assistant answered without advancing todos, so rearming stops.
-- Genuine user message inside the accepted-continuation window: `continuationBlockReason = "user-interruption"`. Synthetic/internal split messages (continuation echo, system directives) are filtered out. When the user `message.updated` event lacks parts, classification is deferred to `message.part.updated` by stashing `pendingUserMessageID`.
-
-While `continuationBlockReason` is set, `handleSessionIdle` and `continuation-injection.ts` skip. It is cleared on real todo progress, abort, or a fresh injection.
+While `continuationBlockReason` is set, `handleSessionIdle` and `continuation-injection.ts` skip; it clears on real todo progress, abort, or a fresh injection.
 
 ## KEY FILES
 
@@ -61,28 +56,6 @@ COUNTDOWN_SECONDS = 2
 ABORT_WINDOW_MS = 3000                // Grace after abort signal
 ```
 
-## STATE PER SESSION
+## STATE PER SESSION (`session-state.ts` `SessionStateStore`)
 
-```typescript
-interface SessionState {
-  stagnationCount: number                       // Turns without todo progress
-  consecutiveFailures: number                   // Resets after FAILURE_RESET_WINDOW_MS
-  lastInjectedAt?: number                       // Cooldown base (exponential backoff)
-  abortDetectedAt?: number                      // Cleared after ABORT_WINDOW_MS
-  wasCancelled?: boolean                        // Abort/cancel flag
-  tokenLimitDetected?: boolean                  // Skip retry on context overflow
-  awaitingPostInjectionProgressCheck?: boolean  // Injected, awaiting next turn
-  continuationResponseObserved?: boolean       // Assistant replied to injection
-  continuationBlockReason?: "directive-response" | "user-interruption"
-  pendingUserMessageID?: string                // Deferred user msg pending part classification
-  countdownStartedAt?: number
-  inFlight?: boolean                           // Injection in progress
-  allTodosCompletedAt?: number
-}
-```
-
-## RELATIONSHIP TO ATLAS
-
-`todoContinuationEnforcer` handles **main Sisyphus sessions** only.
-`atlasHook` handles **boulder/ralph/subagent sessions** with a different decision gate.
-Both fire on `session.idle` but check session type first.
+`stagnationCount` (turns without todo progress) · `consecutiveFailures` (resets after `FAILURE_RESET_WINDOW_MS`) · `lastInjectedAt` (cooldown base, exponential backoff) · `abortDetectedAt` (cleared after `ABORT_WINDOW_MS`) · `wasCancelled` · `tokenLimitDetected` (skip retry on context overflow) · `awaitingPostInjectionProgressCheck` · `continuationResponseObserved` · `continuationBlockReason` (`"directive-response" | "user-interruption"`) · `pendingUserMessageID` (deferred user-msg classification) · `countdownStartedAt` · `inFlight` · `allTodosCompletedAt`.

@@ -1,6 +1,6 @@
 # src/hooks/comment-checker/ (AI Slop Comment Blocker)
 
-**Generated:** 2026-07-17 (7d664b96b)
+**Generated:** 2026-07-17 (7d664b96b) (update pass 2026-11-18 / c2691818a9)
 
 ## OVERVIEW
 

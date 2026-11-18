@@ -1,6 +1,6 @@
 # src/hooks/keyword-detector/ -- Mode Keyword Injection
 
-**Generated:** 2026-07-17
+**Generated:** 2026-11-18 / c2691818a9 (update pass)
 
 ## OVERVIEW
 
@@ -20,41 +20,16 @@ This matches the package layering direction in [`ROADMAP.md`](../../../../../ROA
 ## STRUCTURE
 
 ```
-keyword-detector/
-├── index.ts           # Barrel export
-├── hook.ts            # createKeywordDetectorHook() chat.message handler
-├── detector.ts        # detectKeywordsWithType() + extractPromptText()
-├── constants.ts       # KEYWORD_DETECTORS array, re-exports from submodules
-├── types.ts           # KeywordDetector, DetectedKeyword types
-├── ultrawork/
-│   ├── index.ts       # getUltraworkMessage() router
-│   ├── source-detector.ts # agent/model routing helpers
-│   ├── default.ts     # thin loader for prompts-core/prompts/ultrawork/default.md
-│   ├── gpt.ts         # thin loader for prompts-core/prompts/ultrawork/gpt.md
-│   ├── gemini.ts      # thin loader for prompts-core/prompts/ultrawork/gemini.md
-│   ├── glm.ts         # thin loader for prompts-core/prompts/ultrawork/glm.md
-│   └── planner.ts     # thin loader for prompts-core/prompts/ultrawork/planner.md
-├── team/
-│   ├── index.ts
-│   └── default.ts     # TEAM_PATTERN + TEAM_MESSAGE from prompts-core mode prompt
-└── hyperplan/
-    ├── index.ts
-    └── default.ts     # HYPERPLAN_PATTERN + HYPERPLAN_MESSAGE from prompts-core mode prompt
+index.ts / hook.ts / constants.ts / types.ts   # barrel, createKeywordDetectorHook() handler, KEYWORD_DETECTORS, types
+detector.ts                                     # detectKeywordsWithType() + extractPromptText()
+ultrawork/   # getUltraworkMessage() router, source-detector.ts, thin .md loaders per variant
+team/         # TEAM_PATTERN + prompt constant from prompts-core
+hyperplan/    # HYPERPLAN_PATTERN + prompt constant from prompts-core
 ```
 
 ## PROMPT CONTENT LOCATIONS
 
-| Prompt family | Markdown source |
-|---------------|-----------------|
-| Ultrawork default | [`packages/prompts-core/prompts/ultrawork/default.md`](../../../../prompts-core/prompts/ultrawork/default.md) |
-| Ultrawork GPT | [`packages/prompts-core/prompts/ultrawork/gpt.md`](../../../../prompts-core/prompts/ultrawork/gpt.md) |
-| Ultrawork Gemini | [`packages/prompts-core/prompts/ultrawork/gemini.md`](../../../../prompts-core/prompts/ultrawork/gemini.md) |
-| Ultrawork GLM | [`packages/prompts-core/prompts/ultrawork/glm.md`](../../../../prompts-core/prompts/ultrawork/glm.md) |
-| Ultrawork planner | [`packages/prompts-core/prompts/ultrawork/planner.md`](../../../../prompts-core/prompts/ultrawork/planner.md) |
-| Team mode | [`packages/prompts-core/prompts/mode/team.md`](../../../../prompts-core/prompts/mode/team.md) |
-| Hyperplan mode | [`packages/prompts-core/prompts/mode/hyperplan.md`](../../../../prompts-core/prompts/mode/hyperplan.md) |
-
-The `src/hooks/keyword-detector/{team,hyperplan}/default.ts` files keep the regex triggers in the hook layer and import the markdown-backed constants from `@oh-my-opencode/prompts-core`. The ultrawork files import markdown with Bun's `.md` text loader so the exact prompt bytes are bundled into `dist/index.js`.
+All prompt bodies are markdown in `packages/prompts-core/prompts/`: ultrawork variants at `ultrawork/{default,gpt,gemini,glm,planner}.md`, team/hyperplan at `mode/{team,hyperplan}.md`. The `team/`+`hyperplan/` `default.ts` keep the regex triggers in this hook layer and import markdown-backed constants from `@oh-my-opencode/prompts-core`; the ultrawork loaders import markdown with Bun's `.md` text loader so the exact prompt bytes are bundled into `dist/index.js`.
 
 ## ULTRAWORK VARIANT ROUTING
 
