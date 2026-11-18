@@ -1,7 +1,8 @@
 // Builds facade-manifest.json from the TSDoc of src/facade.ts. Each tagged interface method becomes one entry:
 // `Interface.method`, its parameters and return type as written, and its `@tier`, `@policy` and `@wire` tags.
 // The parser accepts only the shapes facade.ts uses (interface bodies of doc comments, properties and method
-// signatures) and throws on anything else, so an unsupported edit fails generation instead of dropping a method.
+// signatures, members ended by a semicolon or a line break) and throws on anything else, so an unsupported edit
+// fails generation instead of dropping a method.
 import { ENGINE_METHODS, ENGINE_NOTIFICATIONS } from "@oh-my-opencode/senpi-desktop-protocol"
 
 const FACADE_SOURCE = "packages/senpi-desktop-sdk/src/facade.ts"
@@ -36,9 +37,10 @@ const WIRE_NAMES: ReadonlySet<string> = new Set([...ENGINE_METHODS, ...ENGINE_NO
 
 const OPEN = new Set(["(", "[", "{", "<"])
 const CLOSE = new Set([")", "]", "}", ">"])
+const MEMBER_SEPARATORS = ";\n\r"
 
-/** Splits `text` at `separator` characters outside brackets; the `>` of `=>` is not a bracket. */
-function splitTopLevel(text: string, separator: string): string[] {
+/** Splits `text` at any `separators` character outside brackets; the `>` of `=>` is not a bracket. */
+function splitTopLevel(text: string, separators: string): string[] {
   const parts: string[] = []
   let depth = 0
   let start = 0
@@ -47,7 +49,7 @@ function splitTopLevel(text: string, separator: string): string[] {
     if (char === ">" && text[index - 1] === "=") continue
     if (OPEN.has(char)) depth += 1
     else if (CLOSE.has(char)) depth -= 1
-    else if (char === separator && depth === 0) {
+    else if (separators.includes(char) && depth === 0) {
       parts.push(text.slice(start, index))
       start = index + 1
     }
@@ -143,13 +145,16 @@ function members(body: string, owner: string): { readonly text: string; readonly
       continue
     }
     if (rest.startsWith("//") || rest.startsWith("/*")) throw new Error(`${owner}: only doc comments are supported`)
-    const [text] = splitTopLevel(rest, ";")
+    const [text] = splitTopLevel(rest, MEMBER_SEPARATORS)
     if (text === undefined) throw new Error(`${owner}: unterminated member`)
     const end = rest.indexOf(text) + text.length
-    if (rest[end] !== ";") throw new Error(`${owner}: member ${JSON.stringify(text)} must end with ';'`)
+    const terminator = rest[end] ?? ""
+    if (terminator !== "" && !MEMBER_SEPARATORS.includes(terminator)) {
+      throw new Error(`${owner}: member ${JSON.stringify(text)} must end with ';' or a line break`)
+    }
     found.push({ text: text.replace(/\s+/g, " "), doc })
     doc = undefined
-    rest = rest.slice(end + 1)
+    rest = rest.slice(end + (terminator === "" ? 0 : 1))
   }
 }
 
