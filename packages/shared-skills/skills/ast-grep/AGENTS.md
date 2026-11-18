@@ -1,6 +1,6 @@
 # ast-grep — Vendored Structural-Search Skill
 
-**Generated:** 2026-08-24 (f3642fcda)
+**Generated:** 2026-11-18 / c2691818a9 (update pass; SOURCE pin verified @ 3148c69)
 
 ## OVERVIEW
 

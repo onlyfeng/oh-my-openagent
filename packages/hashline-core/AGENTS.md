@@ -1,6 +1,6 @@
 # hashline-core — Hash-Anchored Edit Primitives (Core)
 
-**Generated:** 2026-06-17
+**Generated:** 2026-06-17 (update pass 2026-11-18 / c2691818a9)
 
 ## OVERVIEW
 

@@ -1,6 +1,6 @@
 # delegate-core — Delegate Model Selection + Retry Guidance (Core)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-11-18 / c2691818a (verified against source; content unchanged from the 2026-08-24 pass)
 
 ## OVERVIEW
 

@@ -1,6 +1,6 @@
 # agents-md-core — AGENTS.md Discovery + Injection (Core)
 
-**Generated:** 2026-06-17
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 

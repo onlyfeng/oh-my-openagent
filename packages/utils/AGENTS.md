@@ -1,6 +1,6 @@
 # utils — Shared Utilities (Core)
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
@@ -24,6 +24,9 @@ Harness-neutral pure-TypeScript core package (`@oh-my-opencode/utils`). Consumed
 | **Logging** | `logging/*.ts` | Buffered logger (flush/rotation) + product identity |
 | **Zip Listing** | `zip-entry-listing/*.ts` | tar / zipinfo / Python / PowerShell adapters + symlink target reading |
 | **Ports** | `port-utils.ts` | `findAvailablePort()`, `DEFAULT_SERVER_PORT` |
+| **Archive / Env** | `archive-entry-validator.ts`, `env-expansion.ts` | Archive entry validation (traversal-safe) + env var expansion |
+| **Path classification** | `classify-path-environment.ts`, `contains-path.ts` | Path-environment classification + containment guards |
+| **Config text** | `config-merge.ts`, `config-section-parser.ts`, `extract-semver.ts`, `format-duration.ts` | Config merge/section parsing, semver extraction, duration formatting |
 | **Misc** | `snake-case.ts`, `jsonc-parser.ts`, `record-type-guard.ts`, `logger.ts` | Key transformation, safe JSONC parse, type guards, injectable shared logger stub |
 
 ## NOTES

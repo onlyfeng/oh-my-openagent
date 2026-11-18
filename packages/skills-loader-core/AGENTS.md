@@ -1,12 +1,12 @@
 # skills-loader-core — Skill Loading + Matching (Core)
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
 Harness-neutral skill loading, builtin skill, runtime skill, and skill matching primitives.
 Package `@oh-my-opencode/skills-loader-core`.
-Confirmed by grep: consumed by `omo-opencode` skill features in ~70 files across `src/features/builtin-skills`, `src/features/opencode-skill-loader`, `src/features/opencode-runtime-skills`, `src/tools/skill`, and `src/hooks/auto-slash-command`.
+Confirmed by grep: consumed by `omo-opencode` in ~49 files — `src/features/opencode-skill-loader` (22), `src/features/opencode-runtime-skills` (4), `src/tools/skill` (9), `src/hooks/auto-slash-command` (5), plus 9 more (plugin skill context, plugin-handlers, config validation, `create-managers.ts`). `src/features/builtin-skills` on the consumer side is gone; the builtin catalog lives HERE, in `src/features/builtin-skills/`.
 
 ## SUBSYSTEMS
 
@@ -25,6 +25,13 @@ Confirmed by grep: consumed by `omo-opencode` skill features in ~70 files across
 - **Exports:** barrel root plus subpath exports for `./opencode-skill-loader`, `./builtin-skills`, `./opencode-runtime-skills`, `./skill`, `./auto-slash-command`, `./shared/*`, and `./config/*`.
 - **Skill matching:** `tools/skill/skill-matcher.ts` provides `matchSkillByName()`, `matchCommandByName()`, and `findPartialMatches()`; ambiguous short-name matches refuse to resolve.
 - **Runtime skill source:** `features/opencode-runtime-skills/` exports `selectRuntimeSecuritySkills()` and `createRuntimeSkillSourceServer()`; dual-runtime (Bun.serve preferred, Node http fallback), loopback-only, `cache-control: no-store`, 404 on unknown paths.
-- **123 TypeScript files** under `src/` (86 non-test). Barrel entry `src/index.ts`.
+- **126 TypeScript files** under `src/` (87 non-test). Barrel entry `src/index.ts`.
+
+## COMMANDS
+
+```bash
+bun test packages/skills-loader-core/src          # co-located suite (package.json: bun test src/*.test.ts src/**/*.test.ts)
+tsgo --noEmit -p packages/skills-loader-core/tsconfig.json   # typecheck (package.json: tsgo)
+```
 
 Parent: [packages/AGENTS.md](../AGENTS.md)

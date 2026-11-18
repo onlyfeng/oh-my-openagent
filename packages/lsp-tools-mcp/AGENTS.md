@@ -1,6 +1,6 @@
 # lsp-tools-mcp -- LSP Tools stdio MCP (MCP layer)
 
-**Generated:** 2026-07-17 / 7d664b96b
+**Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-07-17 7d664b96b)
 
 ## OVERVIEW
 

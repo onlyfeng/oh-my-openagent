@@ -16,13 +16,8 @@ host, not a Bun-callable clone operation.
   its `m` child; `stop` must be safe after a partially failed start.
 - `IsolationUnavailableError` permits fallback. Other errors propagate. A failed
   teardown preserves the tree rather than recursively removing an active mount.
-- `chooseBaseDir(repoRoot, homeDir, id)` selects a same-device location, using a
-  mkdir/remove probe for a volume root. Its optional I/O seam is for deterministic
-  device tests. A home fallback on another device excludes tree-cloning backends.
-- `ensureIsolation` claims a unique `.creating-<pid>` sibling before starting,
-  then publishes through the backend's optional `relocate(fromBase, toBase)` hook,
-  or rename for non-mounted backends. Retention uses the same hook. Existing published or in-flight directories are not
-  overwritten; use stale sweeping to reclaim dead attempts.
+- `chooseBaseDir(repoRoot, homeDir, id)` selects a same-device location (mkdir/remove probe; optional I/O seam for deterministic device tests); a cross-device home fallback excludes tree-cloning backends.
+- `ensureIsolation` claims a `.creating-<pid>` sibling before starting, then publishes via the backend's optional `relocate(fromBase, toBase)` hook (or rename for non-mounted backends); retention uses the same hook. Published/in-flight directories are never overwritten — reclaim via stale sweeping.
 - Ownership is checked before age. Foreign, retained, live and unknown owners
   are never automatically deleted. Creating/malformed markers get a ten-minute
   grace period. A live creating owner survives regardless of age.
@@ -62,21 +57,11 @@ device/liveness probes. `started_at` is an ISO timestamp recorded after successf
 start; old `{ backend }` markers remain readable by the sweeper. ZFS markers also
 record dataset/snapshot identity, and overlay markers retain the lower path.
 
-The Linux filesystem workflow creates real loopback btrfs and (when the kernel
-module loads) ZFS, and exercises publication, COW and teardown. Required check:
-`Isolation Linux filesystems / linux-fs` for isolation-core and isolated-child PRs.
-Branch protection is not managed by this package; the PR must request that check.
-Missing filesystem environment variables produce explicit skip reasons locally.
-The workflow also mutation-tests EOPNOTSUPP rejection on the runner's ext4 /tmp.
-Reflink's Node-hosted fallback uses argv-only `cp -a --reflink=always`, never a
-silent plain copy. FFI walks and rcopy plain copies account bytes during traversal,
-reserve 10% headroom, and default to a 2 GiB ceiling (no separate prewalk).
+The Linux filesystem workflow creates real loopback btrfs and (when the kernel module loads) ZFS, exercising publication, COW and teardown; required check `Isolation Linux filesystems / linux-fs` for isolation-core and isolated-child PRs (branch protection is not managed here — the PR must request it). Missing filesystem env vars produce explicit local skip reasons; the workflow also mutation-tests EOPNOTSUPP rejection on the runner's ext4 /tmp. Reflink's Node-hosted fallback uses argv-only `cp -a --reflink=always`, never a silent plain copy; FFI walks and rcopy plain copies account bytes during traversal, reserve 10% headroom, and default to a 2 GiB ceiling (no separate prewalk).
 
 ## ReFS manual verification (D2)
 
-Hosted Windows runners do not provide ReFS. The default is native-contract tests
-only; do not describe those tests as a live ReFS proof. On a disposable, already
-provisioned ReFS volume (for example `R:`), from the repository root in PowerShell:
+Hosted Windows runners do not provide ReFS; the default is native-contract tests only — never describe those as a live ReFS proof. On a disposable, provisioned ReFS volume (e.g. `R:`), from the repo root in PowerShell:
 
 ```powershell
 fsutil fsinfo volumeinfo R:
@@ -86,10 +71,4 @@ bun test packages/isolation-core/src/backends/fs-integration.test.ts -t ReFS
 Remove-Item Env:ISOLATION_TEST_REFS_ROOT
 ```
 
-The test checks publication, aligned extents, unaligned tails, tiny/empty files,
-source immutability, and teardown. Native calls use long-path prefixes, allocate
-the destination to cluster-rounded EOF, clone its aligned prefix and copy only
-the remaining tail, then retain the original logical file size. No volume is
-formatted by the test. Save the test output with the Windows build and volume
-cluster size when recording a live validation. ProjFS remains intentionally
-excluded because its callbacks require a native host, not merely callable FFI.
+Covers publication, aligned extents, unaligned tails, tiny/empty files, source immutability, teardown (long-path prefixes; cluster-rounded EOF allocation; clone the aligned prefix, copy the tail; original logical size kept); no volume is formatted. Record the output with the Windows build + volume cluster size for a live validation.

@@ -1,6 +1,6 @@
 # visual-qa — Bundled Visual-Evidence CLI
 
-**Generated:** 2026-08-24 (f3642fcda)
+**Generated:** 2026-11-18 (c2691818a9)
 
 ## OVERVIEW
 
@@ -21,7 +21,7 @@ visual-qa/
     ├── ansi.ts                   # ANSI escape stripping (width must be escape-aware)
     ├── png-decode.ts / png-crc.ts / png-synth.ts   # stdlib PNG codec (no deps)
     ├── types.ts
-    └── *.test.ts                 # co-located bun tests for every module above
+    └── *.test.ts                 # co-located bun tests per module; skill-doc-fields.test.ts pins SKILL.md's documented tui-check JSON fields to what checkTui emits
 ```
 
 ## BUNDLE/SOURCE DUALITY

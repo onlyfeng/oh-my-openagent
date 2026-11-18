@@ -1,98 +1,40 @@
-# src/features/builtin-skills/ — Built-in Skill Catalog
+# features/builtin-skills - Built-in Skill Catalog
 
-**Generated:** 2026-08-24 (f3642fcda; prior 2026-07-17 7d664b96b)
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
-Skills shipped inside the plugin (always available, no install). Registered via `createBuiltinSkills()`. Each skill implements the `BuiltinSkill` interface with name, description, content, and optional MCP config. Loaded by `opencode-skill-loader` with scope priority `opencode-project > project > opencode > user > config > builtin = shared` (`merger/scope-priority.ts`). User-installed skills with the same name override built-ins.
+Skills shipped inside the plugin (no install). `skills.ts` `createBuiltinSkills()` assembles the catalog; every entry implements `BuiltinSkill` (`types.ts`: name, description, template, optional mcpConfig, agent/model/allowedTools gating, argumentHint). Same-name user-installed skills outrank built-ins (builtin/shared = 1 of 6, [scope-priority](../opencode-skill-loader/merger/scope-priority.ts)).
 
 ## STRUCTURE
 
-Selected modules and resources:
-
 ```
 builtin-skills/
-├── index.ts              # Barrel exports
-├── skills.ts             # createBuiltinSkills() factory + resolveActiveBuiltinSkills()
+├── skills.ts             # createBuiltinSkills() + resolveActiveBuiltinSkills()
 ├── types.ts              # BuiltinSkill interface
-├── skills/
-│   ├── git-master.ts                  # Wraps git-master/ SKILL.md + section constants
-│   ├── git-master-sections/           # Prompt sub-sections (history-search, rebase, atomic-planning…)
-│   ├── git-master-skill-metadata.ts   # Companion to git-master
-│   ├── playwright.ts                  # Facade over browser provider variants
-│   ├── playwright-mcp-skill.ts        # createPlaywrightSkill() factory (mcp_args)
-│   ├── playwright-cli.ts              # CLI variant
-│   ├── dev-browser.ts                 # Persistent page state
-│   ├── debugging.ts                   # Debugging methodology
-│   ├── visual-qa.ts                   # Visual QA
-│   ├── frontend.ts              # Design-first UI guidance
-│   ├── review-work.ts                 # Gate-review post-implementation review (manual QA + one reviewer)
-│   ├── remove-ai-slops.ts             # Shared skill loader for remove-ai-slops
-│   ├── init-deep.ts                   # Shared skill loader for init-deep
-│   ├── team-mode.ts                   # 12 team_* tool documentation (gated)
-│   ├── security-research.ts           # Team Mode exploitability-driven security research
-│   ├── security-review.ts             # Reuses security-research
-│   └── index.ts                       # skill barrel
-├── git-master/                        # Resources for git-master skill
-├── frontend/                    # Resources for frontend skill
-├── dev-browser/                       # Resources for dev-browser
-└── security-research/                 # Resources for security-research
+├── skill-file-loader.ts  # createSharedSkillTemplateLoader / loadSharedSkillTemplate
+├── skills/               # one module per skill + git-master-sections/
+└── git-master/ hyperplan/ security-research/ dev-browser/ frontend/  # resources, see ANTI-PATTERNS
 ```
 
-## SKILL CATALOG
+## WHERE TO LOOK
 
-Selected skills; the provider registry is defined in `skills.ts`.
+| Concern | Facts |
+|---------|-------|
+| Catalog assembly | `createBuiltinSkills({ browserProvider, disabledSkills, teamModeEnabled, playwrightMcpArgs })` returns ONE browser skill (below) plus frontend, git-master, review-work, remove-ai-slops, init-deep, debugging, security-research, security-review, hyperplan, visual-qa; `disabledSkills` (name Set) filters the result. |
+| Browser variants | `browserProvider` picks one: `"playwright"` (default, MCP), `"playwright-cli"` (token-efficient CLI), `"dev-browser"` (persistent page state, inline template + `resolvedPath`). `playwright` and `playwright-cli` both export name `"playwright"` (agents hardcode it); only the implementation swaps. |
+| playwright MCP args | `playwrightMcpArgs` appends flags after the default `npx @playwright/mcp@latest` mcpConfig invocation (e.g. `--executable-path`, `--no-sandbox` for sandboxes); absent or empty keeps the `playwrightSkill` singleton byte-identical. |
+| team-mode | Included ONLY when `teamModeEnabled && !disabledSkills.has("team-mode")`; documents the 12 `team_*` tools. The interface has NO `shouldLoad` field; gating lives in the factory. |
+| MCP collision | `resolveActiveBuiltinSkills({ systemMcpNames })` drops skills whose `mcpConfig` keys collide with system MCP names (only `playwright` declares one today). |
+| Template sources | (a) `loadSharedSkillTemplate(name)`: cached frontmatter body from `@oh-my-opencode/shared-skills/<name>/SKILL.md` (debugging, frontend, init-deep, remove-ai-slops, review-work, visual-qa). (b) inline `with { type: "text" }` import of sibling SKILL.md (security-research, hyperplan). (c) security-review aliases security-research's template and description. |
+| git-master | Template COMPOSED from `skills/git-master-sections/` constants (overview, commit-workflow, rebase-workflow, history-search-workflow, quick-reference) joined with `---` separators; name/description from `git-master-skill-metadata.ts`. |
 
-| Skill | MCP | Notes |
-|-------|-----|-------|
-| `git-master` | — | 1107-LOC SKILL.md; atomic commits, rebase, history search; included by default for delegate-task `git` category |
-| `playwright` | `@playwright/mcp` | Browser automation via MCP |
-| `playwright-cli` | — | Browser automation via shell CLI (no MCP) |
-| `dev-browser` | — | Persistent page state browser for dev work |
-| `frontend` | — | Design-first UI development guidance |
-| `review-work` | — | Post-implementation gate review (orchestrator manual QA + one gate reviewer) |
-| `debugging` | — | Debugging methodology |
-| `visual-qa` | — | Visual QA |
-| `$omo:remove-ai-slops` | — | Remove AI-generated code smells |
-| `init-deep` | — | Hierarchical AGENTS.md generation |
-| `security-research` | — | Team Mode exploitability-driven security research |
-| `security-review` | — | Reuses security-research |
-| `team-mode` | — | **Conditional** — only rendered when `team_mode.enabled`; documents the 12 `team_*` tools and lifecycle |
+## CONVENTIONS
 
-## BROWSER VARIANT SELECTION
+- Adding a skill: create `skills/<name>.ts` exporting a `BuiltinSkill`, register it in `skills.ts` AND the `skills/index.ts` barrel, put resources under a sibling `<name>/` dir. Conditional skills are gated in `createBuiltinSkills()`.
+- `createSharedSkillTemplateLoader(readFile?, rootPath?)` stays injectable for tests; ENOENT rethrows (no silent fallback).
 
-Config `browser_automation_engine` selects which browser skill loads. Selected values:
+## ANTI-PATTERNS
 
-| Value | Skill Loaded |
-|-------|-------------|
-| `"playwright"` (default) | playwright (MCP-backed) |
-| `"playwright-cli"` | playwright-cli (CLI-backed) |
-
-Only one browser skill is active per session; non-selected variants are skipped.
-`resolveActiveBuiltinSkills({ systemMcpNames })` additionally filters out builtin
-skills whose declared MCP names collide with system MCP names.
-
-For the `playwright` (MCP) variant, `browser_automation_engine.playwright_mcp_args` (string array) appends extra CLI flags after the default `npx @playwright/mcp@latest` invocation, e.g. `--executable-path` or `--no-sandbox` for sandboxed envs lacking a system Chrome. Threaded via `createBuiltinSkills({ playwrightMcpArgs })` into `createPlaywrightSkill({ mcp_args })` (`skills/playwright-mcp-skill.ts`); absent or empty leaves the default singleton byte-identical.
-
-## TEAM-MODE SKILL GATING
-
-The `team-mode` skill is registered unconditionally but only **rendered** when `team_mode.enabled: true`:
-
-```typescript
-// skills/team-mode.ts (paraphrase)
-const teamModeSkill: BuiltinSkill = {
-  name: "team-mode",
-  shouldLoad: (config) => config.team_mode?.enabled === true,
-  // ...
-}
-```
-
-When disabled, the skill is filtered out before agent prompt assembly so agents do not see `team_*` tool docs they cannot use.
-
-## ADDING A NEW BUILT-IN SKILL
-
-1. Create `skills/{name}.ts` exporting a `BuiltinSkill` object
-2. Register in `skills.ts` `createBuiltinSkills()` factory
-3. Add resources (if any) under a sibling directory: `{name}/SKILL.md`, prompt sections, etc.
-4. If the skill is conditional, set `shouldLoad: (config) => …`
-5. Optionally declare an MCP server in the skill (loaded by `skill-mcp-manager` per session)
+- NEVER edit `git-master/SKILL.md`, `dev-browser/SKILL.md`, or `frontend/SKILL.md` expecting prompt changes: git-master ships composed sections, dev-browser an inline template, frontend the shared-skills copy (the local file feeds `shared-skill-extraction.test.ts` only). Only `hyperplan/SKILL.md` and `security-research/SKILL.md` are imported at runtime.
+- NEVER export a duplicate skill `name` (sole sanctioned exception: the browser-variant swap behind `"playwright"`).

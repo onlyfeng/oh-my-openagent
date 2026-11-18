@@ -1,6 +1,6 @@
 # omo-config-core - Harness-Neutral omo.json Config Core
 
-**Generated:** 2026-10-22 / f9de7acf36
+**Generated:** 2026-11-18 / c2691818a9 (update pass)
 
 ## OVERVIEW
 
@@ -11,6 +11,7 @@ Harness-neutral primitives for the `omo.json` config surface: a Zod v4 schema tr
 | Path | Purpose |
 |------|---------|
 | `src/index.ts` | Barrel re-exporting `./schema`, `./loader`, `./models`, `./writer`, `./migration`. |
+| `src/internal/` | Internal helpers (`jsonc-parse.ts`, `plain-object.ts`, `posix-path.ts`, own barrel) — deliberately NOT re-exported by the public barrel. |
 | `src/schema/config.ts` | Root `OmoConfigSchema` + `OmoConfigLayerSchema` (`.strict()`; `$schema`, `categories`, `agents`, `git_master`, `task`, `teams`, `models`, `side_panel`, `[opencode]`/`[senpi]`/`[codex]` blocks, `profiles`, `_migrations`, `legacy_migrations`). `OmoConfig` type. |
 | `src/schema/harness.ts` | `HARNESS_IDS` (`codex`/`opencode`/`omo`), `OMO_CONFIG_HARNESS_IDS` (`opencode`/`senpi`/`codex`), `OmoHarnessIdSchema`. |
 | `src/schema/model-catalog.ts` | `OmoModelCatalogSchema` / `*Layer` variants: record of short name to `{ model, variant?, reasoningEffort? }`. |
@@ -44,25 +45,24 @@ Harness-neutral primitives for the `omo.json` config surface: a Zod v4 schema tr
 
 ### Layer precedence (`resolveOmoConfigPaths` + `loadOmoConfig`)
 
-`resolveOmoConfigPaths` returns the user layer first, then project layers farthest-first (`paths.ts:98`). `loadOmoConfig` folds each layer onto the accumulator in order, so the last-merged layer wins: **nearest project `.omo/omo.jsonc` beats a farther ancestor, and any loaded project layer beats the user layer**. Missing or unparseable layers become `diagnostics` and are skipped; a layer with unrecognized keys still loads with those keys stripped plus one `unknown-keys` diagnostic listing their dotted paths, and every other invalid value is pruned on its own (`loader/layer-validation.ts` + `loader/prune-invalid-leaves.ts`: the smallest failing subtree per zod issue path, re-validated in bounded passes) with one `invalid-value` diagnostic per dropped key. Only a root that is not an object, a prototype-tamper hit, an exhausted prune bound, or a file with nothing valid left drops the whole layer with a `validation` diagnostic. The accumulator starts from `DEFAULT_RAW_CONFIG` (task defaults parsed from the schema). The merged document then resolves through `resolveOmoConfigView` (shared base -> `[harness]` -> `profiles.<P>` -> `profiles.<P>.[harness]`, control keys stripped) before the final `OmoConfigSchema` parse applies defaults once. If the merged result fails final validation the failing merged values are pruned the same way (`invalid-value` diagnostics at `(merged omo config)`); only when that cannot settle does the loader return the all-default config plus a `validation` diagnostic rather than throwing. `omoConfigDiagnosticLines` (`loader/diagnostic-lines.ts`) renders these diagnostics as the doctor lines both doctors print.
+`resolveOmoConfigPaths` returns the user layer first, then project layers farthest-first (`findProjectConfigPathsFarthestFirst` ends in `nearestFirst.reverse()`, `paths.ts:101`; composed in `resolveOmoConfigPaths`, `paths.ts:104`). `loadOmoConfig` folds each layer onto the accumulator in order, so the last-merged layer wins: **nearest project `.omo/omo.jsonc` beats a farther ancestor, and any loaded project layer beats the user layer**. Missing or unparseable layers become `diagnostics` and are skipped; a layer with unrecognized keys still loads with those keys stripped plus one `unknown-keys` diagnostic listing their dotted paths, and every other invalid value is pruned on its own (`loader/layer-validation.ts` + `loader/prune-invalid-leaves.ts`: the smallest failing subtree per zod issue path, re-validated in bounded passes) with one `invalid-value` diagnostic per dropped key. Only a root that is not an object, a prototype-tamper hit, an exhausted prune bound, or a file with nothing valid left drops the whole layer with a `validation` diagnostic. The accumulator starts from `DEFAULT_RAW_CONFIG` (task defaults parsed from the schema). The merged document then resolves through `resolveOmoConfigView` (shared base -> `[harness]` -> `profiles.<P>` -> `profiles.<P>.[harness]`, control keys stripped) before the final `OmoConfigSchema` parse applies defaults once. If the merged result fails final validation the failing merged values are pruned the same way (`invalid-value` diagnostics at `(merged omo config)`); only when that cannot settle does the loader return the all-default config plus a `validation` diagnostic rather than throwing. `omoConfigDiagnosticLines` (`loader/diagnostic-lines.ts`) renders these diagnostics as the doctor lines both doctors print.
 
 ### Filename resolution (`paths.ts`)
 
-- User dir: `~/.omo` on every platform; prefers `omo.jsonc`, falls back to `omo.json` (`paths.ts:29`). There is no `$XDG_CONFIG_HOME` / `%APPDATA%` / `~/.config/omo` branch, and `legacy-user-config-purge.test.ts` fails the suite if one returns.
-- Project layers: `<dir>/.omo/omo.jsonc` (then `omo.json`) walked from `cwd` up to `$HOME`, skipping `$HOME` itself so the `~/.omo` user layer is not also counted as a project layer (`paths.ts:76`).
-- Symlinked project `.omo` dirs and symlinked project config files are refused as a load source (`paths.ts:57`).
+- User dir: `~/.omo` on every platform; prefers `omo.jsonc`, falls back to `omo.json` (`paths.ts:28`). There is no `$XDG_CONFIG_HOME` / `%APPDATA%` / `~/.config/omo` branch, and `legacy-user-config-purge.test.ts` fails the suite if one returns.
+- Project layers: `<dir>/.omo/omo.jsonc` (then `omo.json`) walked from `cwd` up to `$HOME`, skipping `$HOME` itself so the `~/.omo` user layer is not also counted as a project layer (`paths.ts:85`); symlinked project `.omo` dirs and symlinked project config files are refused as a load source (`paths.ts:46`).
 
 ### Merge safety (`merge.ts`)
 
-Recursively deep-merges plain objects; scalars and arrays replace. `__proto__`, `prototype`, and `constructor` keys are dropped via `isUnsafeObjectKey` on both the merge key and every nested value (`merge.ts:9`, `merge.ts:22`).
+Recursively deep-merges plain objects; scalars and arrays replace. `__proto__`, `prototype`, and `constructor` keys are dropped via `isUnsafeObjectKey` on both the merge key and every nested value (`merge.ts:22`, `merge.ts:35`).
 
 ### Writer guarantees (`writer.ts`)
 
-`updateOmoConfig` refuses symlinked target paths and symlinked project `.omo` dirs (`writer.ts:83`, `writer.ts:94`), rejects a target whose existing content is not valid JSONC (`writer.ts:109`), writes a `.bak.<timestamp>` backup of any existing file with exclusive-create collision retries (`writer.ts:36`), applies each `OmoConfigEdit` through jsonc-parser so comments and trailing commas survive, then writes atomically via a unique temp file plus `rename` (`writer.ts:66`). Every failure surfaces as a typed `OmoConfigWriteError` carrying `operation` (`"backup" | "parse" | "read" | "write"`) and the underlying cause (`types.ts:67`).
+`updateOmoConfig` refuses symlinked target paths and symlinked project `.omo` dirs (`writer.ts:105`, `writer.ts:115`), rejects a target whose existing content is not valid JSONC (`writer.ts:129`), writes a `.bak.<timestamp>` backup of any existing file with exclusive-create collision retries (`writer.ts:48`), applies each `OmoConfigEdit` through jsonc-parser so comments and trailing commas survive, then writes atomically via a unique temp file plus `rename` (`writer.ts:91`). Every failure surfaces as a typed `OmoConfigWriteError` carrying `operation` (`"backup" | "parse" | "read" | "write"`) and the underlying cause (`types.ts:75`).
 
 ## DEPENDENCIES & CONSUMERS
 
-- **Depends on:** `@oh-my-opencode/utils` (`parseJsoncSafe`, `isPlainObject`, `isUnsafeObjectKey`), `jsonc-parser`, `zod`.
+- **Depends on:** `jsonc-parser`, `zod`. The `parseJsoncSafe` / `isPlainObject` / `isUnsafeObjectKey` equivalents live in `src/internal/` — `@oh-my-opencode/utils` is NOT a dependency (only `merge.test.ts` imports it as a test oracle).
 - **Consumed by:** `packages/senpi-task` (schema types re-used by the task/team config surface), `packages/omo-senpi` (`components/config-resolution` wraps `loadOmoConfig` + `resolveModelReferences`; `components/config-startup` runs the migration engine at startup; `components/task` consumes the resolved config), `packages/omo-opencode` (`plugin-config/omo-config-chain.ts` builds the per-layer OpenCode views and the user-only protected view; `startup-migration.ts` drives the engine; `config-migration/` supplies OpenCode-side discovery + transform), and `packages/omo-codex` (`plugin/shared/src/config-loader.ts` + `config-migration.ts` for the `config.jsonc` group).
 
 ## QA

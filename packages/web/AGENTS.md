@@ -1,10 +1,10 @@
 # packages/web/ — Marketing Site (Next.js + Cloudflare Workers)
 
-**Generated:** 2026-08-24 (f3642fcda; prior 2026-05-20)
+**Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-08-24 f3642fcda)
 
 ## OVERVIEW
 
-Public-facing marketing site for OmO (omo.dev). Next.js 16 (App Router) deployed to Cloudflare Workers via [@opennextjs/cloudflare](https://opennext.js.org/cloudflare). Independent of the npm plugin — its own `package.json`, `bun.lock`, and `tsconfig.json`.
+Public-facing marketing site for OmO (omo.dev). Next.js 16 (App Router) deployed to Cloudflare Workers via [@opennextjs/cloudflare](https://opennext.js.org/cloudflare). Independent of the npm plugin — its own `package.json`, `bun.lock`, and `tsconfig.json`. NOT part of the npm package (root `package.json` `files` ships only `dist/`, `bin/`, `postinstall.mjs`) — exclusively a Cloudflare deployment target; root `bun test` ignores `packages/web/**` via `bunfig.toml`.
 
 ## STACK
 
@@ -23,43 +23,28 @@ Public-facing marketing site for OmO (omo.dev). Next.js 16 (App Router) deployed
 
 ```
 packages/web/
-├── app/[locale]/         # localized routes (App Router)
-├── components/           # shared UI primitives + shadcn-generated
-├── lib/                  # utility helpers (cn, etc.)
-├── messages/{en,ja,ko,zh}.json  # i18n strings
-├── i18n/                 # next-intl request/routing config
-├── proxy.ts              # next-intl routing and canonical redirects
-├── public/               # static assets (largest dir, ~4 MB)
-├── e2e/                  # Playwright tests
-├── scripts/prepare-build.mjs    # purges .next/cache/fetch-cache before build
-├── next.config.ts
-├── open-next.config.ts
-├── wrangler.toml         # worker name + compatibility settings
-├── playwright.config.ts
-├── eslint.config.mjs
-├── postcss.config.mjs
-├── tsconfig.json
-├── components.json       # shadcn config
-└── package.json
+├── app/[locale]/               # localized routes; tokens in app/styles/design-system.css
+├── components/                 # UI primitives, shadcn components/ui/, home/, docs/
+├── lib/ i18n/ proxy.ts         # helpers (cn, build-id), next-intl config, canonical redirects
+├── messages/{en,ja,ko,zh}.json # all user-facing copy; public/ static assets; e2e/ Playwright specs
+└── scripts/                    # prepare-build.mjs, generate-docs-content.mjs, icon/poster utils
 ```
 
 ## SCRIPTS
 
 ```bash
-# from packages/web/ directory
-bun install
+# from packages/web/ (bun install ONLY — never npm install)
 bun run dev              # next dev (local Node.js)
-bun run lint             # biome lint + eslint
-bun run lint:fix
-bun run format           # prettier --write
-bun run format:check
-bun run type-check       # tsgo --noEmit
-bun run build            # next build (Turbopack, Node target)
-bun run preview          # opennextjs-cloudflare build + preview locally
-bun run deploy           # opennextjs-cloudflare build + deploy to Cloudflare
-bun run test:e2e         # playwright test
+bun run lint | lint:fix  # eslint (cached; app/components/lib/e2e/scripts)
+bun run format | format:check    # prettier --write / --check
+bun run type-check       # generate-docs-content + tsgo --noEmit
+bun run build            # bun --bun next build (Turbopack)
+bun run test             # bun test lib
+bun run test:e2e         # playwright: flag-off config first, then the default config
+bun run preview | deploy # opennextjs-cloudflare build + preview locally / deploy to Cloudflare
 bun run cf-typegen       # regenerate cloudflare-env.d.ts from wrangler.toml bindings
 ```
+Asset utilities: `icons:render` / `icons:check` (app icons), `poster:graph` / `check:graph-budget`.
 
 ## CI/CD
 
@@ -68,30 +53,17 @@ bun run cf-typegen       # regenerate cloudflare-env.d.ts from wrangler.toml bin
 | `.github/workflows/web-ci.yml`     | push/PR to master/dev that touches `packages/web/**`             | format check, lint, type-check, next build, opennextjs-cloudflare build |
 | `.github/workflows/web-deploy.yml` | push to master that touches `packages/web/**` OR manual dispatch | full deploy via `cloudflare/wrangler-action@v3`                         |
 
-**Account and secret:** the Worker runs on the Sisyphus Labs Cloudflare account (moved 2026-10-09); `wrangler.toml` pins the account id and names the omo.dev zone routes by `zone_id`. The deploy workflow uses the `omo-production` GitHub environment, whose `CLOUDFLARE_API_TOKEN` can edit Workers scripts and the omo.dev zone's routes and nothing else (sisyphuslabs/common-infra `docs/cutover-workers.md`).
-
-**Build id and static assets:** the build id is the commit sha (`lib/build-id.mjs`), so `/_next/static/<sha>/` belongs to one commit. Re-deploying the same commit (a re-run, or a `workflow_dispatch` on the same sha) rebuilds that directory; if the rebuilt manifests are not byte-identical, the asset-retention guard stops the deploy with `Content-addressed asset changed bytes`. That is the guard failing safe, not a bug to bypass: deploy a new commit instead.
-
-## RELATIONSHIP TO npm PACKAGE
-
-The npm package `oh-my-opencode` ships only `dist/`, `bin/`, and `postinstall.mjs` (see root `package.json` `files` field). `packages/web/` is **not** included in any npm publish — it is exclusively a separate Cloudflare deployment target.
-
-Root `bun test` ignores `packages/web/**` through `bunfig.toml` so `packages/web/e2e/*.spec.ts` does not pollute plugin tests.
+**Account/secret:** the Worker runs on the Sisyphus Labs Cloudflare account (moved 2026-10-09); `wrangler.toml` pins the account id and names the omo.dev zone routes by `zone_id`; the `omo-production` GitHub environment's `CLOUDFLARE_API_TOKEN` can edit Workers scripts and the omo.dev zone's routes and nothing else (sisyphuslabs/common-infra `docs/cutover-workers.md`). **Build id** = commit sha (`lib/build-id.mjs`), so `/_next/static/<sha>/` belongs to one commit; re-deploying the same sha with non-byte-identical rebuilt manifests is stopped by the asset-retention guard (`Content-addressed asset changed bytes`) — the guard failing safe, not a bug to bypass: deploy a new commit instead.
 
 ## CONVENTIONS
 
-- **No path aliases globally** in the omo project, but `packages/web/` is a Next.js app where `@/*` aliases are the framework default. Keep `@/*` confined to packages/web/.
-- Use the existing shadcn primitives in `components/ui/` rather than installing new UI libs.
-- All user-facing copy goes through `messages/{locale}.json`; never hardcode strings in components.
-- **Design source of truth:** the tokens in `app/styles/design-system.css` (doriterm.com's Night and Day palettes, light and dark, Timeless Sans + JetBrains Mono) and the landing system in `components/home/styles`. `DESIGN.md` still describes the earlier dark-only Geist design and is being rewritten (#12658); where they differ, the stylesheet wins. Keep: IntersectionObserver over scroll listeners, only `transform`/`opacity` animated.
-- Docs content under `components/docs/` is generated by `scripts/generate-docs-content.mjs` (DO NOT EDIT marker) — edit the source docs, not the generated output.
-- Format with prettier before commit — `web-ci.yml` enforces `format:check`.
+- `@/*` aliases are the Next.js framework default HERE only (the omo project has no global path aliases); reuse the existing shadcn primitives in `components/ui/` rather than installing new UI libs; all user-facing copy goes through `messages/{locale}.json`, never hardcoded.
+- **Design source of truth:** the tokens in `app/styles/design-system.css` (doriterm.com's Night and Day palettes, light and dark, Timeless Sans + JetBrains Mono) and the landing system in `components/home/styles`. `DESIGN.md` still describes the earlier dark-only Geist design and is being rewritten (#12658); where they differ, the stylesheet wins. IntersectionObserver over scroll listeners; only `transform`/`opacity` animated.
+- Docs content under `components/docs/` is generated by `scripts/generate-docs-content.mjs` (DO NOT EDIT marker) — edit the source docs, not the generated output. Format with prettier before commit — `web-ci.yml` enforces `format:check`.
 
 ## ANTI-PATTERNS
 
-- Never run `npm install` in `packages/web/`. Use `bun install` only. (Root `.gitignore` already blocks `package-lock.json`.)
-- Never commit `.next/`, `.open-next/`, `.wrangler/`, `node_modules/` (covered by `packages/web/.gitignore`).
-- Never deploy locally with `bun run deploy` against production — use the GitHub Actions workflow so Cloudflare credentials live in one place.
+- Never run `npm install` in `packages/web/` — `bun install` only (root `.gitignore` already blocks `package-lock.json`). Never commit `.next/`, `.open-next/`, `.wrangler/`, `node_modules/` (covered by `packages/web/.gitignore`). Never deploy locally with `bun run deploy` against production — use the GitHub Actions workflow so Cloudflare credentials live in one place.
 - Do not add `framer-motion`; CSS keyframes/Tailwind animation only (narrow `motion/react layoutId` exception in DESIGN.md). No serif typography; no layout-property animation (`width`/`height`/`top`/`left`/margin/padding).
 - Known accepted debt: docs pages overflow horizontally at 390×844 — do not worsen without the docs-shell design work.
 

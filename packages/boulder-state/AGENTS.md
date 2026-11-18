@@ -1,6 +1,6 @@
 # boulder-state — Work-Tracking State Machine (Core)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-11-18 / c2691818a (update pass)
 
 ## OVERVIEW
 
@@ -19,6 +19,7 @@ Every `BoulderState` carries `active_work_id` + a `works` map. The root-level fi
 | **Sessions/tasks** (`storage/{session,task}.ts`) | `appendSessionId(ForWork)`, `upsertTaskSessionState(ForWork)`, `startTaskTimer`, `endTaskTimer` |
 | **Stale works** (`storage/stale-work.ts`) | `reconcileStaleWorks`, `isWorkStale`, `resolveStaleWorkThresholdMs`, `DEFAULT_STALE_WORK_THRESHOLD_MS`, `STALE_WORK_THRESHOLD_ENV_KEY` |
 | **Plans** (`plan-checklist.ts`, `top-level-task.ts`, `storage/plan-progress.ts`) | `getPlanChecklist`, `parsePlanChecklist`, `readCurrentTopLevelTask`, `findPrometheusPlans`, `getPlanProgress`, `getPlanName` |
+| **Review artifacts** (`storage/review-artifacts.ts`) | Momus review verdicts beside plans: `getPlanReviewsDir` (`<plan>.reviews/`), sequence-named writes, `hashPlanContent` |
 | **Paths** (`storage/path.ts`) | `getBoulderFilePath`, `resolveBoulderPlanPath(ForWork)` |
 
 ## CONSUMERS
@@ -36,4 +37,5 @@ Every `BoulderState` carries `active_work_id` + a `works` map. The root-level fi
 - **Stale works:** `completeBoulder` is the only completion transition, so a work whose session died abnormally would stay `active` forever (#8413). `reconcileStaleWorks(directory, options?)` demotes an `active` work to `paused` and stamps `stale_since` when its last activity - the newest of its sessions' transcript mtimes, `updated_at` and `started_at` - is at least `OMO_BOULDER_STALE_WORK_THRESHOLD_MS` (default 6h) old; a work with no activity evidence at all is stale. Nothing stale means no write, `completed`/`abandoned` and status-less records are never touched, and every failure is swallowed. Transcripts are read only under session directories whose alphanumeric shape matches the work's own cwd or worktree, because an agent home accumulates thousands of them. `selectActiveWork`/`appendSessionIdForWork` return a `stale_since` work to `active` and drop the stamp; a work paused without the stamp keeps its status. Readers are unchanged - `getActiveWorks`/`getWorkResumeOptions` still filter `completed`/`abandoned` only.
 - **`writeBoulderState` self-creates `.omo/.gitignore`** (`*`, `!/rules/`) on first `mkdir`.
 - **Plan parsing** has two modes: structured (when `## TODOs` / `## Final Verification Wave` headings exist) counts only labeled rows inside those sections (`N` / `T<n>[.<n>[a]]` under TODOs, `F<n>` / `H<n>` under the final wave, followed by `.`, space, `-` or em-dash); otherwise a simple mode counts any top-level `-`/`*` checkbox. A structured parse that counts nothing while top-level checkboxes exist under another heading falls back to simple mode. `[x]` is completed, `[ ]` is remaining, and `[~]` (blocked) counts toward the total only, so it never keeps a continuation alive. `isStructuredTaskRow` exposes the row grammar to the OpenCode plan-format validator; the Codex Stop hook keeps its own copy in `omo-codex/plugin/components/ulw-execute-continuation/src/plan-checklist.ts`. Code fences (`markdown-fence.ts`) and indented checkboxes are skipped.
+- **Momus review artifacts** (`storage/review-artifacts.ts`): `okay`/`reject` verdict artifacts land in the plan's `.reviews/` sidecar dir with sequence names; a missing ignore file must never block the artifact write (best-effort only), and it never writes through a symlinked `.reviews` directory (`review-artifacts.test.ts`).
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).

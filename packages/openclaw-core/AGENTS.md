@@ -1,6 +1,6 @@
 # openclaw-core — OpenClaw Gateway + Reply Daemon (Core)
 
-**Generated:** 2026-06-16
+**Generated:** 2026-06-16 (update pass 2026-11-18 / c2691818a9)
 
 ## OVERVIEW
 

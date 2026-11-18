@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-The only shared skill besides `ultimate-browsing` carrying a real sub-project: a Python package + CLI that finds, lists, searches, and reads local coding-agent session transcripts across ~25 platforms (Codex, Claude, OpenCode, OMO/Senpi/pi, and a long tail), normalizing them into one `Session` model. Earned this file: 33 files, 23 Python modules, own test suite, own `pyrightconfig.json`, own `.npmignore` (ships in the npm package minus tests/caches).
+The only shared skill besides `ultimate-browsing` carrying a real sub-project: a Python package + CLI that finds, lists, searches, and reads local coding-agent session transcripts across ~25 platforms (Codex, Claude, OpenCode, OMO/Senpi/pi, and a long tail), normalizing them into one `Session` model. Earned this file: 34 files, 23 Python modules, own test suite, own `pyrightconfig.json`, own `.npmignore` (ships in the npm package minus tests/caches).
 
 ## STRUCTURE
 

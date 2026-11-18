@@ -1,6 +1,6 @@
 # comment-checker-core — apply-patch Parser + Checker Runner (Core)
 
-**Generated:** 2026-06-17
+**Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-06-17)
 
 ## OVERVIEW
 
@@ -13,8 +13,12 @@ Two responsibilities: (1) parse LLM apply-patch edits into structured `CheckerEd
 | `parseApplyPatchRequests(patch)` | `apply-patch-edits.ts` | parse `*** Add/Update/Delete File:` + `*** Move to:` protocol with `@@` context + `+`/`-` markers |
 | `extractApplyPatchEdits(details, args?)` | `apply-patch-edits.ts` | high-level extractor (patch text OR metadata files) |
 | `getApplyPatchMetadataFiles(details)` | `apply-patch-edits.ts` | read files from nested `details.files` / `result.files` / `metadata.files` |
-| `resolveCommentCheckerBinary(input)` | `runner.ts` | locate binary via `createRequire(@code-yeongyu/comment-checker)` |
+| parse helpers (`getString`, `isRecord`, `joinPatchLines`, `makeAccumulator`, `readApplyPatchMetadataFiles`) | `apply-patch-edits.ts` | building blocks of the high-level extractor |
+| `resolveCommentCheckerBinary(input)` | `runner.ts` | locate the binary (package binary via `createRequire` / platform package candidates) |
 | `runCommentChecker(input, options)` | `runner.ts` | pipe `HookInput` JSON to stdin, read stdout/stderr, return `CheckResult` |
+| `COMMENT_CHECKER_RELEASE_VERSION` (pin `0.8.0`), `COMMENT_CHECKER_RELEASE_REPO`, `commentCheckerBinaryName`, `commentCheckerCacheDir`, `resolveCommentCheckerReleaseAsset` | `release.ts` | pinned `code-yeongyu/go-claude-code-comment-checker` release: per-platform asset names + URLs |
+| `COMMENT_CHECKER_PACKAGE_NAME`, `findCommentCheckerPackageBinary` | `package-binary.ts` | platform-package binary lookup (`<pkg>-<os>-<arch>`, `vendor/<platform>/`, `bin/`); tolerates embedded-Bun `ResolveMessage` misses |
+| `sendAndCloseStdin` | `stdin-delivery.ts` | write + close stdin settling once; the error listener stays attached for the stream's lifetime (#6396) |
 | `COMMENT_CHECKER_VERSION_MARKER`, `isCachedCommentCheckerCurrent(cacheDir)`, `recordCachedCommentCheckerRelease(cacheDir)` | `cached-release.ts` | version marker beside the binary in the shared cache slot; a missing or different marker means the cached checker is stale and must be re-downloaded (#8850) |
 | types (17) | `types.ts` | `CheckerEdit`, `HookInput`, `CheckResult`, `SpawnFn`/`SpawnProcess`/`SpawnSignal`, `ApplyPatchFileMetadata`, … |
 
@@ -25,6 +29,7 @@ Two responsibilities: (1) parse LLM apply-patch edits into structured `CheckerEd
 
 ## NOTES
 
+- **Binary resolution has two sources:** the platform package binary (`package-binary.ts`) and the pinned GitHub release asset (`release.ts`, currently `0.8.0`) cached beside the version marker (`cached-release.ts`).
 - **Exit-code contract:** `0` = clean, `2` = has comments. Any other exit code, a synchronous `spawn` throw, or a rejected `exited` (a spawn error such as EACCES / ENOEXEC) returns `{hasComments: false, message: "", failure: { exitCode, stderr }}` (`exitCode: null` when the checker never started; `stderr` trimmed to 500 chars, or the spawn error message). Callers that ignore `failure` keep the old "no comments" behavior; OmO Native uses it to warn once and go inert (#8850). A timeout still returns the plain empty result: a slow checker is not a broken one.
 - **Spawn timeouts:** default 30s, 1s kill grace, SIGTERM→SIGKILL escalation.
 - **`SpawnProcess` is an injected interface** — `stdin.send(input): Promise<void>` (write + close, settles once; the adapter owns every stdin `error` event so a checker that exits without reading cannot crash the host, #6396), `ReadableStream<Uint8Array>` stdout/stderr, `exited: Promise<number>` — never the Node `ChildProcess` type directly. A failed `send` kills the child and returns the empty result.
