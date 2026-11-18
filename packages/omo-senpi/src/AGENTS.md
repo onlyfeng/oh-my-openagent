@@ -21,7 +21,7 @@ Source root of the Senpi adapter package. The package barrel (`index.ts`) export
 Colocated at `src/` root: 17 executable package-contract tests, not documentation:
 
 - `bundle-purity.test.ts` - import allowlist for the extension bundle; keep aligned with `SENPI_LOADER_ALIASES` in `plugin/scripts/build-extension.mjs` (peer-external rule in `../AGENTS.md`).
-- `bundle-size.test.ts` - raw byte budget for built `plugin/extensions/omo.js`. Every ceiling increase requires a separate measured PR with bundle sizes before/after and the reason; never fold it into a feature PR.
+- `bundle-size.test.ts` - raw byte budget for built `plugin/extensions/omo.js`. A ceiling increase is measured, never estimated: a single PR raises it in its own measured change with sizes before/after and the reason; a bundle-train batch sets it to the batch's measured `omo.js` size (plus the standing headroom) in its own integration commit, with the measurement in the batch PR body.
 - `bundle-lazy-barrel.test.ts` - lazy dynamic imports survive minification in the emitted bundle.
 - `bundled-skill-disable.test.ts` - a `disabled_skills` entry drops that skill from the resolved native skill set.
 - `computer-use-lazy-runtime.test.ts` - asserted on the EMITTED artifacts: computer-use keeps only its registration shell in `omo.js`; the desktop client and handle ship in `omo-computer-use.js` and load on first use.

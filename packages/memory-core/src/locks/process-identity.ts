@@ -28,7 +28,10 @@ async function readLinuxStartIdentity(pid: number): Promise<string | null> {
     const stat = await readFile(`/proc/${pid}/stat`, "utf8")
     const commandEnd = stat.lastIndexOf(")")
     if (commandEnd < 0) return null
-    const fieldsAfterCommand = stat.slice(commandEnd + 2).trim().split(/\s+/)
+    const fieldsAfterCommand = stat
+      .slice(commandEnd + 2)
+      .trim()
+      .split(/\s+/)
     const startTicks = fieldsAfterCommand[19]
     return startTicks === undefined ? null : `linux-proc-start-ticks:${startTicks}`
   } catch {
@@ -61,13 +64,16 @@ export function createProcessStartIdentityReader(
   let ownIdentity: Promise<string | null> | undefined
   return (pid) => {
     if (pid !== ownPid) return read(pid)
-    ownIdentity ??= read(pid).then((identity) => {
-      if (identity === null) ownIdentity = undefined
-      return identity
-    }, (error: unknown) => {
-      ownIdentity = undefined
-      throw error
-    })
+    ownIdentity ??= read(pid).then(
+      (identity) => {
+        if (identity === null) ownIdentity = undefined
+        return identity
+      },
+      (error: unknown) => {
+        ownIdentity = undefined
+        throw error
+      },
+    )
     return ownIdentity
   }
 }
@@ -85,6 +91,25 @@ async function readProcessStartIdentity(pid: number): Promise<string | null> {
   }
   if (process.platform === "win32") return await readWin32StartIdentity(pid)
   return null
+}
+
+/**
+ * The basename of a live process's argv[0], or null when the process is gone or the platform cannot say. Lets a
+ * caller name a lock holder by what it runs; Linux reads /proc, macOS and FreeBSD ask ps, Windows answers null.
+ */
+export async function getProcessCommandName(pid: number): Promise<string | null> {
+  let argv0: string | undefined
+  if (process.platform === "linux") {
+    try {
+      argv0 = (await readFile(`/proc/${pid}/cmdline`, "utf8")).split("\0", 1)[0]
+    } catch {
+      return null
+    }
+  } else if (process.platform === "darwin" || process.platform === "freebsd") {
+    argv0 = (await execFileText("/bin/ps", ["-o", "args=", "-p", String(pid)]))?.split(/\s+/, 1)[0]
+  }
+  const name = argv0?.slice(argv0.lastIndexOf("/") + 1)
+  return name === undefined || name === "" ? null : name
 }
 
 function identityScheme(identity: string): string | null {

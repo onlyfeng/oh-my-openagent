@@ -1,5 +1,6 @@
 import type { AgreementExtractionRecord, AgreementsPolicy, FactsKnownAgreement } from "../agreements/types"
 import type { GitCommitAuthor, GitMemoryRepo } from "../git"
+import { parseClaimReceipt, type ClaimReceipt } from "../provenance"
 import { applyFactsRecovery } from "./recovery"
 import {
   FactsPlanParentDirtyError,
@@ -15,9 +16,16 @@ export interface FactsPersonReference {
   readonly aliases: readonly string[]
 }
 
+// `receipt` is optional only for records written before #10488; the record tool always attaches one.
 export type FactsExtractionRecord =
-  | { readonly scope: "person"; readonly person: FactsPersonReference; readonly text: string; readonly date: string }
-  | { readonly scope: "project"; readonly text: string; readonly date: string }
+  | {
+      readonly scope: "person"
+      readonly person: FactsPersonReference
+      readonly text: string
+      readonly date: string
+      readonly receipt?: ClaimReceipt
+    }
+  | { readonly scope: "project"; readonly text: string; readonly date: string; readonly receipt?: ClaimReceipt }
 
 export interface FactsBatch {
   readonly batchId: string
@@ -33,6 +41,7 @@ export interface FactsKnownPerson {
 
 export interface FactsPayload {
   readonly version: 1
+  readonly agreementEventVersion?: 1
   readonly identity: string
   readonly today: string
   readonly entries: readonly FactsQueueEntry[]
@@ -83,23 +92,28 @@ export async function applyFactsBatch(
   if (count === 0) return { outcome: "no_facts", affectedPaths: [] }
   try {
     const recovery = await planFactsMutation(repo, batch, options.people, options.onAliasTie, options.agreements)
+    if (recovery.paths.length === 0) return { outcome: "no_facts", affectedPaths: [] }
     await options.publishRecovery?.(recovery)
-    return applyFactsRecovery(repo, recovery, count, author)
+    return applyFactsRecovery(repo, recovery, count, author, {
+      batch,
+      agreementsPolicy: options.agreements,
+      publishRecovery: options.publishRecovery,
+    })
   } catch (error) {
     if (error instanceof FactsPlanParentDirtyError) return { outcome: "parent_dirty" }
     throw error
   }
 }
 
-export function validateFactsRecovery(
-  recovery: FactsApplyRecovery,
-  batch: FactsBatch,
-): void {
+export function validateFactsRecovery(recovery: FactsApplyRecovery, batch: FactsBatch): void {
   validateFactsBatchId(batch.batchId)
-  if (recovery.version !== 1
-    || recovery.batchId !== batch.batchId
-    || recovery.recordsHash !== factsRecordsHash(batch.records, batch.agreements)
-    || recovery.paths.some((entry, index) => index > 0 && recovery.paths[index - 1]!.path >= entry.path)) {
+  if (
+    recovery.version !== 1 ||
+    (recovery.agreementEventVersion !== undefined && recovery.agreementEventVersion !== 1) ||
+    recovery.batchId !== batch.batchId ||
+    recovery.recordsHash !== factsRecordsHash(batch.records, batch.agreements) ||
+    recovery.paths.some((entry, index) => index > 0 && recovery.paths[index - 1]!.path >= entry.path)
+  ) {
     throw new TypeError("Invalid facts applyRecovery envelope")
   }
 }
@@ -114,21 +128,49 @@ export function parseFactsExtractionRecord(value: unknown, index: number): Facts
   const date = validDate(value.date)
   if (text === undefined) throw invalid(index, "text must be non-empty")
   if (date === undefined) throw invalid(index, "date must be YYYY-MM-DD")
+  const receipt = value.receipt === undefined ? undefined : parseClaimReceipt(value.receipt)
+  if (value.receipt !== undefined && receipt === undefined) throw invalid(index, "receipt is malformed")
+  const withReceipt = receipt === undefined ? {} : { receipt }
   if (value.scope === "project") {
-    if ("person" in value) throw invalid(index, "project record must not carry person")
-    assertKeys(value, ["scope", "text", "date"], index)
-    return { scope: "project", text, date }
+    // Models that fill every optional property (GPT through OpenAI-compatible proxies, #10918)
+    // send an empty person on project facts. That carries no person, so it is dropped; a project
+    // record naming a real person is still a contradiction and is refused.
+    if ("person" in value && !isPlaceholderPerson(value.person))
+      throw invalid(index, "project record must not carry person")
+    assertKeys(value, ["scope", "person", "text", "date", "receipt"], index)
+    return { scope: "project", text, date, ...withReceipt }
   }
   if (value.scope !== "person") throw invalid(index, "scope must be person or project")
   if (!("person" in value)) throw invalid(index, "person record requires person")
-  assertKeys(value, ["scope", "person", "text", "date"], index)
+  assertKeys(value, ["scope", "person", "text", "date", "receipt"], index)
   if (!isRecord(value.person)) throw invalid(index, "person must be an object")
   assertKeys(value.person, ["name", "aliases"], index)
   const name = nonEmpty(value.person.name)
-  if (name === undefined || !Array.isArray(value.person.aliases)) throw invalid(index, "person requires name and aliases")
+  if (name === undefined || !Array.isArray(value.person.aliases))
+    throw invalid(index, "person requires name and aliases")
   const aliases = value.person.aliases.map(nonEmpty)
   if (aliases.some((alias) => alias === undefined)) throw invalid(index, "person aliases must be non-empty strings")
-  return { scope: "person", person: { name, aliases: aliases as string[] }, text, date }
+  return { scope: "person", person: { name, aliases: aliases as string[] }, text, date, ...withReceipt }
+}
+
+// Only null-like tokens that cannot be a name. A short word such as "Na" is a real surname, so a
+// project record carrying it is refused as a real person, never dropped as a placeholder.
+const PLACEHOLDER_NAMES = new Set(["n/a", "none", "null", "undefined", "unknown", "-"])
+
+function isPlaceholderName(value: unknown): boolean {
+  if (value === undefined || value === null) return true
+  return typeof value === "string" && (value.trim().length === 0 || PLACEHOLDER_NAMES.has(value.trim().toLowerCase()))
+}
+
+function isPlaceholderPerson(value: unknown): boolean {
+  if (!isRecord(value)) return isPlaceholderName(value)
+  if (Object.keys(value).some((key) => key !== "name" && key !== "aliases")) return false
+  const aliases = value.aliases
+  const emptyAliases =
+    aliases === undefined ||
+    aliases === null ||
+    (Array.isArray(aliases) && aliases.every((alias) => typeof alias === "string" && alias.trim().length === 0))
+  return isPlaceholderName(value.name) && emptyAliases
 }
 
 function assertKeys(value: Record<string, unknown>, allowed: readonly string[], index: number): void {

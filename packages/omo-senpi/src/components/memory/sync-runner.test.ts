@@ -6,9 +6,24 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 
 import { buildIdentityPaths } from "@oh-my-opencode/memory-core"
-import type { DeviceSync, EngineStatus, SyncSession } from "@oh-my-opencode/memory-core/sync-engine"
+import type {
+  DeviceSync,
+  EngineStatus,
+  OpenDeviceSyncOptions,
+  SyncSession,
+} from "@oh-my-opencode/memory-core/sync-engine"
 
-import { SYNC_CLOSE_WAIT_EXCEEDED, SYNC_IDLE_NO_DEVICE_SESSION, SYNC_UNAVAILABLE, createSyncRunner, watchHeadLog } from "./sync-runner"
+import { selectedDeviceAccountSource } from "./device-session/account-runtime-loader"
+import { createDeviceSessionResolver } from "./device-session/resolver"
+import {
+  SYNC_CLOSE_WAIT_EXCEEDED,
+  SYNC_CONFIG_INVALID,
+  SYNC_IDLE_NO_DEVICE_SESSION,
+  SYNC_UNAVAILABLE,
+  createSyncRunner,
+  watchHeadLog,
+} from "./sync-runner"
+import { remainingTestTime } from "../../../../../test-support/test-deadline"
 
 const dirs: string[] = []
 afterEach(async () => {
@@ -51,7 +66,12 @@ function fakeOpen() {
 test("sessions sharing a repository share one engine, started once and closed with the last session", async () => {
   const paths = await identity()
   const fake = fakeOpen()
-  const runner = createSyncRunner({ logger, resolveSession: async () => session, open: fake.open, watchHead: () => () => undefined })
+  const runner = createSyncRunner({
+    logger,
+    resolveSession: async () => session,
+    open: fake.open,
+    watchHead: () => () => undefined,
+  })
   await runner.acquire("agent", paths, { enabled: true })
   await runner.acquire("agent", paths, { enabled: true })
   expect([fake.opened, fake.started]).toEqual([[paths.repo], [paths.repo]])
@@ -66,7 +86,11 @@ test("sessions sharing a repository share one engine, started once and closed wi
 test("without a device session the production runner is a no-op: one typed idle line, no engine, nothing written", async () => {
   const paths = await identity()
   const lines: string[] = []
-  const recording = { info: (m: string) => lines.push(m), warn: (m: string) => lines.push(`warn ${m}`), error: (m: string) => lines.push(`error ${m}`) }
+  const recording = {
+    info: (m: string) => lines.push(m),
+    warn: (m: string) => lines.push(`warn ${m}`),
+    error: (m: string) => lines.push(`error ${m}`),
+  }
   const runner = createSyncRunner({ logger: recording })
   await runner.acquire("agent", paths, { enabled: true })
   await runner.acquire("agent", paths, { enabled: true })
@@ -80,9 +104,19 @@ test("without a device session the production runner is a no-op: one typed idle 
 test("memory.sync.enabled false, or no signed-in device session, opens nothing", async () => {
   const paths = await identity()
   const fake = fakeOpen()
-  const off = createSyncRunner({ logger, resolveSession: async () => session, open: fake.open, watchHead: () => () => undefined })
+  const off = createSyncRunner({
+    logger,
+    resolveSession: async () => session,
+    open: fake.open,
+    watchHead: () => () => undefined,
+  })
   await off.acquire("agent", paths, { enabled: false })
-  const signedOut = createSyncRunner({ logger, resolveSession: async () => null, open: fake.open, watchHead: () => () => undefined })
+  const signedOut = createSyncRunner({
+    logger,
+    resolveSession: async () => null,
+    open: fake.open,
+    watchHead: () => () => undefined,
+  })
   await signedOut.acquire("agent", paths, { enabled: true })
   expect(fake.opened).toEqual([])
   expect(await signedOut.status(paths.repo)).toBeNull()
@@ -103,7 +137,11 @@ test("a commit seen by the HEAD reflog watch starts a local-commit cycle, and on
       watchHeadLog(gitDir, listener, warn, (path, _options, fire) => {
         watched = path
         onChange = fire
-        return Object.assign(new EventEmitter(), { close: () => { closed = true } }) as unknown as FSWatcher
+        return Object.assign(new EventEmitter(), {
+          close: () => {
+            closed = true
+          },
+        }) as unknown as FSWatcher
       }),
   })
   await runner.acquire("agent", paths, { enabled: true })
@@ -117,7 +155,11 @@ test("a commit seen by the HEAD reflog watch starts a local-commit cycle, and on
 
 test("watchHeadLog reports a missing reflog instead of silently never firing", () => {
   const warnings: string[] = []
-  const stop = watchHeadLog("/nonexistent/.git", () => undefined, (m) => warnings.push(m))
+  const stop = watchHeadLog(
+    "/nonexistent/.git",
+    () => undefined,
+    (m) => warnings.push(m),
+  )
   stop()
   expect(warnings).toHaveLength(1)
 })
@@ -126,7 +168,9 @@ test("a missing sync sidecar leaves the runner idle with a typed sync-unavailabl
   const paths = await identity()
   const warned: { message: string; code: unknown }[] = []
   const errors: string[] = []
-  const missing = Object.assign(new Error("Cannot find module '#omo-memory-sync-runtime'"), { code: "ERR_MODULE_NOT_FOUND" })
+  const missing = Object.assign(new Error("Cannot find module '#omo-memory-sync-runtime'"), {
+    code: "ERR_MODULE_NOT_FOUND",
+  })
   const runner = createSyncRunner({
     logger: {
       info: () => undefined,
@@ -148,6 +192,69 @@ test("a missing sync sidecar leaves the runner idle with a typed sync-unavailabl
   await runner.release(paths.repo)
 })
 
+test("an unloadable device account sidecar reports sync-unavailable with its reason, like the engine sidecar", async () => {
+  const paths = await identity()
+  const warned: { message: string; code: unknown }[] = []
+  const errors: string[] = []
+  const missing = Object.assign(new Error("Cannot find module '#omo-device-account-runtime'"), {
+    code: "ERR_MODULE_NOT_FOUND",
+  })
+  const runner = createSyncRunner({
+    logger: {
+      info: () => undefined,
+      warn: (message: string, meta?: Record<string, unknown>) => warned.push({ message, code: meta?.code }),
+      error: (message: string) => errors.push(message),
+    },
+    resolveSession: createDeviceSessionResolver({
+      source: selectedDeviceAccountSource({ env: {} }, async () => {
+        throw missing
+      }),
+      pinDir: join(paths.runtime, "pins"),
+      loadRuntime: () => Promise.reject(new Error("the engine sidecar is not reached when the account cannot load")),
+    }),
+    watchHead: () => () => undefined,
+  })
+  await runner.acquire("agent", paths, { enabled: true })
+  const status = await runner.status(paths.repo)
+  expect(status?.kind).toBe(SYNC_UNAVAILABLE)
+  expect(status !== null && "reason" in status ? status.reason : "").toContain("#omo-device-account-runtime")
+  expect(warned.map((w) => w.code)).toEqual([SYNC_UNAVAILABLE])
+  expect(errors).toEqual([])
+  await runner.release(paths.repo)
+})
+
+test("an invalid OMO_SERVICE_API_URL is reported as a configuration error naming the variable, not as an unavailable sidecar", async () => {
+  const paths = await identity()
+  const warned: unknown[] = []
+  const errors: { message: string; code: unknown; variable: unknown }[] = []
+  const runner = createSyncRunner({
+    logger: {
+      info: () => undefined,
+      warn: (_message: string, meta?: Record<string, unknown>) => warned.push(meta?.code),
+      error: (message: string, meta?: Record<string, unknown>) =>
+        errors.push({ message, code: meta?.code, variable: meta?.variable }),
+    },
+    resolveSession: createDeviceSessionResolver({
+      source: selectedDeviceAccountSource({ env: { OMO_SERVICE_API_URL: "not a url" } }),
+      pinDir: join(paths.runtime, "pins"),
+      loadRuntime: () =>
+        Promise.reject(new Error("the engine sidecar is not reached when the account cannot be built")),
+    }),
+    watchHead: () => () => undefined,
+  })
+  await runner.acquire("agent", paths, { enabled: true })
+  const status = await runner.status(paths.repo)
+  expect(status?.kind).toBe(SYNC_CONFIG_INVALID)
+  expect(status !== null && "variable" in status ? status.variable : undefined).toBe("OMO_SERVICE_API_URL")
+  expect(warned).toEqual([])
+  expect(errors).toHaveLength(1)
+  expect(errors[0]?.code).toBe(SYNC_CONFIG_INVALID)
+  expect(errors[0]?.variable).toBe("OMO_SERVICE_API_URL")
+  expect(errors[0]?.message).toContain("OMO_SERVICE_API_URL")
+  expect(errors[0]?.message).not.toContain("sidecar")
+  await runner.release(paths.repo)
+})
+
 test("a release followed at once by an acquire of the same repo waits for the close and keeps sync running", async () => {
   const paths = await identity()
   let leased = false
@@ -157,7 +264,11 @@ test("a release followed at once by an acquire of the same repo waits for the cl
     if (leased) return null
     leased = true
     return {
-      engine: { start: () => { started += 1 } } as unknown as DeviceSync["engine"],
+      engine: {
+        start: () => {
+          started += 1
+        },
+      } as unknown as DeviceSync["engine"],
       status: async (): Promise<EngineStatus> => ({ kind: "never_synced" }),
       notifyLocalCommit: () => undefined,
       close: async () => {
@@ -186,7 +297,11 @@ test("an acquire waiting on a close that never finishes gives up after the bound
   const errors: { message: string; code: unknown }[] = []
   let opens = 0
   const runner = createSyncRunner({
-    logger: { info: () => undefined, warn: () => undefined, error: (message: string, meta?: Record<string, unknown>) => errors.push({ message, code: meta?.code }) },
+    logger: {
+      info: () => undefined,
+      warn: () => undefined,
+      error: (message: string, meta?: Record<string, unknown>) => errors.push({ message, code: meta?.code }),
+    },
     resolveSession: async () => session,
     open: async (): Promise<DeviceSync | null> => {
       opens += 1
@@ -213,7 +328,10 @@ test("the runner answers device names from the session its resolver returned, an
   const fake = fakeOpen()
   const runner = createSyncRunner({
     logger,
-    resolveSession: async () => ({ ...session, deviceName: (principal: string) => (principal === "device:dev-mini" ? "Mac mini" : undefined) }),
+    resolveSession: async () => ({
+      ...session,
+      deviceName: (principal: string) => (principal === "device:dev-mini" ? "Mac mini" : undefined),
+    }),
     open: fake.open,
     watchHead: () => () => undefined,
   })
@@ -222,4 +340,103 @@ test("the runner answers device names from the session its resolver returned, an
   expect(runner.deviceName("device:dev-mini")).toBe("Mac mini")
   expect(runner.deviceName("device:other")).toBeUndefined()
   await runner.release(paths.repo)
+})
+
+test("a running engine whose device signs out (or is revoked) closes and leaves the runner idle", async () => {
+  const paths = await identity()
+  const fake = fakeOpen()
+  const lines: string[] = []
+  let wentIdle: () => void = () => undefined
+  const idle = new Promise<void>((resolve) => {
+    wentIdle = resolve
+  })
+  const recording = {
+    info: (m: string) => {
+      lines.push(m)
+      if (m === SYNC_IDLE_NO_DEVICE_SESSION) wentIdle()
+    },
+    warn: () => undefined,
+    error: () => undefined,
+  }
+  let endSignIn: () => void = () => undefined
+  const runner = createSyncRunner({
+    logger: recording,
+    resolveSession: async () => ({
+      ...session,
+      onEnded: (notify) => {
+        endSignIn = notify
+      },
+    }),
+    open: fake.open,
+    watchHead: () => () => undefined,
+  })
+  await runner.acquire("agent", paths, { enabled: true })
+  expect(fake.opened).toEqual([paths.repo])
+  endSignIn()
+  await Promise.race([
+    idle,
+    new Promise((_, reject) =>
+      setTimeout(
+        () => reject(new Error("waited out the test budget for the runner to go idle after sign-out")),
+        remainingTestTime(),
+      ),
+    ),
+  ])
+  expect(fake.closed).toEqual([paths.repo])
+  expect(await runner.status(paths.repo)).toBeNull()
+  expect(lines).toEqual([SYNC_IDLE_NO_DEVICE_SESSION])
+  await runner.release(paths.repo)
+  expect(fake.closed).toEqual([paths.repo])
+})
+
+test("the runner reports a status change with the repository it belongs to (omo #10637 review L2)", async () => {
+  const paths = await identity()
+  let forwarded: (() => void) | undefined
+  const changed: string[] = []
+  const runner = createSyncRunner({
+    logger,
+    resolveSession: async () => session,
+    onStatusChange: (repo) => changed.push(repo),
+    open: async (o) => {
+      forwarded = o.onStatusChange
+      return {
+        engine: { start: () => undefined } as unknown as DeviceSync["engine"],
+        status: async (): Promise<EngineStatus> => ({ kind: "never_synced" }),
+        notifyLocalCommit: () => undefined,
+        close: async () => undefined,
+      }
+    },
+    watchHead: () => () => undefined,
+  })
+  await runner.acquire("agent", paths, { enabled: true })
+  forwarded?.()
+  expect(changed).toEqual([paths.repo])
+  await runner.release(paths.repo)
+})
+
+test("a failed sync cycle the engine logs at warn reaches the logger's warn; routine engine lines stay at info (#13635)", async () => {
+  const paths = await identity()
+  const fake = fakeOpen()
+  const lines: string[] = []
+  let engineLog: OpenDeviceSyncOptions["log"]
+  const runner = createSyncRunner({
+    logger: {
+      info: (message: string) => lines.push(`info ${message}`),
+      warn: (message: string) => lines.push(`warn ${message}`),
+      error: () => undefined,
+    },
+    resolveSession: async () => session,
+    open: async (options) => {
+      engineLog = options.log
+      return fake.open(options)
+    },
+    watchHead: () => () => undefined,
+  })
+  await runner.acquire("agent", paths, { enabled: true })
+
+  engineLog?.("sync cycle failed during push: SyncHttpError", "warn")
+  engineLog?.("sync: journal retired")
+
+  expect(lines).toContain("warn sync cycle failed during push: SyncHttpError")
+  expect(lines).toContain("info sync: journal retired")
 })

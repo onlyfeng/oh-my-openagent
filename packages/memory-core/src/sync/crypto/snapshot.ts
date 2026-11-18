@@ -5,7 +5,7 @@ import { isCancelledAdmission } from "./fold.ts"
 import { strictEd25519Precheck } from "./strict-ed25519/strict-ed25519.ts"
 import { openBatch } from "./open.ts"
 import { decodeB64 } from "./signatures.ts"
-import { receiverPass, wire } from "./receiver.ts"
+import { wire } from "./receiver.ts"
 import type { RejectionCounter } from "./rejection.ts"
 import { b64urlDecode, sha256B64 } from "./vendor/sync-format/jcs.ts"
 import { verifyObject } from "./vendor/sync-format/object.ts"
@@ -71,9 +71,8 @@ export const importSnapshot = async (
   if (snapshot.account !== account) return refuse("account_mismatch")
   const covered = keyringEntries.filter((candidate) => candidate.seq <= snapshot.covers_seq)
   let state = emptyChain(account, anchor)
-  const pass = await receiverPass([], covered)
   for (const entry of covered) {
-    const step = await verifyKeyringEntry(state, entry, "keyring-only", pass)
+    const step = await verifyKeyringEntry(state, entry, "keyring-only")
     if (!step.ok) {
       const anchorFailure = step.reason === "untrusted_root" || step.reason === "anchor_mismatch"
       return refuse(anchorFailure ? step.reason : "keyring_prefix_refused")
@@ -125,7 +124,11 @@ export const importSnapshot = async (
     if (!opened.ok) return { ok: false, reason: "chunk_refused" }
     records.push(...opened.records)
   }
-  const continued = atVerifiedHead(state, { seq: snapshot.covers_seq, link: snapshot.link, keyring_link: snapshot.keyring_head })
+  const continued = atVerifiedHead(state, {
+    seq: snapshot.covers_seq,
+    link: snapshot.link,
+    keyring_link: snapshot.keyring_head,
+  })
   if (continued === null) return refuse("keyring_prefix_refused")
   return { ok: true, state: continued, records }
 }
