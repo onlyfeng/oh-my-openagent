@@ -1,5 +1,7 @@
 # Repository Conventions
 
+**Generated:** 2026-11-18 / c2691818a9 (update pass; content verified current)
+
 Conventions for human contributors and AI agents working on this component.
 
 ## Style

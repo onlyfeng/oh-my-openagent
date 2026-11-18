@@ -1,6 +1,6 @@
 # scripts — plugin build/sync/migration orchestration
 
-**Score 14** (29 files, ~3.5k LOC; distinct domain: executable orchestration layer between manifests and components).
+**Score 14** (28 files, ~3.5k LOC; distinct domain: executable orchestration layer between manifests and components).
 
 ## OVERVIEW
 
@@ -23,7 +23,7 @@ Executable Node ESM scripts driving the plugin build pipeline, SessionStart conf
 ## CONVENTIONS
 
 - Every CLI entry guards with `isCliEntry()` (`pathToFileURL(process.argv[1])` comparison); without it a symlinked plugin-cache path silently no-ops the whole hook.
-- TOML is edited via `migrate-codex-config/toml-section-editor.mjs` (455 LOC, own scanner preserving comments/order/multiline) — never a generic TOML parser.
+- TOML is edited via `migrate-codex-config/toml-section-editor.mjs` (457 LOC, own scanner preserving comments/order/multiline) — never a generic TOML parser.
 - Subprocess orchestration captures output sequentially; component tasks run `npm run build`, bundling uses `bun build --target node --format esm`.
 
 ## ANTI-PATTERNS

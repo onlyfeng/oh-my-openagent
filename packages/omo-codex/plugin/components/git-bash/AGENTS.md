@@ -1,6 +1,6 @@
 # git-bash — Codex plugin component: Windows git_bash MCP reminder hook
 
-**Generated:** 2026-07-03
+**Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 

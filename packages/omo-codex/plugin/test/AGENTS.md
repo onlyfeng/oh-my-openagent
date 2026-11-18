@@ -1,10 +1,10 @@
 # test — aggregate plugin contract suite (node:test)
 
-**Score 14** (53 files, ~9.7k LOC; distinct domain: black-box contract checking over generated artifacts).
+**Score 14** (56 files: 50 `*.test.mjs` suites + 4 shared support modules + `index.js`, ~11k LOC; distinct domain: black-box contract checking over generated artifacts).
 
 ## OVERVIEW
 
-51 `*.test.mjs` suites + `index.js` loader asserting contracts over GENERATED/INSTALLED artifacts — manifests, aggregate hook JSON, built CLIs, synced skills — not over component sources. Runs via `npm test` from `plugin/` after `npm run build`; also the tail of repo-root `bun run test:codex`.
+50 `*.test.mjs` suites + `index.js` loader asserting contracts over GENERATED/INSTALLED artifacts — manifests, aggregate hook JSON, built CLIs, synced skills — not over component sources. Runs via `npm test` from `plugin/` after `npm run build`; also the tail of repo-root `bun run test:codex`.
 
 ## KEY FILES
 
@@ -27,6 +27,7 @@
 | Skills sync | `sync-skills{,-codex-compatibility}.test.mjs`, `ulw-plan`/`ulw-research`/`ulw-loop` skill contracts |
 | Teammode | `teammode-{transport,communication,worktree,safety,thread-links,thread-title,archive-ambiguity}.test.mjs` |
 | Component CLIs | `component-{bundled-cli,bin-names}.test.mjs`, `lsp-prebuild-layouts` |
+| Cross-cutting gates | `windows-console-hide`, `node-install-surface`, `display-metadata`, `payload-equivalence`, `scaffold-plan`, `materialize-shared-upstreams`, `lcx-contribute-bug-fix-template`, `ulw-plan-review-state-contract` |
 
 ## CONVENTIONS
 
@@ -34,6 +35,7 @@
 - Idempotence asserted with byte equality; skill copies checked for hand-authored drift.
 - Paths resolve from `import.meta.url`; temp roots isolated per test; subprocesses via `process.execPath`, never a shell assumption.
 - Windows behavior explicit: `.cmd` shims, `commandWindows`, PowerShell 5.1/TLS/ASCII constraints.
+- `migrate-codex-config.test.mjs` shells out to Python (`python3`/`python` with `tomllib`, 3.11+) for TOML assertions; it is the densest suite and carries the only `// allow: SIZE_OK - <reason> + split plan` waiver.
 
 ## ANTI-PATTERNS
 
