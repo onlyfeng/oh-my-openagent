@@ -1,4 +1,4 @@
-# senpi-desktop-sdk — Typed Computer-Use SDK
+# senpi-desktop-sdk - Typed Computer-Use SDK
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 29 (37 files; 20 modules under `src/` incl. `transport/`). One-row placement in the parent role map; nothing repeated here.
 
@@ -11,8 +11,8 @@ Typed SDK over an engine `RpcPort`: `connect()`, the `Computer`/`Window`/`Elemen
 | File | Role |
 |------|------|
 | `src/index.ts` | Barrel: `connect`, `Transport`/`ConnectOptions`, `ComputerError`, `ConfirmControl`, facade interfaces, action/report/selector/geometry types, policy constants (`BACKGROUND`/`FOREGROUND`/`SEMANTIC`) |
-| `src/connect.ts` | `connect(transport)` — three transport kinds: `inProcess` wraps a port the host already owns (`close()` detaches, port stays with its owner); `spawn` starts an engine child via injected `launch` (SDK owns the port, `close()` ends it); `attach` joins a running `--serve` daemon socket. `toolBridge` is not implemented |
-| `src/facade.ts` | The contract: every interface method carries TSDoc `@tier`, `@policy`, `@wire` — policy is encoded in tags, never inferred from names |
+| `src/connect.ts` | `connect(transport)` - three transport kinds: `inProcess` wraps a port the host already owns (`close()` detaches, port stays with its owner); `spawn` starts an engine child via injected `launch` (SDK owns the port, `close()` ends it); `attach` joins a running `--serve` daemon socket. `toolBridge` is not implemented |
+| `src/facade.ts` | The contract: every interface method carries TSDoc `@tier`, `@policy`, `@wire` - policy is encoded in tags, never inferred from names |
 | `src/computer.ts` / `window.ts` / `element.ts` / `frame.ts` / `control.ts` / `batch.ts` | The facade surface (pointer, keyboard, menus, frames, confirm control, batching) |
 | `src/transport/spawn.ts` / `attach-uds.ts` | Spawn launcher + UDS attach transports |
 | `src/errors.ts` | Structured `ComputerError` |
@@ -26,8 +26,8 @@ Typed SDK over an engine `RpcPort`: `connect()`, the `Computer`/`Window`/`Elemen
 
 ## ANTI-PATTERNS
 
-- Every facade method signature must carry `@tier`, `@policy`, `@wire` — unsupported contract edits are rejected by manifest generation, never silently omitted.
-- Facade policy lives in the TSDoc tags + manifest — do not duplicate it as hand-written runtime tables.
+- Every facade method signature must carry `@tier`, `@policy`, `@wire` - unsupported contract edits are rejected by manifest generation, never silently omitted.
+- Facade policy lives in the TSDoc tags + manifest - do not duplicate it as hand-written runtime tables.
 
 ## COMMANDS
 

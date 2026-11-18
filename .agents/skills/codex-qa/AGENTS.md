@@ -1,10 +1,10 @@
-# codex-qa — Isolated Codex Light QA Skill
+# codex-qa - Isolated Codex Light QA Skill
 
 **Generated:** 2026-11-18 / c2691818a9 | Score: 14 (distinct QA domain: 16 files, real harness scripts, 3.7k-LOC E2E hotspot)
 
 ## OVERVIEW
 
-QA skill that drives the REAL `codex app-server` against an isolated `CODEX_HOME` + a LOCAL mock model (no real API call) to prove the omo Codex plugin (`packages/omo-codex/`) works — nothing else here is more than supporting docs for that flow.
+QA skill that drives the REAL `codex app-server` against an isolated `CODEX_HOME` + a LOCAL mock model (no real API call) to prove the omo Codex plugin (`packages/omo-codex/`) works - nothing else here is more than supporting docs for that flow.
 
 ## WHERE TO LOOK
 
@@ -22,7 +22,7 @@ QA skill that drives the REAL `codex app-server` against an isolated `CODEX_HOME
 
 ## STRUCTURE
 
-`scripts/lsp-e2e.sh` (3,676 LOC) is the largest file in `.agents/` — LSP end-to-end driver; treat as its own subsystem when editing.
+`scripts/lsp-e2e.sh` (3,676 LOC) is the largest file in `.agents/` - LSP end-to-end driver; treat as its own subsystem when editing.
 
 ## CONVENTIONS
 
@@ -33,8 +33,8 @@ QA skill that drives the REAL `codex app-server` against an isolated `CODEX_HOME
 
 ## ANTI-PATTERNS
 
-- NEVER use the real `~/.codex` or a published package; every script shasums `~/.codex/config.toml` before/after — keep that guard.
-- NEVER hit a real model API — mock model only.
+- NEVER use the real `~/.codex` or a published package; every script shasums `~/.codex/config.toml` before/after - keep that guard.
+- NEVER hit a real model API - mock model only.
 - NEVER prove a hook via log scraping; the app-server notification stream is first-party proof.
 - NEVER trust the interactive codex shell function in scripts.
 - Evidence goes under gitignored `.omo/evidence/<YYYYMMDD>-<slug>/`; never commit it.

@@ -1,4 +1,4 @@
-# agents-md-core — AGENTS.md Discovery + Injection (Core)
+# agents-md-core - AGENTS.md Discovery + Injection (Core)
 
 **Generated:** 2026-11-18 / c2691818a9
 
@@ -24,8 +24,8 @@ Harness-neutral logic for walking a file path UP its directory tree, discovering
 ## NOTES
 
 - **Path-traversal guard is a security invariant.** `resolveFilePath` canonicalizes via `realpathSync` and returns `null` when the resolved path is outside `rootDirectory`.
-- **Truncator + storage are injected** (`AgentsMdTruncator`, `AgentsMdInjectedPathsStorage`) — this package never implements truncation strategy or persistence itself.
-- **Formatting deviates from repo default:** this package uses semicolons where the rest of the repo is no-semicolon — match the file you are editing, do not reformat.
+- **Truncator + storage are injected** (`AgentsMdTruncator`, `AgentsMdInjectedPathsStorage`) - this package never implements truncation strategy or persistence itself.
+- **Formatting deviates from repo default:** this package uses semicolons where the rest of the repo is no-semicolon - match the file you are editing, do not reformat.
 
 - Parent: [`packages/AGENTS.md`](../AGENTS.md).
 

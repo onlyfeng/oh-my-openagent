@@ -1,4 +1,4 @@
-# remote/ — Account-Wide Thread Half (device service + relay)
+# remote/ - Account-Wide Thread Half (device service + relay)
 
 **Generated:** 2026-11-18 / c2691818a9 | Earned by score 14 (40 files, ~8.8k LOC). Parent [`../AGENTS.md`](../AGENTS.md) owns the tool contracts and the delivery table; this file maps only the remote modules.
 
@@ -16,7 +16,7 @@
 
 ## CONVENTIONS
 
-- Outcomes are data: `ok` (optionally `local` / `located`), `refused` (reason + receipt detail), `uncertain` — an uncertain command may have run and is never retried blindly.
+- Outcomes are data: `ok` (optionally `local` / `located`), `refused` (reason + receipt detail), `uncertain` - an uncertain command may have run and is never retried blindly.
 - The alias registry schema is frozen at v1; changes need a new versioned shape, not an edit.
 - Every watcher drains through `watch-queue.ts`; nothing subscribes to the device service ad hoc.
 

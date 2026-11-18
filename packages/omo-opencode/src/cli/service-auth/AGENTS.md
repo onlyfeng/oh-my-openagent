@@ -1,6 +1,6 @@
-# service-auth — Hidden CLI Login + Credential Store (direct files)
+# service-auth - Hidden CLI Login + Credential Store (direct files)
 
-**Score:** 16 (75 direct files — 27 production, 40+ tests/fixtures; curated barrel). Scope note: this file covers the directory's own files only; `keychain-helper/` (nested) is out of scope here. Parent: [`src/cli/AGENTS.md`](../AGENTS.md) (the hidden `service-auth login` command).
+**Score:** 16 (75 direct files - 27 production, 40+ tests/fixtures; curated barrel). Scope note: this file covers the directory's own files only; `keychain-helper/` (nested) is out of scope here. Parent: [`src/cli/AGENTS.md`](../AGENTS.md) (the hidden `service-auth login` command).
 
 ## OVERVIEW
 
@@ -10,8 +10,8 @@ Service authentication for the omo account: device/loopback/browser login flows,
 
 | Task | Location |
 |------|----------|
-| Public barrel | `index.ts` — `accountHome`, `credentialLockPaths`, `withCredentialLock`, `currentServiceDevice`, `createCredentialStore`, `createSession`, `SignInError`, `retireSyncPinOnDiscard` |
-| CLI command wiring | `commands.ts` — `configureServiceAuthCommands`, `serviceAuthProgram`, `runServiceAuthCommand`, `beginLogin` |
+| Public barrel | `index.ts` - `accountHome`, `credentialLockPaths`, `withCredentialLock`, `currentServiceDevice`, `createCredentialStore`, `createSession`, `SignInError`, `retireSyncPinOnDiscard` |
+| CLI command wiring | `commands.ts` - `configureServiceAuthCommands`, `serviceAuthProgram`, `runServiceAuthCommand`, `beginLogin` |
 | Login flows | `device-flow.ts`, `loopback.ts` (`loginLoopback`), `browser.ts` (`openSignInBrowser`), `closed-device-login.ts`, `machine-device.ts` |
 | Credential store | `keystore.ts` (`CredentialStore`, `KeychainApprovalPendingError`, `quietNotice`), `credential-lock.ts`, `credential-owner.ts`, `secret-service-lock.ts` |
 | Sessions + discard | `session.ts` (`Session`, `BeforeKeysDiscarded`, `DiscardedCredential`), `owned-refresh.ts`, `refresh-attempt.ts`, `sync-pin-retire.ts` |

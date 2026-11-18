@@ -1,4 +1,4 @@
-# src/runners/rpc/ — RPC Child-Process Runner
+# src/runners/rpc/ - RPC Child-Process Runner
 
 **Score ~16** (66 files incl. tests/fixtures; child-process lifecycle + wire protocol domain).
 
@@ -15,7 +15,7 @@ The RPC runner for senpi-task: spawns and steers a newline-delimited-JSON child 
 | `delivery-semantics.ts` | `RpcStreamingBehavior`, `isBusyChildRejection` |
 | `exit-mapping.ts` | Child-exit → outcome mapping |
 | `crash-record.ts` | Crash-record input + writers |
-| `handle.ts` | Run handle (steer, dispose, wake sources, exit order) — heavily tested |
+| `handle.ts` | Run handle (steer, dispose, wake sources, exit order) - heavily tested |
 | `terminate.ts` / `start-cleanup.ts` | Termination + cleanup |
 | `spawn.ts` / `senpi-launcher.ts` | Child spawn + launcher |
 | `model-admission.ts` / `model-catalog-probe.ts` | Model admission adjudication + catalog probe |
@@ -31,7 +31,7 @@ The RPC runner for senpi-task: spawns and steers a newline-delimited-JSON child 
 
 ## ANTI-PATTERNS
 
-- Treat the wire error codes and provider-id shapes as a closed contract — extend via the regexes in `errors.ts`, not ad-hoc strings.
+- Treat the wire error codes and provider-id shapes as a closed contract - extend via the regexes in `errors.ts`, not ad-hoc strings.
 - Fixture toggles (`FAKE_*`) must never leak into production spawn paths.
 
 ## COMMANDS

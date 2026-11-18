@@ -1,10 +1,10 @@
-# shared-skills/skills/ulw-plan/ — Cross-Harness Planning Skill
+# shared-skills/skills/ulw-plan/ - Cross-Harness Planning Skill
 
-**Score ~8** (7 files; distinct domain — approval-gated planning, no implementation).
+**Score ~8** (7 files; distinct domain - approval-gated planning, no implementation).
 
 ## OVERVIEW
 
-The shared/cross-harness `ulw-plan` skill (OpenCode + shared pool). Same planning-only, approval-gated contract as the Senpi copy: read-only planning that writes guarded `.omo` plan artifacts and never implements product code. NOTE: this skill is dual-maintained by hand — the Codex edition keeps its own copy under `packages/omo-codex/plugin/components/ultrawork/skills/ulw-plan/`, and `sync-skills.mjs` does NOT copy this shared version to Codex. Keep both in step when editing.
+The shared/cross-harness `ulw-plan` skill (OpenCode + shared pool). Same planning-only, approval-gated contract as the Senpi copy: read-only planning that writes guarded `.omo` plan artifacts and never implements product code. NOTE: this skill is dual-maintained by hand - the Codex edition keeps its own copy under `packages/omo-codex/plugin/components/ultrawork/skills/ulw-plan/`, and `sync-skills.mjs` does NOT copy this shared version to Codex. Keep both in step when editing.
 
 ## WHERE TO LOOK
 
@@ -23,7 +23,7 @@ The shared/cross-harness `ulw-plan` skill (OpenCode + shared pool). Same plannin
 ## ANTI-PATTERNS
 
 - Never self-activate on a bare `ultrawork`; never implement product code or delegate implementation; never skip the approval gate.
-- Do NOT hand-build plan artifacts — use the scaffold script.
+- Do NOT hand-build plan artifacts - use the scaffold script.
 - Do not dispatch ordinary lanes with `category=`; only documented advisory/reviewer exceptions apply.
 - Do not convert override phrases into authorization for irreversible/destructive/spending decisions.
 

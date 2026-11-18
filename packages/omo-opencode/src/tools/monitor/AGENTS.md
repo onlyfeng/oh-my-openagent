@@ -1,4 +1,4 @@
-# src/tools/monitor/ — Monitor Tools (OpenCode)
+# src/tools/monitor/ - Monitor Tools (OpenCode)
 
 ## OVERVIEW
 
@@ -22,7 +22,7 @@ feature. Parent: [`src/tools/AGENTS.md`](../AGENTS.md).
 ## CONVENTIONS
 
 - One factory file per tool; `create-monitor-tools.ts` only composes.
-- Tool results are plain JSON-safe values — no live handles cross the tool
+- Tool results are plain JSON-safe values - no live handles cross the tool
   boundary.
 
 ## ANTI-PATTERNS

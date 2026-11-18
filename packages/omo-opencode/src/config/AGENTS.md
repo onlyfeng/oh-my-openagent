@@ -58,7 +58,7 @@ config/schema/
 
 ## TEAM_MODE SCHEMA
 
-The schema ships from [`@oh-my-opencode/team-core/config`](../../../team-core/) — `schema/team-mode.ts` is a re-export shim (11 fields incl. `enabled`, `max_parallel_members` 1..8, `max_members` 1..8, `tmux_visualization`).
+The schema ships from [`@oh-my-opencode/team-core/config`](../../../team-core/) - `schema/team-mode.ts` is a re-export shim (11 fields incl. `enabled`, `max_parallel_members` 1..8, `max_members` 1..8, `tmux_visualization`).
 
 When `enabled: true`: 12 `team_*` tools register (`tool-registry.ts` `teamModeToolsRecord`); 3 conditional hooks (`team-mode-status-injector` + `team-mailbox-injector` Transform tier, `team-tool-gating` Tool Guard tier); 4 team-session-event handlers in `src/plugin/event.ts` (`team-idle-wake-hint`, `team-lead-orphan-handler`, `team-member-error-handler`, `team-member-status-handler`); `team-mode` built-in skill loads; doctor check `cli/doctor/checks/team-mode.ts` runs.
 
@@ -73,4 +73,4 @@ When `enabled: true`: 12 `team_*` tools register (`tool-registry.ts` `teamModeTo
 3. Reference via `z.infer<typeof YourSchema>` for the TypeScript type
 4. Access in handlers via `pluginConfig.{field_name}` (snake_case JSON, snake_case TS field)
 5. Run `bun run build:schema` to regenerate `dist/oh-my-opencode.schema.json`
-6. If the field is one core owns (`permission`, `prompt_append`, category keys), extend BOTH schemas — `schema/core-schema-parity.test.ts` fails on drift.
+6. If the field is one core owns (`permission`, `prompt_append`, category keys), extend BOTH schemas - `schema/core-schema-parity.test.ts` fails on drift.

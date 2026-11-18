@@ -1,6 +1,6 @@
-# scripts/qa/cu-eval/ — Computer-Use Eval Harness
+# scripts/qa/cu-eval/ - Computer-Use Eval Harness
 
-**Score ~9** (9 files; distinct domain — computer-use evaluation/benchmark driver).
+**Score ~9** (9 files; distinct domain - computer-use evaluation/benchmark driver).
 
 ## OVERVIEW
 

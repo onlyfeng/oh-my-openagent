@@ -1,6 +1,6 @@
-# src/hooks/think-mode/ — Think-Keyword Model Switcher
+# src/hooks/think-mode/ - Think-Keyword Model Switcher
 
-**Score ~9** (7 files; distinct domain — keyword-triggered thinking/model switch).
+**Score ~9** (7 files; distinct domain - keyword-triggered thinking/model switch).
 
 ## OVERVIEW
 
@@ -11,9 +11,9 @@ A session hook that detects a "think"/"ultrathink" keyword (plus a large multili
 | File | Role |
 |------|------|
 | `index.ts` | Barrel: re-exports detector, switcher, types + `clearThinkModeState`, `createThinkModeHook` |
-| `detector.ts` | `detectThinkKeyword(text)`, `extractPromptText(parts)` — keyword matching |
+| `detector.ts` | `detectThinkKeyword(text)`, `extractPromptText(parts)` - keyword matching |
 | `switcher.ts` | Model/variant switch logic |
-| `hook.ts` | `createThinkModeHook()` — session event handler |
+| `hook.ts` | `createThinkModeHook()` - session event handler |
 | `types.ts` | Option/state types |
 
 ## CONVENTIONS
@@ -24,7 +24,7 @@ A session hook that detects a "think"/"ultrathink" keyword (plus a large multili
 
 ## ANTI-PATTERNS
 
-- Do not match the keyword inside code blocks/inline code — always strip code first.
+- Do not match the keyword inside code blocks/inline code - always strip code first.
 - Keep the keyword a whole-word match; do not let it fire inside identifiers.
 
 ## COMMANDS

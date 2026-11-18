@@ -11,7 +11,7 @@ Harness-neutral primitives for the `omo.json` config surface: a Zod v4 schema tr
 | Path | Purpose |
 |------|---------|
 | `src/index.ts` | Barrel re-exporting `./schema`, `./loader`, `./models`, `./writer`, `./migration`. |
-| `src/internal/` | Internal helpers (`jsonc-parse.ts`, `plain-object.ts`, `posix-path.ts`, own barrel) — deliberately NOT re-exported by the public barrel. |
+| `src/internal/` | Internal helpers (`jsonc-parse.ts`, `plain-object.ts`, `posix-path.ts`, own barrel) - deliberately NOT re-exported by the public barrel. |
 | `src/schema/config.ts` | Root `OmoConfigSchema` + `OmoConfigLayerSchema` (`.strict()`; `$schema`, `categories`, `agents`, `git_master`, `task`, `teams`, `models`, `side_panel`, `[opencode]`/`[senpi]`/`[codex]` blocks, `profiles`, `_migrations`, `legacy_migrations`). `OmoConfig` type. |
 | `src/schema/harness.ts` | `HARNESS_IDS` (`codex`/`opencode`/`omo`), `OMO_CONFIG_HARNESS_IDS` (`opencode`/`senpi`/`codex`), `OmoHarnessIdSchema`. |
 | `src/schema/model-catalog.ts` | `OmoModelCatalogSchema` / `*Layer` variants: record of short name to `{ model, variant?, reasoningEffort? }`. |
@@ -62,7 +62,7 @@ Recursively deep-merges plain objects; scalars and arrays replace. `__proto__`, 
 
 ## DEPENDENCIES & CONSUMERS
 
-- **Depends on:** `jsonc-parser`, `zod`. The `parseJsoncSafe` / `isPlainObject` / `isUnsafeObjectKey` equivalents live in `src/internal/` — `@oh-my-opencode/utils` is NOT a dependency (only `merge.test.ts` imports it as a test oracle).
+- **Depends on:** `jsonc-parser`, `zod`. The `parseJsoncSafe` / `isPlainObject` / `isUnsafeObjectKey` equivalents live in `src/internal/` - `@oh-my-opencode/utils` is NOT a dependency (only `merge.test.ts` imports it as a test oracle).
 - **Consumed by:** `packages/senpi-task` (schema types re-used by the task/team config surface), `packages/omo-senpi` (`components/config-resolution` wraps `loadOmoConfig` + `resolveModelReferences`; `components/config-startup` runs the migration engine at startup; `components/task` consumes the resolved config), `packages/omo-opencode` (`plugin-config/omo-config-chain.ts` builds the per-layer OpenCode views and the user-only protected view; `startup-migration.ts` drives the engine; `config-migration/` supplies OpenCode-side discovery + transform), and `packages/omo-codex` (`plugin/shared/src/config-loader.ts` + `config-migration.ts` for the `config.jsonc` group).
 
 ## QA

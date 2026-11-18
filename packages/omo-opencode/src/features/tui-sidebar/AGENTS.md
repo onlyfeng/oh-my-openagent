@@ -1,4 +1,4 @@
-# src/features/tui-sidebar/ — TUI Sidebar Snapshot + Mirror
+# src/features/tui-sidebar/ - TUI Sidebar Snapshot + Mirror
 
 **Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-08-17)
 
@@ -17,10 +17,10 @@ TUI side:     1s poll → readMirror() → derivers → computeView() → viewKe
 
 | File | Purpose |
 |------|---------|
-| `mirror-manager.ts` | `TuiStateMirror` — debounced (250ms) flush, 2s heartbeat, single in-flight write, start/stop lifecycle |
-| `snapshot-builder.ts` | `buildTuiRuntimeSnapshot` — active agents from session statuses, job board from `BackgroundManager.getTasksSnapshot()`, loop state; redacts `activeGoal` text before write |
+| `mirror-manager.ts` | `TuiStateMirror` - debounced (250ms) flush, 2s heartbeat, single in-flight write, start/stop lifecycle |
+| `snapshot-builder.ts` | `buildTuiRuntimeSnapshot` - active agents from session statuses, job board from `BackgroundManager.getTasksSnapshot()`, loop state; redacts `activeGoal` text before write |
 | `snapshot-schema.ts` | Zod schema `TuiRuntimeSnapshotSchema` (version literal 1) + `parseSnapshot` |
-| `mirror-io.ts` | `writeMirror` (atomic, mode 0600) / `readMirror` — rejects unparseable, wrong-project, or stale (>6s) snapshots |
+| `mirror-io.ts` | `writeMirror` (atomic, mode 0600) / `readMirror` - rejects unparseable, wrong-project, or stale (>6s) snapshots |
 | `mirror-path.ts` | XDG data dir + sha1(projectDir) prefix filename; `canonicalProjectDir` via realpath |
 | `loop-reader.ts` | Reads `.omo/ulw-loop/*/goals.json` (v1 schema) + legacy `.omo/loop/goals.json`, freshest live loop wins; stale after 120s |
 | `derivers.ts` | Snapshot → section states; jobs sorted by status priority (running first), caps MAX_AGENTS/MAX_JOBS = 12 |
@@ -35,9 +35,9 @@ TUI side:     1s poll → readMirror() → derivers → computeView() → viewKe
 
 ## KEY EXPORTS
 
-- `TuiStateMirror` — constructed in `src/create-managers.ts` when sidebar enabled; deps injected (`client`, `backgroundManager`, optional `getStatuses`/`sessionAgentResolver`).
-- `readMirror`, `computeView`, `viewKey`, `buildViewNodes`, derivers, `POLL_INTERVAL_MS` — consumed by `src/tui.ts` on the render side.
-- `TuiRuntimeSnapshot` — the cross-process contract; bump `MIRROR_SCHEMA_VERSION` on shape changes (readers drop non-matching versions).
+- `TuiStateMirror` - constructed in `src/create-managers.ts` when sidebar enabled; deps injected (`client`, `backgroundManager`, optional `getStatuses`/`sessionAgentResolver`).
+- `readMirror`, `computeView`, `viewKey`, `buildViewNodes`, derivers, `POLL_INTERVAL_MS` - consumed by `src/tui.ts` on the render side.
+- `TuiRuntimeSnapshot` - the cross-process contract; bump `MIRROR_SCHEMA_VERSION` on shape changes (readers drop non-matching versions).
 
 ## LIFECYCLE / WIRING
 

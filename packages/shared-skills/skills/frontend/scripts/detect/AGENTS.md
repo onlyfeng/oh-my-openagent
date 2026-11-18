@@ -1,4 +1,4 @@
-# detect — frontend design-review SDK + CLI
+# detect - frontend design-review SDK + CLI
 
 TypeScript detect/lint engine behind the `frontend` skill: renders pages at multiple viewports, snapshots computed styles, and runs a catalog of page/source rules. Earned by score 16 (246 TS files incl. rules/, own tsconfig, SDK barrel, high export density). Rule authoring lives in [rules/AGENTS.md](rules/AGENTS.md); skill packaging rules in [packages/shared-skills/AGENTS.md](../../../../AGENTS.md).
 
@@ -6,26 +6,26 @@ TypeScript detect/lint engine behind the `frontend` skill: renders pages at mult
 
 | File | Role |
 |------|------|
-| `index.ts` | The `@public` SDK barrel — the only surface for callers outside this repo (skill scripts, a project's own lint step) |
+| `index.ts` | The `@public` SDK barrel - the only surface for callers outside this repo (skill scripts, a project's own lint step) |
 | `cli.ts` | Thin CLI over the barrel: `bun cli.ts [--json] [--reflow] [--config <file.json>] <file-or-dir-or-url>...` |
 | `detect.ts` | `detectPage` / `detectFiles`: render each viewport, lint every snapshot, dedupe |
 | `lint.ts` | `lintSnapshot` / `lintSources` / `effectiveSeverity` / `sortFindings` / `hasFailures` |
-| `config.ts` | `parseConfig` — parses untrusted JSON, rejects unknown keys |
+| `config.ts` | `parseConfig` - parses untrusted JSON, rejects unknown keys |
 | `rule.ts` | The `Rule = PageRule \| SourceRule` discriminated contract |
 | `report.ts` | `summarize` (severity counts) + `formatFindingsText` |
 | `types.ts` | Finding/Severity/Viewport/Snapshot types (re-exported by the barrel) |
 
 ## STRUCTURE
 
-- `core/` — pure helpers: color math (`blend`, `contrastRatio`, `parseColor`), page ignore logic (`isIgnored`), source extension dispatch, shadow DOM, characters.
-- `render/` — `Renderer` contract (`RenderTarget`, `RenderError`), the default renderer factory, HTML probe placement.
-- `rules/` — the catalog: six families (color, copy, decoration, layout, source, typography) folded into `ALL_RULES`; own AGENTS.md.
-- `snapshot/` — `collectPageSnapshot` + `STYLE_PROPS` (which computed styles are captured).
-- `testing/` — `build-snapshot.ts`: Chromium default computed styles for hand-built test snapshots.
+- `core/` - pure helpers: color math (`blend`, `contrastRatio`, `parseColor`), page ignore logic (`isIgnored`), source extension dispatch, shadow DOM, characters.
+- `render/` - `Renderer` contract (`RenderTarget`, `RenderError`), the default renderer factory, HTML probe placement.
+- `rules/` - the catalog: six families (color, copy, decoration, layout, source, typography) folded into `ALL_RULES`; own AGENTS.md.
+- `snapshot/` - `collectPageSnapshot` + `STYLE_PROPS` (which computed styles are captured).
+- `testing/` - `build-snapshot.ts`: Chromium default computed styles for hand-built test snapshots.
 
 ## CLI CONTRACT
 
-Exit 0 = no failing findings; 1 = findings that fail the gate (any error or warning — advisories never fail); 2 = usage or render failure. `http(s)://` targets render as pages; other paths go through `collectFiles` (`../perfection`), HTML renders as a page, remaining files lint as source text. Both CLI catches are `no-excuse-ok` boundaries mapping to exit 2.
+Exit 0 = no failing findings; 1 = findings that fail the gate (any error or warning - advisories never fail); 2 = usage or render failure. `http(s)://` targets render as pages; other paths go through `collectFiles` (`../perfection`), HTML renders as a page, remaining files lint as source text. Both CLI catches are `no-excuse-ok` boundaries mapping to exit 2.
 
 ## RULE + CONFIG CONTRACT
 

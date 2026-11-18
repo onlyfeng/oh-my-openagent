@@ -1,10 +1,10 @@
-# src/__tests__/ — Plugin Perf Benchmarks
+# src/__tests__/ - Plugin Perf Benchmarks
 
 **Generated:** 2026-11-18 (updated)
 
 ## OVERVIEW
 
-Plugin-level tests that intentionally break the co-located `*.test.ts` convention: they boot the whole plugin via `createPluginModule()` and measure init cost. The directory holds only this file and `perf/` — all other plugin tests live colocated next to their modules.
+Plugin-level tests that intentionally break the co-located `*.test.ts` convention: they boot the whole plugin via `createPluginModule()` and measure init cost. The directory holds only this file and `perf/` - all other plugin tests live colocated next to their modules.
 
 | Path | Measures |
 |------|----------|

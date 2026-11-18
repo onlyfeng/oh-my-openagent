@@ -1,10 +1,10 @@
-# git-bash — Codex plugin component: Windows git_bash MCP reminder hook
+# git-bash - Codex plugin component: Windows git_bash MCP reminder hook
 
 **Generated:** 2026-11-18 / c2691818a9
 
 ## OVERVIEW
 
-Component wrapper (`@sisyphuslabs/codex-git-bash-hook`, private, bin `omo-git-bash-hook`) that steers Windows Codex sessions toward the OMO `git_bash` MCP: a `PreToolUse` hook on `^Bash$` injects one `additionalContext` reminder per session to prefer `git_bash` over built-in `exec_command`; a `PostCompact` hook clears the once-per-session marker so the reminder re-fires after compaction. This component is NOT the MCP — the `git_bash` stdio server is declared plugin-wide in [`.mcp.json`](../../.mcp.json) (`node ../../git-bash-mcp/dist/cli.js mcp`) and implemented by [`packages/git-bash-mcp`](../../../../git-bash-mcp/AGENTS.md). Emits nothing on non-Windows hosts.
+Component wrapper (`@sisyphuslabs/codex-git-bash-hook`, private, bin `omo-git-bash-hook`) that steers Windows Codex sessions toward the OMO `git_bash` MCP: a `PreToolUse` hook on `^Bash$` injects one `additionalContext` reminder per session to prefer `git_bash` over built-in `exec_command`; a `PostCompact` hook clears the once-per-session marker so the reminder re-fires after compaction. This component is NOT the MCP - the `git_bash` stdio server is declared plugin-wide in [`.mcp.json`](../../.mcp.json) (`node ../../git-bash-mcp/dist/cli.js mcp`) and implemented by [`packages/git-bash-mcp`](../../../../git-bash-mcp/AGENTS.md). Emits nothing on non-Windows hosts.
 
 ## KEY FILES
 

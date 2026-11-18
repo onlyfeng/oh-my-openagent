@@ -1,6 +1,6 @@
-# testing/ — Thread Gateway Test Harness
+# testing/ - Thread Gateway Test Harness
 
-**Generated:** 2026-11-18 / c2691818a9 | **Score:** 18 (14 files; test-only — no production barrel). Gateway semantics live in [`../AGENTS.md`](../AGENTS.md).
+**Generated:** 2026-11-18 / c2691818a9 | **Score:** 18 (14 files; test-only - no production barrel). Gateway semantics live in [`../AGENTS.md`](../AGENTS.md).
 
 ## OVERVIEW
 
@@ -10,10 +10,10 @@ Reusable harness + fake runtime driving real subprocess extensions (`.mjs` drive
 
 | File | Role |
 |------|------|
-| `harness.ts` | `createGatewayHarness` — `GatewayHarness`, `HarnessSession`, `SessionOptions` |
-| `fake-runtime.ts` | `FakeSessionRuntime` — the fake session runtime |
+| `harness.ts` | `createGatewayHarness` - `GatewayHarness`, `HarnessSession`, `SessionOptions` |
+| `fake-runtime.ts` | `FakeSessionRuntime` - the fake session runtime |
 | `sender-process.ts` + `job-control.ts` | Subprocess sender + job control |
-| `settled.ts` | `settled()` — await helper for Bun 1.4.2 worker-thread promises |
+| `settled.ts` | `settled()` - await helper for Bun 1.4.2 worker-thread promises |
 | `extension-lifecycle.mjs` / `extension-lifecycle-driver.mjs` | Lifecycle fixture + driver |
 | `extension-wake-driver.mjs` / `extension-racer.ts` | Wake and race drivers |
 | `session-callable-extension.mjs` | Session-callable operations fixture |
@@ -23,9 +23,9 @@ Reusable harness + fake runtime driving real subprocess extensions (`.mjs` drive
 
 ## ANTI-PATTERNS
 
-- Bun 1.4.2 worker-thread reply promises may settle without waking `expect(...).resolves/.rejects` — use `settled()` and assert its returned value/error.
-- The v4 worker is an immutable historical compatibility fixture — never regenerate or edit it; rebuild path is documented in its README.
-- Drivers are `.mjs` on purpose (plain Node subprocesses, dynamic imports) — do not convert them to bundled TS.
+- Bun 1.4.2 worker-thread reply promises may settle without waking `expect(...).resolves/.rejects` - use `settled()` and assert its returned value/error.
+- The v4 worker is an immutable historical compatibility fixture - never regenerate or edit it; rebuild path is documented in its README.
+- Drivers are `.mjs` on purpose (plain Node subprocesses, dynamic imports) - do not convert them to bundled TS.
 
 ## COMMANDS
 

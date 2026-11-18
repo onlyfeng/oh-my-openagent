@@ -1,10 +1,10 @@
-# remote — Remote Client Surface (sessions, follow, thread addressing)
+# remote - Remote Client Surface (sessions, follow, thread addressing)
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 14 (41 direct files, ~8.6k LOC, distinct domain: remote device/session operations)
 
 ## OVERVIEW
 
-The public remote-operations module (#13414, design B2): typed clients over remote sessions and devices, thread-address parsing/naming, deadline handling, and the attach/follow surfaces. The barrel is deliberately narrow; `createRemoteClient` stays internal — every caller builds its client through its sender's factory.
+The public remote-operations module (#13414, design B2): typed clients over remote sessions and devices, thread-address parsing/naming, deadline handling, and the attach/follow surfaces. The barrel is deliberately narrow; `createRemoteClient` stays internal - every caller builds its client through its sender's factory.
 
 ## WHERE TO LOOK
 
@@ -23,12 +23,12 @@ The public remote-operations module (#13414, design B2): typed clients over remo
 
 - Typed Outcome/`RemoteFailure` returns; no thrown strings. Failures carry `next_action`.
 - Dependencies injected; `LocalSessions` export exists for injection, not direct construction.
-- Hotspot tests over 500 LOC (`sessions.test.ts` 1109, `follow.test.ts` 906) pin race-heavy behavior — run them on any touch.
+- Hotspot tests over 500 LOC (`sessions.test.ts` 1109, `follow.test.ts` 906) pin race-heavy behavior - run them on any touch.
 
 ## ANTI-PATTERNS
 
 - Don't call `createRemoteClient` outside this module; add a sender-specific factory instead.
-- Don't parse thread handles ad hoc — route through `canonicalizeThreadHandle`/`handleOf`.
+- Don't parse thread handles ad hoc - route through `canonicalizeThreadHandle`/`handleOf`.
 
 ## COMMANDS
 

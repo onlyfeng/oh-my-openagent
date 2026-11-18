@@ -1,4 +1,4 @@
-# web/app/ — Next.js App Router Surface
+# web/app/ - Next.js App Router Surface
 
 **Score ~14** (41 files; Next App Router routes/layouts/metadata, distinct from `web/components`).
 
@@ -15,7 +15,7 @@ The Next.js App Router tree for the `web` package: localized route groups, route
 | `app/api/*/route.ts`                       | API route handlers                                                                                 |
 | `manifest.ts` / `robots.ts` / `sitemap.ts` | Static metadata generators                                                                         |
 | `_components/`                             | Shared route-level components                                                                      |
-| `styles/design-system.css`                 | Design tokens (~1.6k lines — the design-system concentration)                                      |
+| `styles/design-system.css`                 | Design tokens (~1.6k lines - the design-system concentration)                                      |
 
 ## CONVENTIONS
 
@@ -26,7 +26,7 @@ The Next.js App Router tree for the `web` package: localized route groups, route
 ## ANTI-PATTERNS
 
 - `robots.ts` must keep `OMO_WEB_SHOWCASE=1` non-indexable.
-- Do not use `npm install` here — Bun only. Do not commit `.next/`, `.open-next/`, `.wrangler/`.
+- Do not use `npm install` here - Bun only. Do not commit `.next/`, `.open-next/`, `.wrangler/`.
 - Do not run production `bun run deploy` locally; deploy through GitHub Actions.
 
 ## COMMANDS

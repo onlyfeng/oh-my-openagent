@@ -1,4 +1,4 @@
-# components/ulw-loop/src/ — ULW Loop Implementation Modules
+# components/ulw-loop/src/ - ULW Loop Implementation Modules
 
 ## OVERVIEW
 
@@ -6,7 +6,7 @@
 `ulw-loop` component: CLI dispatch, runtime, SDK surface, plans, checkpoints,
 evidence, steering, quality gates, and Codex hooks. Style, build, and command
 conventions live in the parent
-[`components/ulw-loop/AGENTS.md`](../AGENTS.md) — not repeated.
+[`components/ulw-loop/AGENTS.md`](../AGENTS.md) - not repeated.
 **Score 18** (60 files, module density, state-transition hotspots).
 
 ## WHERE TO LOOK

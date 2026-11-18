@@ -1,4 +1,4 @@
-# session-manager — the 4 `session_*` tools
+# session-manager - the 4 `session_*` tools
 
 **Score 8** (18 files, ~4.0k LOC; distinct domain: the only tool family with dual SDK/file storage and fallback merge).
 
@@ -9,7 +9,7 @@ Implements `session_list`, `session_read`, `session_search`, `session_info` (too
 ## ARCHITECTURE
 
 - **Dual storage, merged by session ID** (`storage.ts`): SQLite via the OpenCode SDK client (`sdk-storage.ts`, paged reads at `SDK_MESSAGE_PAGE_SIZE`) when `isSqliteBackend()`; legacy JSON storage (`file-storage.ts`) for compatibility and fallback. Session lists merge by ID, newest first.
-- **Fallback rule:** an SDK read falls through to file storage when `shouldFallbackFromSdkError(error)` OR the SDK answers `NotFoundError` — a session existing only in legacy JSON storage (#5854) must still be readable.
+- **Fallback rule:** an SDK read falls through to file storage when `shouldFallbackFromSdkError(error)` OR the SDK answers `NotFoundError` - a session existing only in legacy JSON storage (#5854) must still be readable.
 - **Project filter:** `ctx.directory === "/"` (multi-project `opencode serve` / `opencode web`) normalizes to no filter; otherwise every session would be silently dropped.
 - **Bounded work:** `session_search` scans at most `MAX_SESSIONS_TO_SCAN = 50` sessions under `SEARCH_TIMEOUT_MS = 60s`; `runWithAbortableTimeout` aborts the underlying reads on timeout (composed with the caller's abort signal) instead of letting them run on.
 - **Formatting/errors:** `session-formatter.ts` renders list/read/search/info payloads; `session-error.ts` (`describeSessionError`, `SkippedSession` → `formatSkippedSessions`) is the error taxonomy.

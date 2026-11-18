@@ -1,10 +1,10 @@
-# side-panel/sections/ — Side-Panel Row Builders
+# side-panel/sections/ - Side-Panel Row Builders
 
 **Score ~11** (20 files; pure row-builder domain, composed by parent `rows.ts`).
 
 ## OVERVIEW
 
-Pure builder functions that turn side-panel snapshots into `PanelRow[]` for each panel section (agents, context, files, goal, memory, session, tools, usage, location). The parent `rows.ts` composes the main builders; shared formatting primitives live in `layout.ts`. No host I/O — each builder takes a snapshot plus explicit width/time/cap inputs.
+Pure builder functions that turn side-panel snapshots into `PanelRow[]` for each panel section (agents, context, files, goal, memory, session, tools, usage, location). The parent `rows.ts` composes the main builders; shared formatting primitives live in `layout.ts`. No host I/O - each builder takes a snapshot plus explicit width/time/cap inputs.
 
 ## WHERE TO LOOK
 
@@ -29,7 +29,7 @@ Pure builder functions that turn side-panel snapshots into `PanelRow[]` for each
 
 ## ANTI-PATTERNS
 
-- Keep builders pure — do not add host/config reads inside a section builder; pass values in.
+- Keep builders pure - do not add host/config reads inside a section builder; pass values in.
 
 ## COMMANDS
 

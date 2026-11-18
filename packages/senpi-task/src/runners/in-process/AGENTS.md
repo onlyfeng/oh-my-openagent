@@ -1,6 +1,6 @@
-# src/runners/in-process/ — InProcessRunner Internals
+# src/runners/in-process/ - InProcessRunner Internals
 
-**Generated:** 2026-11-18 / c2691818a9 | **Score:** 24 (34 files). The facade is sibling `../in-process.ts` (`InProcessRunner`); execution-mode semantics and the shared-tool invariants live in [`../../../runners/AGENTS.md`](../AGENTS.md) and the package parent — not repeated here.
+**Generated:** 2026-11-18 / c2691818a9 | **Score:** 24 (34 files). The facade is sibling `../in-process.ts` (`InProcessRunner`); execution-mode semantics and the shared-tool invariants live in [`../../../runners/AGENTS.md`](../AGENTS.md) and the package parent - not repeated here.
 
 ## OVERVIEW
 
@@ -10,10 +10,10 @@ Child handles, session/options construction, kernel-tool scoping, and the curate
 
 | File | Role |
 |------|------|
-| `child-handle.ts` | Child session/handle contracts + create/restore factories — a restored child is rebuilt from its persisted transcript; the original prompt is NEVER replayed |
+| `child-handle.ts` | Child session/handle contracts + create/restore factories - a restored child is rebuilt from its persisted transcript; the original prompt is NEVER replayed |
 | `child-options.ts` | `buildChildSessionOptions`, `requireChildSessionDir`, input/tool-name helpers |
 | `child-loader.ts` / `create-child-session.ts` | Child loading and session creation |
-| `shared-tool-filter.ts` | `filterSharedParentTools` — the parent-closure filter (own suite) |
+| `shared-tool-filter.ts` | `filterSharedParentTools` - the parent-closure filter (own suite) |
 | `host-tools.ts` / `kernel-tool-surface.ts` | Kernel tool scope + surface (python/revive suites) |
 | `curated-readonly-bash.ts` | The shell-free gh/curl broker that replaces the shell for curated read-only children |
 | `native-run-pause.ts` | Native pause wiring for in-process children |
@@ -24,9 +24,9 @@ Child handles, session/options construction, kernel-tool scoping, and the curate
 
 ## ANTI-PATTERNS
 
-- A restored child never replays the original prompt — rebuild comes from the persisted transcript alone.
+- A restored child never replays the original prompt - rebuild comes from the persisted transcript alone.
 - Tool parity between parent and child is pinned by `builtin-tool-parity.integration.test.ts` and `child-tool-surface.test.ts`; do not widen the child surface without those suites.
-- Curated read-only children get the broker, not the shell — don't hand execution back.
+- Curated read-only children get the broker, not the shell - don't hand execution back.
 
 ## COMMANDS
 

@@ -1,4 +1,4 @@
-# btw-side — Ephemeral Side Conversations (TUI)
+# btw-side - Ephemeral Side Conversations (TUI)
 
 **Generated:** 2026-11-18 / c2691818a9 (update pass; content verified)
 
@@ -32,6 +32,6 @@ Codex-aligned ephemeral "btw" side conversations launched from the OpenCode TUI:
 
 ## ANTI-PATTERNS
 
-- NEVER inject the full parent transcript — parent context goes through `parent-context-budget.ts` only.
+- NEVER inject the full parent transcript - parent context goes through `parent-context-budget.ts` only.
 - NEVER let a side session mutate parent-scoped state; the adoption guard exists to prevent exactly this.
 - Do not track side-session state outside `server-session-registry.ts`.

@@ -1,4 +1,4 @@
-# plugin — vendored Codex plugin bundle (`@sisyphuslabs/omo-codex-plugin`)
+# plugin - vendored Codex plugin bundle (`@sisyphuslabs/omo-codex-plugin`)
 
 **Generated:** 2026-11-18 / c2691818a9
 

@@ -1,4 +1,4 @@
-# src/install/ — Senpi Installer
+# src/install/ - Senpi Installer
 
 **Score ~12** (12 files, ~1.7k LOC; install/launch orchestration domain).
 
@@ -25,7 +25,7 @@ The omo-senpi local installer: orchestrates installing/uninstalling the Senpi pl
 
 ## ANTI-PATTERNS
 
-- Current install is local-path only — do NOT document npm/git/marketplace distribution for the Senpi adapter skill surface.
+- Current install is local-path only - do NOT document npm/git/marketplace distribution for the Senpi adapter skill surface.
 - Keep settings writes atomic; never write settings in place.
 
 ## COMMANDS

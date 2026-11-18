@@ -1,4 +1,4 @@
-# src/journal/ — Transcript Journal (per-conversation durability)
+# src/journal/ - Transcript Journal (per-conversation durability)
 
 **Generated:** 2026-11-18 / c2691818a9
 
@@ -8,12 +8,12 @@ Earned its file (score ~25): 12 TS files, ~2.3k LOC, the durable journal domain 
 
 | Task | File |
 |------|------|
-| Append + projection + lock orchestration | `store.ts` — `TranscriptJournal` (append, state/cursor projection, lock acquisition, atomic replacement, durability via `fsync.ts`) |
-| Cursor + reflection snapshots | `cursor.ts` — `captureCursorSnapshot`, `deriveState`, `initialReflectionState`; state schema `v3_assistant_steps` |
-| Entry types + truncation | `entries.ts` — `projectTranscriptEntries`, `truncateToolResult`, the caps below |
-| Cross-process local lock | `lock.ts` — `withLocalJournalLock`, `JournalLockTimeoutError`, `ACQUISITION_WAIT_MS` |
-| Empty-journal sweep | `sweep.ts` — `sweepEmptyTranscriptJournals` + keep reasons |
-| Public API | `index.ts` barrel — the only import surface for the rest of memory-core |
+| Append + projection + lock orchestration | `store.ts` - `TranscriptJournal` (append, state/cursor projection, lock acquisition, atomic replacement, durability via `fsync.ts`) |
+| Cursor + reflection snapshots | `cursor.ts` - `captureCursorSnapshot`, `deriveState`, `initialReflectionState`; state schema `v3_assistant_steps` |
+| Entry types + truncation | `entries.ts` - `projectTranscriptEntries`, `truncateToolResult`, the caps below |
+| Cross-process local lock | `lock.ts` - `withLocalJournalLock`, `JournalLockTimeoutError`, `ACQUISITION_WAIT_MS` |
+| Empty-journal sweep | `sweep.ts` - `sweepEmptyTranscriptJournals` + keep reasons |
+| Public API | `index.ts` barrel - the only import surface for the rest of memory-core |
 
 ## INVARIANTS
 
@@ -24,7 +24,7 @@ Earned its file (score ~25): 12 TS files, ~2.3k LOC, the durable journal domain 
 
 ## ANTI-PATTERNS
 
-- Never append unbounded tool results or raw reasoning into the journal — extend `entries.ts` truncation instead.
+- Never append unbounded tool results or raw reasoning into the journal - extend `entries.ts` truncation instead.
 - Never bypass `TranscriptJournal` / `withLocalJournalLock` with direct `transcript.jsonl` writes.
 
 ## TESTS

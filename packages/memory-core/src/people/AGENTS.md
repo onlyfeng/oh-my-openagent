@@ -1,4 +1,4 @@
-# src/people — People-Card Grammar
+# src/people - People-Card Grammar
 
 **Generated:** 2026-11-18 | c2691818a9
 
@@ -15,7 +15,7 @@ People-card markdown grammar: parse/serialize, slug rules, reserved slugs, colli
 
 ## ANTI-PATTERNS
 
-- Behavioral patterns are NEVER stored in people cards — lines are limited to `IDENTITY` / `ATTRIBUTE` / `RELATIONSHIP` / `INSTRUCTION` prefixes with bounded metadata (parent memory-core invariant, enforced here).
+- Behavioral patterns are NEVER stored in people cards - lines are limited to `IDENTITY` / `ATTRIBUTE` / `RELATIONSHIP` / `INSTRUCTION` prefixes with bounded metadata (parent memory-core invariant, enforced here).
 - `isReservedSlug` is the only guard against a person slug colliding with a system path; never bypass it.
 - `resolveSlugCollision` is deterministic: same input pair always picks the same winner. Do not introduce randomness.
 

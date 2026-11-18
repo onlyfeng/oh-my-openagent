@@ -45,7 +45,7 @@ serverPlugin(input, options)
 
 ## CONFIG LOADING
 
-`loadPluginConfig(directory, ctx)`: 1. user `~/.omo/omo.jsonc`; 2. walked `<pwd up to $HOME>/.omo/omo.jsonc`; 3. `mergeConfigs` — `agents`/`categories`/`claude_code` deepMerge (recursive, prototype-pollution safe), `disabled_*` Set union, `mcp_env_allowlist` + `playwright_mcp_args` user-only (security), others override-replace; 4. Zod safeParse fills defaults; 5. legacy config migrated once at startup into the unified OMO chain.
+`loadPluginConfig(directory, ctx)`: 1. user `~/.omo/omo.jsonc`; 2. walked `<pwd up to $HOME>/.omo/omo.jsonc`; 3. `mergeConfigs` - `agents`/`categories`/`claude_code` deepMerge (recursive, prototype-pollution safe), `disabled_*` Set union, `mcp_env_allowlist` + `playwright_mcp_args` user-only (security), others override-replace; 4. Zod safeParse fills defaults; 5. legacy config migrated once at startup into the unified OMO chain.
 
 ## HOOK COMPOSITION (5-tier)
 

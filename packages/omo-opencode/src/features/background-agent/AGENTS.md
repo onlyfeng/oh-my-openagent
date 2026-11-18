@@ -1,4 +1,4 @@
-# src/features/background-agent/ — Core Orchestration Engine
+# src/features/background-agent/ - Core Orchestration Engine
 
 **Generated:** 2026-05-20 · **Updated:** 2026-11-18
 
@@ -16,9 +16,9 @@ LaunchInput → pending → [ConcurrencyManager queue] → running → polling �
 
 | File | Purpose |
 |------|---------|
-| `manager.ts` | `BackgroundManager` — main class (3.6k LOC, the production hotspot): launch, cancel, resume, getTask, listTasks, event handling, stale cleanup, archive |
+| `manager.ts` | `BackgroundManager` - main class (3.6k LOC, the production hotspot): launch, cancel, resume, getTask, listTasks, event handling, stale cleanup, archive |
 | `spawner.ts` | Task spawning: `createTask`/`startTask`/`resumeTask` over `SpawnerContext`; prompt/record/fallback/tmux pieces live in `spawner/` |
-| `concurrency.ts` | `ConcurrencyManager` — FIFO queue per concurrency key, slot acquisition/release |
+| `concurrency.ts` | `ConcurrencyManager` - FIFO queue per concurrency key, slot acquisition/release |
 | `task-poller.ts` | 3s interval polling, completion via idle events + stability detection (10s unchanged) |
 | `types.ts` | `BackgroundTask`, `LaunchInput`, `ResumeInput`, `BackgroundTaskStatus` |
 | `parent-wake-notifier.ts` | Coordinates parent-session wake notification; queue/dedupe/dispatch/history/activity/recovery helpers are split into sibling `parent-wake-*.ts` modules |
@@ -47,14 +47,14 @@ LaunchInput → pending → [ConcurrencyManager queue] → running → polling �
 |------|---------|
 | `fallback-agent.ts` | `FALLBACK_AGENT` + `buildFallbackBody` + `isAgentNotFoundError` for the runtime-fallback path |
 | `task-prompt-body.ts` | Builds the task prompt body |
-| `task-record.ts` | `buildTaskRecord` — the `bg_<uuid8>` task record |
-| `tmux-callback-invoker.ts` | `invokeTmuxSessionCreatedCallback`: fire-and-forget TmuxSessionManager notify on session creation, gated on `tmuxEnabled && !suppress`; fires immediately — `TMUX_CALLBACK_DELAY_MS = 200` sits in `constants.ts` but is no longer applied here |
+| `task-record.ts` | `buildTaskRecord` - the `bg_<uuid8>` task record |
+| `tmux-callback-invoker.ts` | `invokeTmuxSessionCreatedCallback`: fire-and-forget TmuxSessionManager notify on session creation, gated on `tmuxEnabled && !suppress`; fires immediately - `TMUX_CALLBACK_DELAY_MS = 200` sits in `constants.ts` but is no longer applied here |
 
 ## COMPLETION DETECTION
 
 Two signals combined:
-1. **Session idle event** — OpenCode reports session became idle
-2. **Stability detection** — message count unchanged for 10s (3+ stable polls at 3s interval)
+1. **Session idle event** - OpenCode reports session became idle
+2. **Stability detection** - message count unchanged for 10s (3+ stable polls at 3s interval)
 
 Both must agree before marking a task complete. Prevents premature completion on brief pauses. On completion, `result-handler` → `parent-session-notifier` injects a system message into the parent session.
 

@@ -1,4 +1,4 @@
-# src/cli/account-keys — OS Keyring Account Keys
+# src/cli/account-keys - OS Keyring Account Keys
 
 **Generated:** 2026-11-18 | c2691818a9
 
@@ -8,8 +8,8 @@
 
 | Path | Role |
 |------|------|
-| `commands.ts` | `configureAccountKeysCommands` — Commander wiring. |
-| `keystore.ts` | `createOsKeyStore` — the public keystore factory. Storage is idempotent; re-adding the same account overwrites. |
+| `commands.ts` | `configureAccountKeysCommands` - Commander wiring. |
+| `keystore.ts` | `createOsKeyStore` - the public keystore factory. Storage is idempotent; re-adding the same account overwrites. |
 | `keyring.ts` | Keyring record constants and dependency-injection contracts for the platform backend. |
 | `account-keys.test.ts` | bun test coverage. |
 
@@ -21,7 +21,7 @@
 
 ## CONVENTIONS
 
-- The keystore is constructed via `createOsKeyStore` with the platform backend injected through `keyring.ts` — never hard-code a backend call inside `commands.ts`.
+- The keystore is constructed via `createOsKeyStore` with the platform backend injected through `keyring.ts` - never hard-code a backend call inside `commands.ts`.
 
 ## COMMANDS
 
@@ -29,4 +29,4 @@
 bun test packages/omo-opencode/src/cli/account-keys
 ```
 
-Changes here are OpenCode-wired — run the `opencode-qa` skill and record evidence under `.omo/evidence/` per the root AGENTS.md mandate.
+Changes here are OpenCode-wired - run the `opencode-qa` skill and record evidence under `.omo/evidence/` per the root AGENTS.md mandate.

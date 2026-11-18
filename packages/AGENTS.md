@@ -21,7 +21,7 @@
 
 ## PLATFORM LAUNCHER PACKAGES (12)
 
-`oh-my-opencode-{darwin-arm64, darwin-x64, darwin-x64-baseline, linux-arm64, linux-arm64-musl, linux-x64, linux-x64-baseline, linux-x64-musl, linux-x64-musl-baseline, windows-x64, windows-x64-baseline, windows-arm64}` — each contains only `bin/oh-my-opencode.js` + `package.json`. [`script/build-binaries.ts`](../script/build-binaries.ts) writes the SAME generated Node-compatible launcher payload from `createPlatformLauncherSource()` to all 12 (not distinct native binaries; no native compilation); published by `publish-platform.yml`. `-baseline`/`-musl` are package-selection and compatibility metadata only. `windows-arm64` targets Windows-on-ARM through x64 emulation, with the launcher's Node fallback when Bun cannot run. Runtime selection happens in `bin/` and `postinstall.mjs`.
+`oh-my-opencode-{darwin-arm64, darwin-x64, darwin-x64-baseline, linux-arm64, linux-arm64-musl, linux-x64, linux-x64-baseline, linux-x64-musl, linux-x64-musl-baseline, windows-x64, windows-x64-baseline, windows-arm64}` - each contains only `bin/oh-my-opencode.js` + `package.json`. [`script/build-binaries.ts`](../script/build-binaries.ts) writes the SAME generated Node-compatible launcher payload from `createPlatformLauncherSource()` to all 12 (not distinct native binaries; no native compilation); published by `publish-platform.yml`. `-baseline`/`-musl` are package-selection and compatibility metadata only. `windows-arm64` targets Windows-on-ARM through x64 emulation, with the launcher's Node fallback when Bun cannot run. Runtime selection happens in `bin/` and `postinstall.mjs`.
 
 ## MCP PACKAGES
 
@@ -75,5 +75,5 @@
 
 ## ANTI-PATTERNS
 
-- Never publish a sibling package manually (use the GitHub Actions workflows), and never copy code between packages by hand — share via a core package or accept the duplication and document it.
+- Never publish a sibling package manually (use the GitHub Actions workflows), and never copy code between packages by hand - share via a core package or accept the duplication and document it.
 - Never modify `bin/oh-my-opencode.js` inside a platform launcher package - regenerate it through `script/build-binaries.ts`.

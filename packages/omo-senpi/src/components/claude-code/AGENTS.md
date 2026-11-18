@@ -1,4 +1,4 @@
-# components/claude-code — Claude Code Binary Acquisition
+# components/claude-code - Claude Code Binary Acquisition
 
 **Generated:** 2026-11-18 | c2691818a9
 
@@ -9,7 +9,7 @@ Senpi component that pins, downloads, and caches the Claude Code executable used
 | Path | Role |
 |------|------|
 | `acquire.ts` | `tarballUrl`, `cachedExecutablePath`, `offlineMessage`; pin/acquisition types. |
-| `find-on-path.ts` | `findOnPath` — locate a pre-installed binary before downloading. |
+| `find-on-path.ts` | `findOnPath` - locate a pre-installed binary before downloading. |
 | `index.ts` | Component factory + re-exports; `executableName`. |
 | `acquire.test.ts`, `index.test.ts` | bun test coverage. |
 

@@ -1,4 +1,4 @@
-# team-mode — Parallel Multi-Agent Coordination
+# team-mode - Parallel Multi-Agent Coordination
 
 **Generated:** 2026-11-18 (trimmed from 168 lines; runtime detail in [`team-runtime/AGENTS.md`](team-runtime/AGENTS.md))
 
@@ -18,7 +18,7 @@ Registered via [`src/plugin/tool-registry.ts`](../../plugin/tool-registry.ts) `t
 
 ## ELIGIBLE AGENTS + MEMBER KINDS
 
-[`AGENT_ELIGIBILITY_REGISTRY`](types.ts) in `types.ts`, three tiers: `eligible` = sisyphus, atlas, sisyphus-junior (the only three); `conditional` = hephaestus (needs the D-36 `teammate: "allow"` patch, else use `subagent_type: "sisyphus"`); `hard-reject` = read-only/plan-mode agents (oracle, librarian, explore, multimodal-looker, metis, momus, prometheus) — they throw at TeamSpec parse with a message pointing at `task` (delegate-task). Members: `{ kind: "subagent_type", name, subagent_type, prompt? }` or `{ kind: "category", name, category, prompt }` (prompt REQUIRED; routed through sisyphus-junior with the category model).
+[`AGENT_ELIGIBILITY_REGISTRY`](types.ts) in `types.ts`, three tiers: `eligible` = sisyphus, atlas, sisyphus-junior (the only three); `conditional` = hephaestus (needs the D-36 `teammate: "allow"` patch, else use `subagent_type: "sisyphus"`); `hard-reject` = read-only/plan-mode agents (oracle, librarian, explore, multimodal-looker, metis, momus, prometheus) - they throw at TeamSpec parse with a message pointing at `task` (delegate-task). Members: `{ kind: "subagent_type", name, subagent_type, prompt? }` or `{ kind: "category", name, category, prompt }` (prompt REQUIRED; routed through sisyphus-junior with the category model).
 
 ## MODULE LAYOUT
 
@@ -47,7 +47,7 @@ Entry (`src/index.ts`): `checkTeamModeDependencies()` + `ensureBaseDirs()` when 
 
 ## ANTI-PATTERNS
 
-- Never bypass `team-session-registry` — direct `loadRuntimeState` lookups will hit the spawn-race window.
+- Never bypass `team-session-registry` - direct `loadRuntimeState` lookups will hit the spawn-race window.
 - Never write team state files without the atomic lock from `team-state-store/locks.ts`.
-- Never substitute `task` (delegate-task) for `team_*` tools when the user explicitly asks for team-mode work — they are not equivalent.
+- Never substitute `task` (delegate-task) for `team_*` tools when the user explicitly asks for team-mode work - they are not equivalent.
 - Never allow members to call `team_create` (nested teams are forbidden by `team-tool-gating` hook).

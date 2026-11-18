@@ -1,4 +1,4 @@
-# computer-use — Desktop Control Component (registration shell + lazy runtime)
+# computer-use - Desktop Control Component (registration shell + lazy runtime)
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 14 (51 files, ~7.2k LOC, distinct domain: the `computer` tool surface)
 
@@ -23,14 +23,14 @@ Senpi component owning the `computer` / `computer_actions` tools and the `/compu
 
 ## CONVENTIONS
 
-- Dependency seams everywhere (settings, runtime loading, engine child creation, lifecycle source, telemetry observers) — tests inject fakes, never a real desktop.
+- Dependency seams everywhere (settings, runtime loading, engine child creation, lifecycle source, telemetry observers) - tests inject fakes, never a real desktop.
 - Component code reaches the host only through `../../extension/types` ports.
 - Characterization tests (`control-confirm`, `foreground-lease`, `runtime-path`) pin observed behavior; extend them rather than deleting assertions.
 
 ## ANTI-PATTERNS
 
 - Don't import the desktop service eagerly; the lazy `#omo-computer-use-runtime` split is a bundle contract.
-- Don't add a second engine probe path — `engine-probe.ts` owns probe phases and refusal reasons.
+- Don't add a second engine probe path - `engine-probe.ts` owns probe phases and refusal reasons.
 
 ## COMMANDS
 

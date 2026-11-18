@@ -1,6 +1,6 @@
-# memory-core/src/provenance/ — Claim & Consent Provenance
+# memory-core/src/provenance/ - Claim & Consent Provenance
 
-**Score ~10** (8 files, ~1.6k LOC incl. review corpus; distinct domain — claim-receipt + consent rules).
+**Score ~10** (8 files, ~1.6k LOC incl. review corpus; distinct domain - claim-receipt + consent rules).
 
 ## OVERVIEW
 
@@ -18,7 +18,7 @@ Harness-neutral provenance contracts for memory writes: claim receipts (who asse
 ## CONVENTIONS
 
 - Claim sources are a closed set (`CLAIM_SOURCES`, `isClaimSource`); `USER_QUOTE_RULE` requires a verbatim user quote for user-sourced claims.
-- Remain harness-neutral — no OpenCode/Codex/Senpi/Pi imports.
+- Remain harness-neutral - no OpenCode/Codex/Senpi/Pi imports.
 
 ## ANTI-PATTERNS
 

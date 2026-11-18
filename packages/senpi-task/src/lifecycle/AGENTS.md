@@ -1,6 +1,6 @@
-# lifecycle — residency, shutdown, reconcile, revival, TTL
+# lifecycle - residency, shutdown, reconcile, revival, TTL
 
-**Score 17** (49 impl + 61 test modules, ~5.9k impl LOC). Owns the durable side of every task child: admission, suspension, crash reconciliation, revival, and expiry. Suspend/resume SEMANTICS (revival populations, admission-lease protocol, deferred outcomes, no-rerun rules) live in the parent [`../../AGENTS.md`](../../AGENTS.md) — not repeated here.
+**Score 17** (49 impl + 61 test modules, ~5.9k impl LOC). Owns the durable side of every task child: admission, suspension, crash reconciliation, revival, and expiry. Suspend/resume SEMANTICS (revival populations, admission-lease protocol, deferred outcomes, no-rerun rules) live in the parent [`../../AGENTS.md`](../../AGENTS.md) - not repeated here.
 
 ## OVERVIEW
 
@@ -20,13 +20,13 @@
 
 Shared child fixtures under `__fixtures__/` (cold-revive harness/team/trace, batch-admission race child).
 
-## INVARIANTS (stated in module headers — preserve them)
+## INVARIANTS (stated in module headers - preserve them)
 
 - `ttl.ts`: a suspended child whose work is in flight is NEVER TTL-deleted; a `lost` process record is NEVER deleted without pid-dead proof.
 - `port.ts`: a child with a pending owner is NEVER lost, by construction.
-- `host-session-revive.ts`: a host-session child record is NEVER lost — losing it would discard a transcript the daemon still owns.
+- `host-session-revive.ts`: a host-session child record is NEVER lost - losing it would discard a transcript the daemon still owns.
 - `shutdown.ts`: pre-dispose steps are best-effort so dispose ALWAYS runs.
-- Claim/epoch fences and the admission lease are the sanctioned ownership/capacity boundaries — never bypass them in reconcile or revival paths.
+- Claim/epoch fences and the admission lease are the sanctioned ownership/capacity boundaries - never bypass them in reconcile or revival paths.
 
 ## CONVENTIONS
 

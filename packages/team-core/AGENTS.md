@@ -1,4 +1,4 @@
-# team-core — Team-Mode Domain Primitives (Core)
+# team-core - Team-Mode Domain Primitives (Core)
 
 **Generated:** 2026-06-16 (updated 2026-09-08)
 

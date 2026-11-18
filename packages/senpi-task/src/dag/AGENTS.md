@@ -1,6 +1,6 @@
 # dag - Dependency-Frontier Task DAG Engine
 
-Compile a node definition into an execution graph, admit each node the moment every node it dependsOn has completed (plus a free resident slot), journal every boundary transition to a filesystem WAL, and recover runs after crashes. Largest subsystem in senpi-task (69 TS files — 40 implementation + 29 tests, ~20.8k LOC; added after the 2026-07 package snapshot). Public surface: `index.ts` barrel + package subpath `./dag`; consumer is the omo-senpi task component (`dag-runtime.ts`, `dag-tool.ts`, `dag-rpc-bridge.ts`).
+Compile a node definition into an execution graph, admit each node the moment every node it dependsOn has completed (plus a free resident slot), journal every boundary transition to a filesystem WAL, and recover runs after crashes. Largest subsystem in senpi-task (69 TS files - 40 implementation + 29 tests, ~20.8k LOC; added after the 2026-07 package snapshot). Public surface: `index.ts` barrel + package subpath `./dag`; consumer is the omo-senpi task component (`dag-runtime.ts`, `dag-tool.ts`, `dag-rpc-bridge.ts`).
 
 ## Anatomy
 
@@ -12,7 +12,7 @@ Compile a node definition into an execution graph, admit each node the moment ev
 | `events.ts` | Pure builders for the 17 lifecycle boundary events. No seq/lane metadata here. |
 | `paused-events.ts` | The 9 paused-run control events (`dag.guidance.*`, `dag.node.cancel_requested`, `dag.node.retry-staged`, `dag.node.pause-recovered`, `dag.node.pause-lost`) and their projection onto the run record. |
 | `paused-controls.ts` / `paused-child-recovery.ts` / `paused-node-encoding.ts` | Live pause controls (guidance add/change, cancel/retry staging), user-paused child recovery over `node-control-context`, and backward-compatible on-disk encoding of the `paused` node state (older releases index node counts by state, so an unknown state would NaN every count). |
-| `run-pause.ts` / `run-mutation.ts` | `applyRunPause` plus `applyDagRunMutation` — the run-record mutation shared by live scheduling and WAL replay (pause application, paused-event projection, `amend-safety.ts` guards). |
+| `run-pause.ts` / `run-mutation.ts` | `applyRunPause` plus `applyDagRunMutation` - the run-record mutation shared by live scheduling and WAL replay (pause application, paused-event projection, `amend-safety.ts` guards). |
 | `counts.ts` / `event-types.ts` / `node-activity.ts` | Node count aggregation, the event type surface (incl. `TaskStartFailureKind`), and task event-log activity reading. |
 | `journal.ts` | `createDagJournal` / `subscribeDagJournal`: sequenced append + checkpoint projection seam. |
 | `store.ts` | `createDagFileStore`: WAL append/read with torn-tail recovery, checkpoint/result/key persistence, run/key/task-owner locks, per-session cap on active (non-terminal) runs, retention pruning. Layout `<stateDir>/dag/{runs,events,results,keys,locks}`; key ids `dagKeyHash = sha256(parentSessionId + "\0" + runKey)`. Atomic temp+rename writes, fsync on by default. |

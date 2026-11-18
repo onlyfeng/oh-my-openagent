@@ -1,4 +1,4 @@
-# src/sync/engine/ — Device Sync Engine Internals
+# src/sync/engine/ - Device Sync Engine Internals
 
 ## OVERVIEW
 
@@ -6,7 +6,7 @@
 own scopes). The cycle-stage implementation of `SyncEngine`: receive, local
 capture, apply, push, legacy cycle. Exposed publicly via the
 `@oh-my-opencode/memory-core/sync/engine` subpath barrel (`index.ts`).
-Parent: [`src/sync/AGENTS.md`](../AGENTS.md) owns the crypto/trust model —
+Parent: [`src/sync/AGENTS.md`](../AGENTS.md) owns the crypto/trust model -
 not repeated here.
 
 ## WHERE TO LOOK
@@ -26,7 +26,7 @@ not repeated here.
 - Cycle stages are explicit modules; dependencies arrive via injected ports
   (fake store/server/crypto, manual clock, in-process locks, fault injection
   in `engine-harness.test-support.ts`).
-- Tests import engine internals directly — that is intentional; only the
+- Tests import engine internals directly - that is intentional; only the
   barrel is the package boundary.
 - Behavioral invariants are test-enforced: no oversized items sent, no foreign
   peer operations imported, no peer edits lost, unsafe received paths

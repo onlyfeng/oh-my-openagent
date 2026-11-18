@@ -1,6 +1,6 @@
-# senpi-task/scripts/ — Manual QA Probes
+# senpi-task/scripts/ - Manual QA Probes
 
-**Score ~8** (5 files; distinct domain — hermetic manual QA drivers).
+**Score ~8** (5 files; distinct domain - hermetic manual QA drivers).
 
 ## OVERVIEW
 
@@ -11,7 +11,7 @@ Executable manual-QA entrypoints (not library exports) for the senpi-task engine
 | File | Focus |
 |------|-------|
 | `manual-qa.ts` | Core record/store/transition/messageability probe (~174 LOC) |
-| `manual-category-qa.ts` | Category resolution incl. gated/deprecated/throwing-registry cases (~347 LOC — largest) |
+| `manual-category-qa.ts` | Category resolution incl. gated/deprecated/throwing-registry cases (~347 LOC - largest) |
 | `manual-agents-qa.ts` | Agent loading: frontmatter `models`/`tools`, broken + symlinked roots, escaped external paths |
 | `manual-output-qa.ts` | `task_output` tail / lost-record / cross-session fail-closed views |
 | `manual-routing-policy-qa.ts` | Fallback-chain model selection across fake registries |

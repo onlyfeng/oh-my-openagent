@@ -19,7 +19,7 @@ assets/
 
 ## SOURCE OF TRUTH
 
-Map by GENERATOR, not by file — one command writes several artifacts:
+Map by GENERATOR, not by file - one command writes several artifacts:
 
 | Generator | Zod source | Writes |
 |-----------|------------|--------|

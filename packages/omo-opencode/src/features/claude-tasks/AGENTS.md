@@ -1,4 +1,4 @@
-# src/features/claude-tasks/ — Task Schema + Storage
+# src/features/claude-tasks/ - Task Schema + Storage
 
 **Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-05-15)
 

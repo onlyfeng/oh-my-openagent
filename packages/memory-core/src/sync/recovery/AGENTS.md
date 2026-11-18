@@ -1,4 +1,4 @@
-# sync/recovery — Recovery-Key Enrollment + Fresh-Device Recovery
+# sync/recovery - Recovery-Key Enrollment + Fresh-Device Recovery
 
 **Score:** 17 (53 files, 9.6k LOC, >20 files, own subtree with bip39/fixtures/testing). Parent: [`packages/memory-core/AGENTS.md`](../../../../AGENTS.md).
 
@@ -10,14 +10,14 @@ Crypto recovery for the sync account: derive recovery keys, enroll them on the s
 
 | Task | Location |
 |------|----------|
-| Public API surface | `index.ts` — the ONLY intended import for consumers |
+| Public API surface | `index.ts` - the ONLY intended import for consumers |
 | Key derivation | `derive.ts` (`deriveRecoveryKeys`, salts, user handle) |
 | Enroll / recover / remove flows | `enroll.ts`, `recover.ts` (`recoverOnFreshDevice`), `remove.ts` |
 | Bridge + availability | `bridge.ts` (`createRecoveryBridge`), `availability.ts` (`recoveryAvailability`) |
 | Phrase variant | `enroll-phrase.ts` (`enrollPhraseRecoveryKey`, `rotateRecoveryPhrase`, `PhraseAcknowledgeUnverifiedError`), `bridge-enroll-phrase.ts`, `bridge-recover-phrase.ts`, `bridge-recover.ts`, `phrase-hints.ts` |
 | Join classification + veto | `join-notice.ts` (`classifyRecoveryJoin`, `VETO_WINDOW_MS`) |
 | Crypto primitives + markers | `hpke-seal.ts`, `key-material.ts`, `keyring-append.ts`, `enroll-marker.ts`, `recovery-handles.ts`, `canary` tests |
-| Adapter ports | `ports.ts` — `RecoveryBridge`, `RecoveryTransport`, authenticator types |
+| Adapter ports | `ports.ts` - `RecoveryBridge`, `RecoveryTransport`, authenticator types |
 | Wordlists / test data / fakes | `bip39/`, `fixtures/`, `testing/` (fake world, server, passkey helpers) |
 
 ## CONVENTIONS
@@ -29,7 +29,7 @@ Crypto recovery for the sync account: derive recovery keys, enroll them on the s
 
 ## ANTI-PATTERNS
 
-- Do not import internal modules (e.g. `key-material.ts`) from outside — `index.ts` is the surface; `package.json` declares no `./sync-recovery` subpath.
+- Do not import internal modules (e.g. `key-material.ts`) from outside - `index.ts` is the surface; `package.json` declares no `./sync-recovery` subpath.
 - Do not widen `VETO_WINDOW_MS` or bypass `classifyRecoveryJoin` when admitting a join.
 - Phrase hints must stay redacted in logs/UI (`phrase-redaction.test.ts`).
 

@@ -1,4 +1,4 @@
-# src/tools/hashline-edit/ — Hash-Anchored `edit` Tool
+# src/tools/hashline-edit/ - Hash-Anchored `edit` Tool
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
@@ -13,13 +13,13 @@ Real code here (4 files):
 | File | Purpose |
 |------|---------|
 | `hashline-edit-executor.ts` | Orchestrator (~158 LOC): canonicalize → normalize → validate/apply via shims → diff → formatter-trigger; publishes tool metadata via `../../features/tool-metadata-store` |
-| `tools.ts` | `createHashlineEditTool()` factory — tool schema + entry point |
+| `tools.ts` | `createHashlineEditTool()` factory - tool schema + entry point |
 | `tool-description.ts` | `HASHLINE_EDIT_DESCRIPTION` constant (documents LINE#ID + alphabet `ZPMQVRWSNKTXJBYH`) |
-| `formatter-trigger.ts` | `runFormattersForFile()` / `FormatterClient` — post-edit formatter run (~118 LOC) |
+| `formatter-trigger.ts` | `runFormattersForFile()` / `FormatterClient` - post-edit formatter run (~118 LOC) |
 
 Every other `.ts` file is a shim re-exporting [`@oh-my-opencode/hashline-core`](../../../../hashline-core/AGENTS.md): `normalize-edits.ts` (`normalizeHashlineEdits`), `validation.ts` (`HashlineMismatchError`), `edit-ordering.ts` (`getEditLineNumber`, `collectLineRefs`, `detectOverlappingRanges`), `edit-deduplication.ts` (`dedupeEdits`), `edit-operations.ts` (`applyHashlineEditsWithReport`), `edit-operation-primitives.ts`, `edit-text-normalization.ts`, `file-text-canonicalization.ts` (`canonicalizeFileText`/`restoreFileText`), `autocorrect-replacement-lines.ts`, `hashline-edit-diff.ts` (`generateHashlineDiff`), `diff-utils.ts` (`generateUnifiedDiff`, `countLineDiffs`), `hashline-chunk-formatter.ts`, `hash-computation.ts`, `constants.ts`, `types.ts` (`ReplaceEdit`/`AppendEdit`/`PrependEdit`/`HashlineEdit`), `index.ts` (barrel).
 
-Do NOT add logic to a shim file — extend `hashline-core` and keep the shim.
+Do NOT add logic to a shim file - extend `hashline-core` and keep the shim.
 
 ## THREE-OP MODEL
 

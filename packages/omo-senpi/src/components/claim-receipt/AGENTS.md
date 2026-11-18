@@ -1,4 +1,4 @@
-# components/claim-receipt/ — Answer Claim Verification
+# components/claim-receipt/ - Answer Claim Verification
 
 ## OVERVIEW
 
@@ -15,10 +15,10 @@ runtime is deferred through the `#omo-claim-receipt-runtime` import.
 | File | Role |
 |------|------|
 | `index.ts` | `createClaimReceiptComponent`, `CLAIM_RECEIPT_NUDGE_FLAG`, session epochs, verdict records |
-| `runtime.ts` | `evaluateAnswer` — the deferred API |
+| `runtime.ts` | `evaluateAnswer` - the deferred API |
 | `runtime-loader.ts` | Shared in-flight import; failed imports cleared so a later answer retries |
 | `classify.ts` | Claim extraction regex rules (code/quotes/relayed text masked) |
-| `evidence.ts` | `TimelineBuilder` — correlates tool results, eval cells, jobs, edits |
+| `evidence.ts` | `TimelineBuilder` - correlates tool results, eval cells, jobs, edits |
 | `match.ts`, `verdict.ts` | Claim-to-evidence matching, verdict constants/renderers |
 | `invocations.ts`, `shell-words.ts`, `cell-commands.ts` | Shell/runner/eval-cell command parsing |
 | `signatures.ts` | Test/build/typecheck output judges |
@@ -36,7 +36,7 @@ runtime is deferred through the `#omo-claim-receipt-runtime` import.
 
 ## ANTI-PATTERNS
 
-- Do not surface nudges by default — shadow mode is intentional pending
+- Do not surface nudges by default - shadow mode is intentional pending
   replay precision.
 - Do not interpret arbitrary strings in eval source as shell commands.
 - Do not treat cell failures or cell writes as authoritative receipts.

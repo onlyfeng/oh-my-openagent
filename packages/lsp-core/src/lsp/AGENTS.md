@@ -1,6 +1,6 @@
-# lsp — LSP Engine Internals (direct files)
+# lsp - LSP Engine Internals (direct files)
 
-**Score:** 17 (81 direct files, ~400KB; key-file roles are tabled in the parent [`packages/lsp-core/AGENTS.md`](../../AGENTS.md) — this file maps the CLUSTERS and test taxonomy instead of repeating that table). `fixtures/` is the only nested dir and is test-only.
+**Score:** 17 (81 direct files, ~400KB; key-file roles are tabled in the parent [`packages/lsp-core/AGENTS.md`](../../AGENTS.md) - this file maps the CLUSTERS and test taxonomy instead of repeating that table). `fixtures/` is the only nested dir and is test-only.
 
 ## OVERVIEW
 
@@ -22,7 +22,7 @@ The engine itself: JSON-RPC transport, client/connection lifecycle, the manager 
 
 ## TEST TAXONOMY
 
-- `*.test.ts` — unit; `*.integration.test.ts` — real-process integration (diagnostics concurrency/freshness, JSON-RPC cancellation).
+- `*.test.ts` - unit; `*.integration.test.ts` - real-process integration (diagnostics concurrency/freshness, JSON-RPC cancellation).
 - Characterization/adversarial suites cluster around the workspace-edit pipeline and transport; run the nearest cluster when touching its files.
 
 ## ANTI-PATTERNS

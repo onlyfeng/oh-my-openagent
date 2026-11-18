@@ -1,11 +1,11 @@
-# src/cli/service-auth/keychain-helper/ — macOS Keychain Helper Protocol
+# src/cli/service-auth/keychain-helper/ - macOS Keychain Helper Protocol
 
 ## OVERVIEW
 
 41 TypeScript files. The signed-helper protocol for macOS Keychain access in
 service auth: pinned helper executable, spawn/verify lifecycle, locked store
 binding, migration and recovery. Consumed by `../keystore.ts` (imports
-`client`, `darwin-backend`, `darwin-store`, `store-binding` directly — there
+`client`, `darwin-backend`, `darwin-store`, `store-binding` directly - there
 is NO barrel; consumers import module paths). Distinct domain: OS secret
 storage. Parent: [`src/cli/AGENTS.md`](../../AGENTS.md).
 
@@ -14,7 +14,7 @@ storage. Parent: [`src/cli/AGENTS.md`](../../AGENTS.md).
 | Area | Role |
 |------|------|
 | `client.ts`, `access.ts` | `callHelper`/`spawnDetachedHelper`, protocol types; `resolveHelperAccess` pinned-copy verification |
-| `store-binding.ts` | `bindKeychainHelper`, `lockedStoreView`, `LockedStore` — store integration seam |
+| `store-binding.ts` | `bindKeychainHelper`, `lockedStoreView`, `LockedStore` - store integration seam |
 | `darwin-backend.ts` | Backend creation/access; keystore error mapping |
 | `darwin-read.ts`, `darwin-store.ts` | Locked read + store, approval-before-lock, migration/recovery |
 | `pin.ts` | Signed-copy pinning; verified before every spawn |
@@ -34,9 +34,9 @@ storage. Parent: [`src/cli/AGENTS.md`](../../AGENTS.md).
 
 - NEVER discover the helper through PATH or environment variables
   (`location.ts`).
-- NEVER execute an unverified or changed helper copy — verify the pin before
+- NEVER execute an unverified or changed helper copy - verify the pin before
   every spawn (`access.ts`).
-- `owner-marker.ts` probes attributes only — never read the secret or open a
+- `owner-marker.ts` probes attributes only - never read the secret or open a
   dialog from a probe.
 - Keep approval before the lock; locked reads are non-interactive.
 

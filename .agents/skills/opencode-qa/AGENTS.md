@@ -1,10 +1,10 @@
-# opencode-qa — opencode Harness QA Skill
+# opencode-qa - opencode Harness QA Skill
 
 **Generated:** 2026-11-18 / c2691818a9 | Score: 16 (22 files >20 threshold, largest QA surface in `.agents/`, 3.1k-LOC E2E + 994-LOC probe hotspots)
 
 ## OVERVIEW
 
-QA skill for opencode itself: CLI (`opencode run`), HTTP server + SSE hook proof, tmux TUI smoke, and SQLite session-DB investigation — each case mapped to a tested helper script plus a per-domain reference doc.
+QA skill for opencode itself: CLI (`opencode run`), HTTP server + SSE hook proof, tmux TUI smoke, and SQLite session-DB investigation - each case mapped to a tested helper script plus a per-domain reference doc.
 
 ## WHERE TO LOOK
 
@@ -18,7 +18,7 @@ QA skill for opencode itself: CLI (`opencode run`), HTTP server + SSE hook proof
 | TUI smoke under tmux | `scripts/tui-smoke.sh` |
 | Session lookup by id / name / text; export roundtrip | `scripts/db-session-by-{id,name,text}.sh`, `scripts/export-roundtrip.sh` |
 | Fake LLM server + event/branch fixtures | `scripts/lib/fake-openai-{server,events,branches}.mjs` |
-| LSP end-to-end driver | `scripts/lsp-e2e.sh` (3,155 LOC — own subsystem) |
+| LSP end-to-end driver | `scripts/lsp-e2e.sh` (3,155 LOC - own subsystem) |
 | Per-domain deep dives | `references/*.md` (cli-commands, db-investigation, docker-qa, events-hooks, sdk, server-api, testing-harness, tui-tmux) |
 
 ## CONVENTIONS
@@ -31,7 +31,7 @@ QA skill for opencode itself: CLI (`opencode run`), HTTP server + SSE hook proof
 ## ANTI-PATTERNS
 
 - NEVER spawn opencode without an isolated XDG sandbox (`XDG_DATA_HOME`/`XDG_CONFIG_HOME`/`XDG_STATE_HOME`/`XDG_CACHE_HOME` → temp dirs); never pollute the real `opencode.db`.
-- NEVER run unbounded text search over the `part` table (multi-GB scan); `db-session-by-text.sh` refuses it on purpose — always scope (`--session`, `--recent`, `--since`).
+- NEVER run unbounded text search over the `part` table (multi-GB scan); `db-session-by-text.sh` refuses it on purpose - always scope (`--session`, `--recent`, `--since`).
 - tmux is SMOKE-only (boots/renders/survives); assert real behavior via `opencode run --format json`, the server API, or SSE events.
 - The opencode source repo (`packages/opencode`) tests with `bun test` from ITS root, never from this repo root.
 - Evidence goes under gitignored `.omo/evidence/<YYYYMMDD>-<slug>/`; never commit it.

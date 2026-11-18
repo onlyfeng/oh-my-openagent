@@ -1,10 +1,10 @@
-# scripts — plugin build/sync/migration orchestration
+# scripts - plugin build/sync/migration orchestration
 
 **Score 14** (28 files, ~3.5k LOC; distinct domain: executable orchestration layer between manifests and components).
 
 ## OVERVIEW
 
-Executable Node ESM scripts driving the plugin build pipeline, SessionStart config migration, and auto-update. Invoked by `plugin/package.json` scripts, aggregate hook JSON, and CI; several are also imported by `plugin/test/` suites. Migration BEHAVIOR semantics (MultiAgentV2 model awareness, restart notices) are owned by the package AGENTS.md CONFIG MIGRATION section — not repeated here.
+Executable Node ESM scripts driving the plugin build pipeline, SessionStart config migration, and auto-update. Invoked by `plugin/package.json` scripts, aggregate hook JSON, and CI; several are also imported by `plugin/test/` suites. Migration BEHAVIOR semantics (MultiAgentV2 model awareness, restart notices) are owned by the package AGENTS.md CONFIG MIGRATION section - not repeated here.
 
 ## KEY FILES
 
@@ -17,13 +17,13 @@ Executable Node ESM scripts driving the plugin build pipeline, SessionStart conf
 | `build-bundled-mcp-runtimes.mjs`, `materialize-shared-upstreams.mjs` | Bundled MCP runtime dists; shared upstream copies |
 | `auto-update.mjs` (+ `-plan`, `-release-notes`, `-state`) | SessionStart update throttle/lock/notice flow |
 | `migrate-codex-config.mjs` + `migrate-codex-config/` | `~/.codex/config.toml` migration: reasoning profile sync, MultiAgentV2 guard, subagent limits, Context7 placeholder guard, root settings |
-| `entry-guard.mjs` | `isCliEntry()` — the mandatory CLI guard |
+| `entry-guard.mjs` | `isCliEntry()` - the mandatory CLI guard |
 | `hook-status-message.mjs`, `install-flow.mjs`, `spawn-command.mjs` | Shared helpers (status formatting, install-flow detection, spawn invocation resolution) |
 
 ## CONVENTIONS
 
 - Every CLI entry guards with `isCliEntry()` (`pathToFileURL(process.argv[1])` comparison); without it a symlinked plugin-cache path silently no-ops the whole hook.
-- TOML is edited via `migrate-codex-config/toml-section-editor.mjs` (457 LOC, own scanner preserving comments/order/multiline) — never a generic TOML parser.
+- TOML is edited via `migrate-codex-config/toml-section-editor.mjs` (457 LOC, own scanner preserving comments/order/multiline) - never a generic TOML parser.
 - Subprocess orchestration captures output sequentially; component tasks run `npm run build`, bundling uses `bun build --target node --format esm`.
 
 ## ANTI-PATTERNS

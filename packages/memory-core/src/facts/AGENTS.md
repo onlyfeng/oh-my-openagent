@@ -1,9 +1,9 @@
-# src/facts/ — Durable Fact-Extraction Pipeline
+# src/facts/ - Durable Fact-Extraction Pipeline
 
 ## OVERVIEW
 
 Queues extracted facts durably, caps payloads, routes them to people cards, and
-recovers from crashes — all with monotonic watermarks and fail-closed parsing.
+recovers from crashes - all with monotonic watermarks and fail-closed parsing.
 Largest memory-core subsystem (46 files, ~6.9k LOC); earned its own file for
 that plus strict wire contracts. Parent: [`packages/memory-core/AGENTS.md`](../../AGENTS.md).
 
@@ -11,20 +11,20 @@ that plus strict wire contracts. Parent: [`packages/memory-core/AGENTS.md`](../.
 
 | File | Role |
 |------|------|
-| `queue.ts` | `FactsQueue` — atomic enqueue/publish with monotonic watermarks |
+| `queue.ts` | `FactsQueue` - atomic enqueue/publish with monotonic watermarks |
 | `schema.ts` | Versioned queue/cursor/consumed record shapes; fail-closed validation |
 | `extraction.ts` | `applyFactsBatch()`, `parseFactsExtractionJsonl()` validation |
-| `payload-cap.ts` | `selectCappedFactsBatch()` — 128 KiB envelope budget (`MAX_FACTS_PAYLOAD_BYTES`); a single entry above it is reported in `oversized`, which the omo-senpi adapter may run alone under its bounded oversized budget (#8984, ≤512 KiB) |
+| `payload-cap.ts` | `selectCappedFactsBatch()` - 128 KiB envelope budget (`MAX_FACTS_PAYLOAD_BYTES`); a single entry above it is reported in `oversized`, which the omo-senpi adapter may run alone under its bounded oversized budget (#8984, ≤512 KiB) |
 | `failures-{schema,backoff,store,selection}.ts` | Failure records, backoff/clear-on-success, starvation-aware `selectLaunchable()` |
-| `person-routing.ts` | `planFactsRouting()` — alias resolution, observation normalization, render targets |
-| `mutation-plan.ts` | `planFactsMutation()` + `factsRecordsHash()` — dirty-parent guard, deterministic ops |
+| `person-routing.ts` | `planFactsRouting()` - alias resolution, observation normalization, render targets |
+| `mutation-plan.ts` | `planFactsMutation()` + `factsRecordsHash()` - dirty-parent guard, deterministic ops |
 | `recovery*.ts` | `applyFactsRecovery()`, ownership/reservation finalization, setter-race handling |
 | `person-index.ts`, `assets/facts-persona.md` | Person index + extraction persona prompt |
 | `agreements-target.ts` | Renders `system/agreements.md` for a batch's `agreements` records (from the adapter's `record_agreement` tool) inside the same facts commit; `factsRecordsHash` covers them only when present, so older recovery envelopes still validate |
 
 ## CONVENTIONS
 
-- **Wire contracts are exported on purpose** — queue/cursor/consumed records,
+- **Wire contracts are exported on purpose** - queue/cursor/consumed records,
   extraction unions, failure states, and recovery paths are versioned public
   shapes; changing them is a cross-package event, not a refactor.
 - **Durability is structural:** every durable write goes `.tmp` → rename,
@@ -40,7 +40,7 @@ that plus strict wire contracts. Parent: [`packages/memory-core/AGENTS.md`](../.
 - NEVER regress enqueue or consumed watermarks when an older batch settles.
 - Do NOT compare opaque message IDs lexically or anchor position on
   non-canonical trailing entries.
-- Do NOT truncate an oversized single entry — report it as oversized and leave
+- Do NOT truncate an oversized single entry - report it as oversized and leave
   it unconsumed (caps apply to batches, not surgery on entries).
 - Do NOT bypass atomic publication, identity-scoped locking, or fail-closed
   parsing when touching durable facts state.
@@ -52,4 +52,4 @@ bun test packages/memory-core/src/facts/
 ```
 
 Integration-heavy: temp identity/git repos and explicit race/recovery
-scenarios. No fixed sleeps — await exact state transitions.
+scenarios. No fixed sleeps - await exact state transitions.

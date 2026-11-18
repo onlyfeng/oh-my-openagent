@@ -1,10 +1,10 @@
-# src/cli/doctor/ — Health Diagnostics (28 Check Files)
+# src/cli/doctor/ - Health Diagnostics (28 Check Files)
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
-`bunx oh-my-opencode doctor` — parallel diagnostic checks. `getAllCheckDefinitions()` registers 9 checks; `getCodexCheckDefinitions()` registers 3 more for the Codex target. Four of the nine are category aggregators (System, Config, Tools, Models). Catches broken installs, config typos, missing dependencies, and provider misconfigurations before they become runtime errors.
+`bunx oh-my-opencode doctor` - parallel diagnostic checks. `getAllCheckDefinitions()` registers 9 checks; `getCodexCheckDefinitions()` registers 3 more for the Codex target. Four of the nine are category aggregators (System, Config, Tools, Models). Catches broken installs, config typos, missing dependencies, and provider misconfigurations before they become runtime errors.
 
 ## COMMAND FLAGS
 
@@ -52,7 +52,7 @@ bunx oh-my-opencode doctor --platform=codex  # Codex/LazyCodex checks only
 index.ts doctor(options)        # mode: default | status | verbose; json flag
   → runner.ts runDoctor()       # Promise.all over all checks (+ dist-tag fetch,
     # + gatherCodexSummary() when target = codex); GLOBAL 30s budget
-    # (DOCTOR_TIMEOUT_MS) — on expiry prints a Timeout result and exits
+    # (DOCTOR_TIMEOUT_MS) - on expiry prints a Timeout result and exits
   → framework/formatter.ts      # text/status/verbose/json rendering
   → exit code: EXIT_CODES.SUCCESS (0) | EXIT_CODES.FAILURE (1)
 ```
@@ -61,6 +61,6 @@ The 30s timeout is a whole-run budget, not per-check; individual subprocesses ti
 
 ## HOW TO ADD A CHECK
 
-1. Create `checks/{name}.ts` exporting a check function matching `DoctorCheck`; return a `CheckResult` — no throws.
+1. Create `checks/{name}.ts` exporting a check function matching `DoctorCheck`; return a `CheckResult` - no throws.
 2. Register in `checks/index.ts`: standalone in `getAllCheckDefinitions()`, or invoked by a category aggregator.
 3. Add id/name to `framework/constants.ts` `CHECK_IDS`/`CHECK_NAMES` unless registering with a literal id.

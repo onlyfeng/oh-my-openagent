@@ -1,4 +1,4 @@
-# src/store/ — Durable Task Record Store
+# src/store/ - Durable Task Record Store
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 24 (48 files, ~6.2k LOC). The parent row in [`../../AGENTS.md`](../../AGENTS.md) owns the summary contract (JSONL records, mtime+size-validated read cache, capped-16 append-fd pool, `resolveStateDir`, redaction); this file maps the internals.
 
@@ -22,9 +22,9 @@ Persistence behind a deliberately narrow barrel: record parsing, locking, claimi
 
 ## ANTI-PATTERNS
 
-- Transitions NEVER delete a record — they go through `transition()` (`types.ts`).
+- Transitions NEVER delete a record - they go through `transition()` (`types.ts`).
 - Never bypass the claim/lock/atomic-write paths for competing record updates; claim-race, lock-recovery, rollback and security suites pin them.
-- No new public surface outside `index.ts` — the package export map has no `./store` subpath; helpers stay module-local.
+- No new public surface outside `index.ts` - the package export map has no `./store` subpath; helpers stay module-local.
 
 ## COMMANDS
 

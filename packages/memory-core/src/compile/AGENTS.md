@@ -1,8 +1,8 @@
-# src/compile/ — Memory Prompt-Block Compilation
+# src/compile/ - Memory Prompt-Block Compilation
 
 **Generated:** 2026-11-18 | c2691818a9
 
-Compiles a committed memory revision into the `<memory>` system-prompt block — persona/identity tree, agreements section, `<external_projection>` listings, expiry evaluation — and caches the result by (revision, template hash, expiry slot). Distinct domain: the only place memory bytes become prompt bytes. Package invariants live in [`packages/memory-core/AGENTS.md`](../../AGENTS.md).
+Compiles a committed memory revision into the `<memory>` system-prompt block - persona/identity tree, agreements section, `<external_projection>` listings, expiry evaluation - and caches the result by (revision, template hash, expiry slot). Distinct domain: the only place memory bytes become prompt bytes. Package invariants live in [`packages/memory-core/AGENTS.md`](../../AGENTS.md).
 
 ## WHERE TO LOOK
 
@@ -14,20 +14,20 @@ Compiles a committed memory revision into the `<memory>` system-prompt block —
 | `stored-block.ts` | `StoredBlock` (`block`, `slot`, `expiries`) JSON encode/decode; undecodable entries read as `undefined`. |
 | `expiry-slot.ts` | The clock slice a block depends on: which `expires` instants have passed. Same slot → same bytes, so a block is cached per (revision, slot). |
 | `external-projection*.ts` | `<external_projection>` bounded directory listings with `$MEMORY_DIR` pointers: grouping (`-dirs`), naming (`-names`), byte/item budgets (`-limits`), precision; newest-first ordering degrades to name order when commit times are unreadable (`recencyUnavailable` + stats). |
-| `changes.ts` | `ProjectedChanges` (added/updated/removed): which path changes actually alter a compiled block — `system/*.md` edits count (bodies are projected), other paths count only on arrival/removal (name-only projection). `Omo-Session` trailer exclusion. |
+| `changes.ts` | `ProjectedChanges` (added/updated/removed): which path changes actually alter a compiled block - `system/*.md` edits count (bodies are projected), other paths count only on arrival/removal (name-only projection). `Omo-Session` trailer exclusion. |
 | `in-flight-reads.ts` | Tracks started-but-unfinished repo reads; `settled()` must complete before an identity directory is removed (Windows EBUSY, #11135). |
 | `render.ts` | `renderSystemTree`: the indented `system/` tree with per-file descriptions. |
 | `fixtures/` | Golden compiled blocks: `empty`, `full`, `persona-only`, `persona-identity`. |
 
 ## CONVENTIONS
 
-- Bump `MEMORY_BLOCK_COMPILER_VERSION` with ANY change to the bytes `compileMemoryBlockAtRevision` produces for the same inputs — persisted blocks are keyed by it, and a block compiled by older code must never be served.
+- Bump `MEMORY_BLOCK_COMPILER_VERSION` with ANY change to the bytes `compileMemoryBlockAtRevision` produces for the same inputs - persisted blocks are keyed by it, and a block compiled by older code must never be served.
 - Secret-like material is redacted (`sync/redact`) before projection.
 - Co-located tests cover cache, persist, changes, projections, expiry, and metadata; fixtures pin golden output.
 
 ## ANTI-PATTERNS
 
-- A degraded block (git read timeout, lock contention) is right for this moment only — never persist it as the block of its commit.
+- A degraded block (git read timeout, lock contention) is right for this moment only - never persist it as the block of its commit.
 - Never hand-edit a persisted block entry; it is a derived cache, not state.
 
 ## COMMANDS

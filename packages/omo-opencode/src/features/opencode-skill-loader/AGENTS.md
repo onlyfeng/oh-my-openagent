@@ -1,4 +1,4 @@
-# src/features/opencode-skill-loader/ — 4-Scope Skill Discovery
+# src/features/opencode-skill-loader/ - 4-Scope Skill Discovery
 
 **Generated:** 2026-05-15 / refreshed 2026-11-18
 
@@ -22,7 +22,7 @@ Same-named skill at higher scope overrides lower.
 | File | Purpose |
 |------|---------|
 | `index.ts` | Re-export shim over `@oh-my-opencode/skills-loader-core/opencode-skill-loader` |
-| `loader.ts` | Main `loadSkills()` — orchestrates discovery → parse → merge |
+| `loader.ts` | Main `loadSkills()` - orchestrates discovery → parse → merge |
 | `merger.ts` + `merger/` | Priority-based deduplication across scopes; the subdir holds the complex name/MCP overlap cases (see MERGER SUBDIRECTORY below) |
 | `skill-content.ts` | YAML frontmatter parsing from SKILL.md |
 | `skill-discovery.ts` / `skill-directory-loader.ts` | Find SKILL.md files in directory trees; load one directory |

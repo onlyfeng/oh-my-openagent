@@ -1,40 +1,40 @@
-# ultimate-browsing/engine — Generic WAF-Profile Fetch Chain (Python)
+# ultimate-browsing/engine - Generic WAF-Profile Fetch Chain (Python)
 
 **Generated:** 2026-11-18 / c2691818a9 (update pass; prior 2026-08-10 38d268995)
 
-## UPSTREAM POLICY — READ THIS BEFORE TOUCHING `engine/**` OR PROPOSING AN UPSTREAM SYNC
+## UPSTREAM POLICY - READ THIS BEFORE TOUCHING `engine/**` OR PROPOSING AN UPSTREAM SYNC
 
-Vendored-and-modified snapshot of [fivetaku/insane-search](https://github.com/fivetaku/insane-search), NOT project-original code; the version we run on is a deliberate choice. Pin: import commit `a4e4ed797` (2026-06-21, `feat(ultimate-browsing): vendor insane-search engine (junk-excluded)`) + de-personalization `4743199a5` (2026-06-21); pinned baseline = upstream state as of 2026-06-21, **pre-0.7.0** (0.7.0 is dated 2026-06-22); re-vendors since: none — every later change here is ours. We intentionally track a **pinned baseline plus local divergence**, not upstream HEAD. No submodule and no automated drift check (unlike the `frontend` skill's upstream submodules): the vendored files ARE the source of truth, and upstream is a reference we port FROM, deliberately, file by file.
+Vendored-and-modified snapshot of [fivetaku/insane-search](https://github.com/fivetaku/insane-search), NOT project-original code; the version we run on is a deliberate choice. Pin: import commit `a4e4ed797` (2026-06-21, `feat(ultimate-browsing): vendor insane-search engine (junk-excluded)`) + de-personalization `4743199a5` (2026-06-21); pinned baseline = upstream state as of 2026-06-21, **pre-0.7.0** (0.7.0 is dated 2026-06-22); re-vendors since: none - every later change here is ours. We intentionally track a **pinned baseline plus local divergence**, not upstream HEAD. No submodule and no automated drift check (unlike the `frontend` skill's upstream submodules): the vendored files ARE the source of truth, and upstream is a reference we port FROM, deliberately, file by file.
 
-Why we do not blind-rebase onto upstream HEAD: (1) upstream reset its public history on 2026-08-06 (single squashed commit `019ee16 refactor: reset public history at 0.14.0`, discarding the prior public history through 0.13.x) — no commit graph to rebase onto, no cherry-picking by sha, only whole-file diffing against a moving HEAD; (2) upstream 0.14.0 REMOVED capability — the endpoint-mining / internal-API auto-derivation / site-recipe subsystems carried publicly between 0.12.0 and 0.14.0 are gone from HEAD, so syncing is partly a downgrade and none of it is recoverable; (3) our tree diverged on purpose — the KEEP list is functionality upstream never had, and a wholesale overwrite would silently delete it; (4) different threat model — our engine ships inside a published npm package and a public marketplace mirror, under a CI no-site-name gate and a de-personalization deny-list, constraints upstream does not carry.
+Why we do not blind-rebase onto upstream HEAD: (1) upstream reset its public history on 2026-08-06 (single squashed commit `019ee16 refactor: reset public history at 0.14.0`, discarding the prior public history through 0.13.x) - no commit graph to rebase onto, no cherry-picking by sha, only whole-file diffing against a moving HEAD; (2) upstream 0.14.0 REMOVED capability - the endpoint-mining / internal-API auto-derivation / site-recipe subsystems carried publicly between 0.12.0 and 0.14.0 are gone from HEAD, so syncing is partly a downgrade and none of it is recoverable; (3) our tree diverged on purpose - the KEEP list is functionality upstream never had, and a wholesale overwrite would silently delete it; (4) different threat model - our engine ships inside a published npm package and a public marketplace mirror, under a CI no-site-name gate and a de-personalization deny-list, constraints upstream does not carry.
 
-**KEEP — our divergences a re-vendor MUST NOT regress (any sync that removes or bypasses one is a regression, not an upgrade):**
+**KEEP - our divergences a re-vendor MUST NOT regress (any sync that removes or bypasses one is a regression, not an upgrade):**
 
-- **Phase 2.5 surrogate retrieval** (`surrogate.py`, `surrogates.yaml`) — archive/reader/proxy routes tried before paying for a browser spin-up, with per-entry `last_verified` staleness handling and `--allow-proxy` gating.
-- **Provenance / trust contract** (`result_schema.py`) — `Provenance` and `Trust` literals on every result, so a snapshot can never be reported as the live page.
-- **Surrogate dead-end validation** (L1.5 in `validators.py`) — interstitial titles and AMP-style redirect stubs rejected instead of returned as content.
-- **The no-site-name rule and its CI gate** (`bias_check.py`) — zero hard-coded site names, brands, or target domains in `engine/**`.
-- **Module split of the fetch chain** — `curl_probe` / `referers` / `url_transforms` / `waf_detector` / `validators` / `executor` / `summary` as separate modules rather than one monolith.
+- **Phase 2.5 surrogate retrieval** (`surrogate.py`, `surrogates.yaml`) - archive/reader/proxy routes tried before paying for a browser spin-up, with per-entry `last_verified` staleness handling and `--allow-proxy` gating.
+- **Provenance / trust contract** (`result_schema.py`) - `Provenance` and `Trust` literals on every result, so a snapshot can never be reported as the live page.
+- **Surrogate dead-end validation** (L1.5 in `validators.py`) - interstitial titles and AMP-style redirect stubs rejected instead of returned as content.
+- **The no-site-name rule and its CI gate** (`bias_check.py`) - zero hard-coded site names, brands, or target domains in `engine/**`.
+- **Module split of the fetch chain** - `curl_probe` / `referers` / `url_transforms` / `waf_detector` / `validators` / `executor` / `summary` as separate modules rather than one monolith.
 - **The Python test suite** under `engine/tests/` with its HTML/JSON fixtures (source checkout only: the skill copy filter drops `engine/tests/` from every shipped edition).
-- **De-personalization** — no personal absolute paths, no personal auth token literals, no personal browser choice; enforced by `depersonalization-gate.test.ts`.
-- **Skill-level layering** — the engine is Tier 1 under a router that also owns Tier 1.5 (agent-reach) and Tier 2 (omowright from js eval: owned and attached engines via the `browser` skill); upstream has no such tiering.
+- **De-personalization** - no personal absolute paths, no personal auth token literals, no personal browser choice; enforced by `depersonalization-gate.test.ts`.
+- **Skill-level layering** - the engine is Tier 1 under a router that also owns Tier 1.5 (agent-reach) and Tier 2 (omowright from js eval: owned and attached engines via the `browser` skill); upstream has no such tiering.
 
-**WANT — upstream improvements worth porting forward (each as a reviewed, site-agnostic change preserving every KEEP item; port individually, never a tree overwrite):**
+**WANT - upstream improvements worth porting forward (each as a reviewed, site-agnostic change preserving every KEEP item; port individually, never a tree overwrite):**
 
 - **Content quality**: dedicated markdown conversion of fetched HTML, main-content extraction, PDF text extraction, and JSON-LD rescue when the HTML body is thin.
 - **Transient-failure retry** and **render-merge** of statically fetched HTML with the browser-rendered DOM.
-- **Differential block classification** — distinguishing a bot-detection block from an infrastructure or authentication failure, instead of collapsing both into `challenge`.
+- **Differential block classification** - distinguishing a bot-detection block from an infrastructure or authentication failure, instead of collapsing both into `challenge`.
 - **Additional stealth fetch backends** beyond the current Playwright templates, and additional WAF vendor profiles.
-- **Per-host route learning** — remembering which route succeeded for a host, with a TTL and a bounded store; must stay runtime state, never committed site knowledge (R4).
-- **Engine-level Phase 0 routing** — the official-public-API preference is currently only a documented rule (R5) the agent can skip; upstream moved it into code so it cannot be skipped. Worth adopting.
+- **Per-host route learning** - remembering which route succeeded for a host, with a TTL and a bounded store; must stay runtime state, never committed site knowledge (R4).
+- **Engine-level Phase 0 routing** - the official-public-API preference is currently only a documented rule (R5) the agent can skip; upstream moved it into code so it cannot be skipped. Worth adopting.
 
-**OUT OF SCOPE:** the removed upstream endpoint-mining / internal-API auto-derivation / site-recipe subsystems (absent from upstream HEAD, not reconstructed; against R3/R4 and R7's anti-bias rule — discovered internal endpoints are runtime findings, never committed engine knowledge); any upstream code carrying site-specific selectors, domains, or brand names (fails `bias_check.py` at the door — re-derive site-agnostically or leave it out); automated upstream tracking (no submodule, no drift check, no auto-bump — syncing is a deliberate, reviewed, human-initiated act).
+**OUT OF SCOPE:** the removed upstream endpoint-mining / internal-API auto-derivation / site-recipe subsystems (absent from upstream HEAD, not reconstructed; against R3/R4 and R7's anti-bias rule - discovered internal endpoints are runtime findings, never committed engine knowledge); any upstream code carrying site-specific selectors, domains, or brand names (fails `bias_check.py` at the door - re-derive site-agnostically or leave it out); automated upstream tracking (no submodule, no drift check, no auto-bump - syncing is a deliberate, reviewed, human-initiated act).
 
-**THE SYNC RULE** — any future upstream sync preserves BOTH sides: (1) diff the specific upstream capability you want against our tree — do not overwrite files wholesale and never `git checkout` upstream over `engine/`; (2) port it as its own reviewed change, keeping every KEEP item intact; (3) re-run `python3 engine/bias_check.py` and the `engine/tests/` suite — a port that introduces a site name or breaks a fixture does not ship; (4) update the pin facts above (baseline, date, what was ported) in the same change, plus the provenance section of [`../ATTRIBUTION.md`](../ATTRIBUTION.md); (5) if a port must drop a KEEP item, say so explicitly in the PR and get it agreed first — silent regressions of the KEEP list are the failure mode this policy exists to prevent.
+**THE SYNC RULE** - any future upstream sync preserves BOTH sides: (1) diff the specific upstream capability you want against our tree - do not overwrite files wholesale and never `git checkout` upstream over `engine/`; (2) port it as its own reviewed change, keeping every KEEP item intact; (3) re-run `python3 engine/bias_check.py` and the `engine/tests/` suite - a port that introduces a site name or breaks a fixture does not ship; (4) update the pin facts above (baseline, date, what was ported) in the same change, plus the provenance section of [`../ATTRIBUTION.md`](../ATTRIBUTION.md); (5) if a port must drop a KEEP item, say so explicitly in the PR and get it agreed first - silent regressions of the KEEP list are the failure mode this policy exists to prevent.
 
 ## OVERVIEW
 
-A 13-file Python package (`__init__.py`, `__main__.py` and 11 modules) embedded in the `ultimate-browsing` skill: a site-agnostic fetch chain that escalates from a cheap curl probe to a real browser, with declarative WAF and surrogate registries. Not "optional scripts" — it has its own CLI entry (`python3 -B -m engine URL`; `-B` keeps bytecode caches out of a signed app bundle, #11373), two YAML config schemas, a 6-file test suite (source checkout only), and a standalone CI guard. Package exports (`__init__.py`): `fetch`, `FetchResult`, `Attempt`, `Verdict`, `ValidationResult`, `validate`, `CHALLENGE_MARKERS`, `detect`, `TRANSFORMS`, `apply_transform`.
+A 13-file Python package (`__init__.py`, `__main__.py` and 11 modules) embedded in the `ultimate-browsing` skill: a site-agnostic fetch chain that escalates from a cheap curl probe to a real browser, with declarative WAF and surrogate registries. Not "optional scripts" - it has its own CLI entry (`python3 -B -m engine URL`; `-B` keeps bytecode caches out of a signed app bundle, #11373), two YAML config schemas, a 6-file test suite (source checkout only), and a standalone CI guard. Package exports (`__init__.py`): `fetch`, `FetchResult`, `Attempt`, `Verdict`, `ValidationResult`, `validate`, `CHALLENGE_MARKERS`, `detect`, `TRANSFORMS`, `apply_transform`.
 
 ## THE NO-SITE-NAME RULE (enforced in CI)
 
@@ -48,21 +48,21 @@ python3 engine/bias_check.py       # fails on any site-specific leak
 
 ```
 fetch(url, ...)                                   # fetch_chain.py
-  Phase 1  curl_probe.py    — curl_cffi TLS-impersonation probe
-  Phase 2  grid             — referer/transform/device attempt grid
-  Phase 2.5 surrogate.py    — third-party archive/reader/proxy routes
-  Phase 3  executor.py      — capability-matched Playwright fallback
+  Phase 1  curl_probe.py    - curl_cffi TLS-impersonation probe
+  Phase 2  grid             - referer/transform/device attempt grid
+  Phase 2.5 surrogate.py    - third-party archive/reader/proxy routes
+  Phase 3  executor.py      - capability-matched Playwright fallback
 ```
 
 Ordering is **not** hardcoded: each `waf_profiles.yaml` profile carries a `fallback_when_challenge` list that drives the ladder. `surrogate_wayback` precedes browser executors in every profile, so archives are tried before paying for a browser spin-up.
 
 ## CONTRACTS
 
-- **Provenance / trust** (`result_schema.py`, two literals on every `FetchResult`): `Provenance = "live" | "snapshot" | "proxy"`, `Trust = "origin" | "archive" | "untrusted"`. A `snapshot` result carries `snapshot_timestamp` and **must** be cited with that timestamp — never presented as the live page. `surrogates.yaml` `kind` fixes these values: `archive` -> snapshot/archive, `reader` -> live, `proxy` -> proxy/untrusted.
+- **Provenance / trust** (`result_schema.py`, two literals on every `FetchResult`): `Provenance = "live" | "snapshot" | "proxy"`, `Trust = "origin" | "archive" | "untrusted"`. A `snapshot` result carries `snapshot_timestamp` and **must** be cited with that timestamp - never presented as the live page. `surrogates.yaml` `kind` fixes these values: `archive` -> snapshot/archive, `reader` -> live, `proxy` -> proxy/untrusted.
 - **Surrogate registry** (`surrogates.yaml`): site-agnostic infrastructure only. Every entry carries `last_verified` (ISO date); entries older than 90 days are deprioritized and flagged, because surrogate routes rot (a 2026-08 probe found 4 of 6 known routes dead or stubbed). `proxy` routes are MITM by construction: they require the explicit `--allow-proxy` flag and never receive `Cookie` or `Authorization` headers. Every surrogate response is re-validated with `target_url` set, so an interstitial or a redirect stub is rejected instead of returned as content.
-- **Validator layers** (`validators.py`): L1 challenge markers (`CHALLENGE_MARKERS`) -> L1.5 surrogate dead ends — interstitial titles + AMP-style redirect stubs (`is_redirect_stub()`, needs `target_url`) -> L2 size/shape fingerprints -> L3+ content checks.
+- **Validator layers** (`validators.py`): L1 challenge markers (`CHALLENGE_MARKERS`) -> L1.5 surrogate dead ends - interstitial titles + AMP-style redirect stubs (`is_redirect_stub()`, needs `target_url`) -> L2 size/shape fingerprints -> L3+ content checks.
 - **CLI**: `python3 -B -m engine URL [--selector S] [--device auto|desktop|mobile] [--timeout 25] [--max-attempts 12] [--no-playwright] [--allow-proxy] [--json] [--trace]`.
 
 ## TESTS & NOTES
 
-`tests/` (source checkout only; not shipped with the skill) — `test_surrogate.py` (staleness, proxy gating, short-circuit), `test_surrogate_validators.py`, `test_fetch_chain.py`, `test_playwright_templates.py`, `test_playwright_stealth.py`, `test_executor_timeout.py`, plus HTML/JSON fixtures under `tests/fixtures/`. `summary.py` emits an **R7 API-first hint** after >=3 challenge verdicts against a known WAF profile: look for `/api/`, `/graphql`, or `.json` endpoints, which usually carry weaker WAF protection than the HTML surface. `templates/` holds the Playwright JS templates (`playwright_real_chrome.js`, `playwright_mobile_chrome.js`) the executor drives. `url_transforms.py` transforms stay domain-agnostic (`mobile_subdomain`, `am_prefix`, `drop_www`). Parent (source checkout only; not shipped with the skill): `packages/shared-skills/AGENTS.md`.
+`tests/` (source checkout only; not shipped with the skill) - `test_surrogate.py` (staleness, proxy gating, short-circuit), `test_surrogate_validators.py`, `test_fetch_chain.py`, `test_playwright_templates.py`, `test_playwright_stealth.py`, `test_executor_timeout.py`, plus HTML/JSON fixtures under `tests/fixtures/`. `summary.py` emits an **R7 API-first hint** after >=3 challenge verdicts against a known WAF profile: look for `/api/`, `/graphql`, or `.json` endpoints, which usually carry weaker WAF protection than the HTML surface. `templates/` holds the Playwright JS templates (`playwright_real_chrome.js`, `playwright_mobile_chrome.js`) the executor drives. `url_transforms.py` transforms stay domain-agnostic (`mobile_subdomain`, `am_prefix`, `drop_www`). Parent (source checkout only; not shipped with the skill): `packages/shared-skills/AGENTS.md`.

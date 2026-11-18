@@ -1,8 +1,8 @@
-# features/task-toast-manager — Transient Task Toasts
+# features/task-toast-manager - Transient Task Toasts
 
 **Generated:** 2026-11-18 | c2691818a9
 
-Task lifecycle toasts (started/progress/completed/failed) for the OpenCode TUI. Distinct domain: the single owner of the toast component lifecycle — the rest of the plugin calls a manager, never renders a toast itself.
+Task lifecycle toasts (started/progress/completed/failed) for the OpenCode TUI. Distinct domain: the single owner of the toast component lifecycle - the rest of the plugin calls a manager, never renders a toast itself.
 
 ## WHERE TO LOOK
 

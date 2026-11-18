@@ -1,8 +1,8 @@
-# src — Flat Utility Files over Domain Subdirs (direct files)
+# src - Flat Utility Files over Domain Subdirs (direct files)
 
 **Generated:** 2026-11-18 / c2691818a9
 
-**Score:** 29 (70 direct files, 9 subdirs, package barrel + public subpaths). WHAT each utility does lives in the parent [`packages/utils/AGENTS.md`](../AGENTS.md) category map — this file covers only the directory's own layout doctrine.
+**Score:** 29 (70 direct files, 9 subdirs, package barrel + public subpaths). WHAT each utility does lives in the parent [`packages/utils/AGENTS.md`](../AGENTS.md) category map - this file covers only the directory's own layout doctrine.
 
 ## OVERVIEW
 
@@ -14,13 +14,13 @@ Single-purpose utilities ship as flat `*.ts` with colocated `*.test.ts`; a domai
 
 ## PUBLIC IMPORT SURFACE
 
-Consumers import the root barrel or a `package.json` subpath — `./atomic-write`, `./runtime`, `./xdg-data-dir`, `./logger`, `./record-type-guard`, `./archive-entry-validator`, `./classify-path-environment`, `./command-executor` (+`/*`), `./git-worktree` (+`/*`), `./internal-initiator-marker`, `./skill-path-resolver`, `./migration` (+`/*`), `./process-sweep`, `./process-tree`, `./prompt-async-gate`, and more — never a deep relative path. All subpaths point at source `.ts` (no dist). `package.json` `exports` is the authoritative list.
+Consumers import the root barrel or a `package.json` subpath - `./atomic-write`, `./runtime`, `./xdg-data-dir`, `./logger`, `./record-type-guard`, `./archive-entry-validator`, `./classify-path-environment`, `./command-executor` (+`/*`), `./git-worktree` (+`/*`), `./internal-initiator-marker`, `./skill-path-resolver`, `./migration` (+`/*`), `./process-sweep`, `./process-tree`, `./prompt-async-gate`, and more - never a deep relative path. All subpaths point at source `.ts` (no dist). `package.json` `exports` is the authoritative list.
 
 ## WHERE TO LOOK (direct files beside their subdirs)
 
 | File | Relationship |
 |------|--------------|
-| `migration.ts` | public `./migration` entry — re-exports the four map modules (agent/hook/model/category names); `migrateConfigFile()` itself lives in `migration/config-migration.ts` |
+| `migration.ts` | public `./migration` entry - re-exports the four map modules (agent/hook/model/category names); `migrateConfigFile()` itself lives in `migration/config-migration.ts` |
 | `command-executor.ts` | flat sibling of `command-executor/` |
 | `process-tree.ts`, `process-tree-termination.ts`, `process-stream-reader.ts` | flat process family (no subdir) |
 | `prompt-async-gate.ts` | flat entry over `prompt-async-gate/` |

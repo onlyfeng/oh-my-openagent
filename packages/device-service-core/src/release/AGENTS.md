@@ -1,4 +1,4 @@
-# src/release — Device-Service Release Acquisition
+# src/release - Device-Service Release Acquisition
 
 **Generated:** 2026-11-18 | c2691818a9
 

@@ -1,4 +1,4 @@
-# src/hooks/unstable-agent-babysitter/ — Unstable Task Agent Babysitter
+# src/hooks/unstable-agent-babysitter/ - Unstable Task Agent Babysitter
 
 ## OVERVIEW
 
@@ -25,7 +25,7 @@ task messages, detects instability, and injects targeted reminders. Wired in
 
 ## ANTI-PATTERNS
 
-- Do not widen `isUnstableTask` heuristics without colocated coverage —
+- Do not widen `isUnstableTask` heuristics without colocated coverage -
   false positives spam sessions.
 - Do not make blocking calls from the idle handler.
 

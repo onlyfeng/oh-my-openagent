@@ -28,7 +28,7 @@ The public API is the barrel at `src/index.ts`.
 | `src/audit/` | `auditMemoryRepo`: read-only repository audit returning `MemoryAuditReport` with typed `MemoryAuditCode` issues (`/doctor` and `/memory` surfaces). |
 | `src/personas/` | `PERSONA_ASSET_FILENAMES` (reflection/dream/facts/kibitzer persona markdown) + `loadPersonaAsset`; every consumer derives filenames from this record so one rename cannot strand a reference. |
 | `src/crdt/` | Loro CRDT runtime for concurrent memory edits: `loro-runtime.ts` owns the wasm load and packaging contract, plus the test fixture. |
-| `src/reflection/` (own AGENTS.md) | Reflection-run lifecycle: reservations, state machine, worktrees, completion validation, sweeps, stale-lock reaper, park policy — see [`src/reflection/AGENTS.md`](src/reflection/AGENTS.md). |
+| `src/reflection/` (own AGENTS.md) | Reflection-run lifecycle: reservations, state machine, worktrees, completion validation, sweeps, stale-lock reaper, park policy - see [`src/reflection/AGENTS.md`](src/reflection/AGENTS.md). |
 | `src/compile/` (own AGENTS.md) | Compile committed memory revisions into marked system-prompt blocks and cache them by template hash. |
 | `src/search/` | Query parsing, transcript providers, and ranked memory/session search. |
 | `src/sync/` (own AGENTS.md) | Remote mirror synchronization and secret redaction. |
@@ -42,12 +42,12 @@ The public API is the barrel at `src/index.ts`.
 - **Transactional state:** write tools take the `memory-write` lock, require a clean repository, validate paths, apply one operation, commit only the affected paths. Never bypass `GitMemoryRepo`, lock domains, or the tool entry points.
 - **Compile from committed state:** compilation targets `HEAD` or an explicit revision; uncommitted working-tree content is not authoritative memory.
 - **Markdown contracts:** frontmatter with a non-empty `description`; `read_only: "true"` blocks mutation; UTF-8, normalized repository-relative paths, LF output.
-- **Strict YAML frontmatter, one grammar everywhere:** `renderMemoryFile` is the ONLY writer — it quotes any scalar the `yaml` package would not read back verbatim and re-parses its own header; `describeFrontmatterViolation` gates the pre-commit hook rules, `validateCompletion`, and `normalizeMemoryFrontmatter` (one-time legacy repair). Never emit an unquoted `description:` by hand.
+- **Strict YAML frontmatter, one grammar everywhere:** `renderMemoryFile` is the ONLY writer - it quotes any scalar the `yaml` package would not read back verbatim and re-parses its own header; `describeFrontmatterViolation` gates the pre-commit hook rules, `validateCompletion`, and `normalizeMemoryFrontmatter` (one-time legacy repair). Never emit an unquoted `description:` by hand.
 - **Deterministic reflection:** manual triggers outrank compaction, which outranks step-count triggers; only one active run and one merged pending reservation.
-- **Domain-specific locks** (`memory-write`, `reflection-scheduler`, transcript) — never one global lock, never timing-based tests.
+- **Domain-specific locks** (`memory-write`, `reflection-scheduler`, transcript) - never one global lock, never timing-based tests.
 - **Redact before external synchronization;** never copy secret-bearing raw logs or configuration into committed memory.
 - **Facts state is durable and fail-closed:** atomic `.tmp`+rename writes (mode `0o600`) under an identity-scoped lock; malformed JSON parses to empty; enqueue/consumed watermarks NEVER regress; ordering follows canonical journal position / snapshot boundary, never lexical message-ID comparison.
-- **Agreements the person wrote are immutable to automation:** only the adapter's `/agreements` command (`commitMemoryWrite` with `writer: "human-command"`) may create, reword, ack, or drop a `by: human` item — the tools and `memory_apply_patch` refuse (`tools/agreements-write-guard.ts`), reflection/dream completion fails on any `system/agreements.md` change, move or delete included (diff `--no-renames`), and automation cannot remove a counted agent item (`n > 0`). With `agreements.enabled: false` the ledger is still projected.
+- **Agreements the person wrote are immutable to automation:** only the adapter's `/agreements` command (`commitMemoryWrite` with `writer: "human-command"`) may create, reword, ack, or drop a `by: human` item - the tools and `memory_apply_patch` refuse (`tools/agreements-write-guard.ts`), reflection/dream completion fails on any `system/agreements.md` change, move or delete included (diff `--no-renames`), and automation cannot remove a counted agent item (`n > 0`). With `agreements.enabled: false` the ledger is still projected.
 - **Behavioral patterns are NEVER stored in people cards:** lines limited to `IDENTITY` / `ATTRIBUTE` / `RELATIONSHIP` / `INSTRUCTION` prefixes with bounded metadata.
 
 ## PUBLIC SURFACES
@@ -56,7 +56,7 @@ The public API is the barrel at `src/index.ts`.
 
 ## CONSUMERS
 
-Harness adapters provide identity, lifecycle events, tool registration, and sync orchestration; the Senpi adapter lives in `packages/omo-senpi/src/components/memory/` — adapter-specific behavior stays there, never imported back.
+Harness adapters provide identity, lifecycle events, tool registration, and sync orchestration; the Senpi adapter lives in `packages/omo-senpi/src/components/memory/` - adapter-specific behavior stays there, never imported back.
 
 ## QA
 
@@ -65,7 +65,7 @@ bun test --timeout 20000 packages/memory-core/src/
 bun run --cwd packages/memory-core typecheck
 ```
 
-Run the nearest co-located `*.test.ts` first, then the package suite. Concurrency tests await exact state or process events with bounded timeouts — never fixed sleeps or retry loops.
+Run the nearest co-located `*.test.ts` first, then the package suite. Concurrency tests await exact state or process events with bounded timeouts - never fixed sleeps or retry loops.
 
 ## ANTI-PATTERNS
 

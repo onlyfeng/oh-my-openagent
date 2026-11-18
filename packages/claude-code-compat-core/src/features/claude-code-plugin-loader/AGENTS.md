@@ -1,6 +1,6 @@
 # claude-code-plugin-loader
 
-Discovers installed Claude Code plugins and translates each into component records (commands, skills-as-commands, agents, MCP servers, hooks) for harness adapters. Largest feature of [claude-code-compat-core](../../../AGENTS.md): 29 TS files (19 prod, ~1.2k prod LOC). Earned by score 11 — file count >20, ~47 exported symbols, own `index.ts` boundary; the sibling loaders stay covered by the package file.
+Discovers installed Claude Code plugins and translates each into component records (commands, skills-as-commands, agents, MCP servers, hooks) for harness adapters. Largest feature of [claude-code-compat-core](../../../AGENTS.md): 29 TS files (19 prod, ~1.2k prod LOC). Earned by score 11 - file count >20, ~47 exported symbols, own `index.ts` boundary; the sibling loaders stay covered by the package file.
 
 ## PIPELINE (`loader.ts`)
 
@@ -12,7 +12,7 @@ Discovers installed Claude Code plugins and translates each into component recor
 4. Five component loaders in `Promise.all`: `loadPluginCommands`, `loadPluginSkillsAsCommands` (skills become slash commands), `loadPluginAgents` (takes `anthropicProvider`), `loadPluginMcpServers`, `loadPluginHooksConfigs`.
 5. Result `PluginComponentsResult`: `commands`, `skills`, `agents`, `mcpServers`, `hooksConfigs`, `plugins`, `errors`.
 
-All five loaders are injectable via `PluginComponentLoadDeps` — that is the test seam.
+All five loaders are injectable via `PluginComponentLoadDeps` - that is the test seam.
 
 ## DISCOVERY
 
@@ -25,7 +25,7 @@ All five loaders are injectable via `PluginComponentLoadDeps` — that is the te
 
 ## HOOK LOADER DETAIL
 
-`hook-loader.ts` stamps every command/http action with the plugin's `installPath` (`pluginRoot`) so the downstream dispatcher can set `CLAUDE_PLUGIN_ROOT` on the spawned hook process (#4458) — the association is lost once configs are merged.
+`hook-loader.ts` stamps every command/http action with the plugin's `installPath` (`pluginRoot`) so the downstream dispatcher can set `CLAUDE_PLUGIN_ROOT` on the spawned hook process (#4458) - the association is lost once configs are merged.
 
 ## TESTS
 

@@ -15,7 +15,7 @@ Conventions for human contributors and AI agents working on this component.
 ## Layout
 
 - `src/cli.ts`: SessionStart hook CLI (stdin JSON in, empty stdout out).
-- `src/codex-hook.ts`: `runSessionStartHook` — the single hook handler.
+- `src/codex-hook.ts`: `runSessionStartHook` - the single hook handler.
 - `src/posthog.ts`: client construction/capture/shutdown; `DEFAULT_POSTHOG_API_KEY`, `DEFAULT_POSTHOG_HOST`, `getComponentVersion`.
 - `src/product-identity.ts`: the constants that must stay byte-equivalent with `packages/omo-codex/src/telemetry/product-identity.ts`.
 - `hooks/hooks.json`: component-local wiring (twin of the aggregate hook JSON).

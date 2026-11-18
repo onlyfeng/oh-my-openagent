@@ -1,14 +1,14 @@
-# src/hooks/atlas/ — Master Boulder Orchestrator
+# src/hooks/atlas/ - Master Boulder Orchestrator
 
 **Generated:** 2026-05-15
 
 ## OVERVIEW
 
-~61 files (~12k LOC incl. tests; 34 production modules). The `atlasHook` — Continuation Tier hook that monitors session.idle events and forces continuation when boulder sessions (ralph-loop, task-spawned agents) have incomplete work. Also enforces write/edit policies for subagent sessions and runs a first-prompt watchdog (90s default) for sessions that never produce output.
+~61 files (~12k LOC incl. tests; 34 production modules). The `atlasHook` - Continuation Tier hook that monitors session.idle events and forces continuation when boulder sessions (ralph-loop, task-spawned agents) have incomplete work. Also enforces write/edit policies for subagent sessions and runs a first-prompt watchdog (90s default) for sessions that never produce output.
 
 ## WHAT ATLAS DOES
 
-Atlas is the "keeper of sessions" — it tracks every session and decides:
+Atlas is the "keeper of sessions" - it tracks every session and decides:
 1. Should this session be forced to continue? (if boulder session with incomplete todos)
 2. Should write/edit be blocked? (policy enforcement for certain session types)
 3. Should a verification reminder be injected? (after tool execution)
@@ -31,8 +31,8 @@ session.idle event
 
 | File | Purpose |
 |------|---------|
-| `atlas-hook.ts` | `createAtlasHook()` — composes event + tool handlers, maintains session state |
-| `event-handler.ts` | `createAtlasEventHandler()` — decision gate for session.idle events |
+| `atlas-hook.ts` | `createAtlasHook()` - composes event + tool handlers, maintains session state |
+| `event-handler.ts` | `createAtlasEventHandler()` - decision gate for session.idle events |
 | `boulder-continuation-injector.ts` | Build + inject continuation prompt into session |
 | `system-reminder-templates.ts` | Templates for continuation reminder messages |
 | `tool-execute-before.ts` | Block write/edit based on session policy |

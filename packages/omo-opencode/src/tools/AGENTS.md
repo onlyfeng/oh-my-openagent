@@ -1,4 +1,4 @@
-# src/tools/ — 12–38 Native Tools Across 14 Tool Directories (+ shared utilities)
+# src/tools/ - 12-38 Native Tools Across 14 Tool Directories (+ shared utilities)
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
@@ -30,7 +30,7 @@ Tools registered via [`createToolRegistry()`](../plugin/tool-registry.ts) in `sr
 | `monitor_start`, `monitor_stop`, `monitor_list`, `monitor_output` | `monitor.enabled` | `monitor/` (watcher engine: `../features/monitor/`) |
 | `edit` (hashline-edit) | `hashline_edit: true` | `hashline-edit/` |
 | `create_goal`, `update_goal`, `get_goal` | `goal.enabled` | [`../hooks/goal/tools.ts`](../hooks/goal/tools.ts) (registered in `tool-registry-core-tools.ts`) |
-| 12 `team_*` tools: `team_create`, `team_delete`, `team_shutdown_request`, `team_approve_shutdown`, `team_reject_shutdown`, `team_send_message`, `team_task_create`, `team_task_list`, `team_task_update`, `team_task_get`, `team_status`, `team_list` (team lifecycle, async messaging, shared atomic-claim tasklist) | `team_mode.enabled: true` | `../features/team-mode/tools/` — see [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md) |
+| 12 `team_*` tools: `team_create`, `team_delete`, `team_shutdown_request`, `team_approve_shutdown`, `team_reject_shutdown`, `team_send_message`, `team_task_create`, `team_task_list`, `team_task_update`, `team_task_get`, `team_status`, `team_list` (team lifecycle, async messaging, shared atomic-claim tasklist) | `team_mode.enabled: true` | `../features/team-mode/tools/` - see [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md) |
 
 ## DELEGATION CATEGORIES (built-in 9)
 
@@ -52,7 +52,7 @@ User-defined categories declared in `categories: { ... }` config override and ex
 
 ## TOOL DIR LAYOUT
 
-`background-task/` (background_output/cancel; LLM interface, engine in `../features/background-agent`), `call-omo-agent/` (explore + librarian only), `delegate-task/` (task — categories, skills, provider category files), `glob/` (60s timeout, 100 file limit), `grep/` (60s timeout, 10MB limit), `hashline-edit/` (edit — hash-anchored LINE#ID edits), `interactive-bash/` (tmux session control), `look-at/` (image/PDF analysis), `monitor/` (monitor_*; engine in `../features/monitor`), `session-manager/` (4 session_* tools), `skill/` (load skill or run command), `skill-mcp/` (skill-embedded MCP), `slashcommand/` (`discoverCommandsSync` feeds the skill tool with the /-command list), `task/` (4 task_* Sisyphus task-system tools), `index.ts` (barrel exports).
+`background-task/` (background_output/cancel; LLM interface, engine in `../features/background-agent`), `call-omo-agent/` (explore + librarian only), `delegate-task/` (task - categories, skills, provider category files), `glob/` (60s timeout, 100 file limit), `grep/` (60s timeout, 10MB limit), `hashline-edit/` (edit - hash-anchored LINE#ID edits), `interactive-bash/` (tmux session control), `look-at/` (image/PDF analysis), `monitor/` (monitor_*; engine in `../features/monitor`), `session-manager/` (4 session_* tools), `skill/` (load skill or run command), `skill-mcp/` (skill-embedded MCP), `slashcommand/` (`discoverCommandsSync` feeds the skill tool with the /-command list), `task/` (4 task_* Sisyphus task-system tools), `index.ts` (barrel exports).
 
 ## ADDING A NEW TOOL
 

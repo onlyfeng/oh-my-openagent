@@ -1,4 +1,4 @@
-# tmux-core — Tmux Primitives (Core)
+# tmux-core - Tmux Primitives (Core)
 
 **Generated:** 2026-06-16 (update pass 2026-11-18 / c2691818a9)
 
@@ -10,7 +10,7 @@ Harness-neutral tmux primitives consumed by the OpenCode adapter (`omo-opencode`
 
 | Area | Key Files | Key Exports |
 |------|-----------|-------------|
-| **Runner** | `src/runner.ts` | `runTmuxCommand()`, `TmuxCommandResult` — retry, timeout, cmux compat |
+| **Runner** | `src/runner.ts` | `runTmuxCommand()`, `TmuxCommandResult` - retry, timeout, cmux compat |
 | **Types / Config** | `src/types.ts`, `src/constants.ts` | `TmuxConfig`, `TmuxLayout`, `TmuxIsolation`, `SpawnPaneResult`, polling constants |
 | **Pane Lifecycle** | `src/tmux-utils/pane-spawn.ts`, `pane-close.ts`, `pane-replace.ts`, `pane-activate.ts`, `pane-command.ts` | `spawnTmuxPane()`, `closeTmuxPane()`, `replaceTmuxPane()`, `activateTmuxPane()`, `buildTmuxAttachCommand()`, `buildTmuxPlaceholderCommand()` |
 | **Session Lifecycle** | `src/tmux-utils/session-spawn.ts`, `session-kill.ts`, `stale-session-sweep.ts` | `spawnTmuxSession()`, `killTmuxSessionIfExists()`, `sweepStaleOmoAgentSessions()` |

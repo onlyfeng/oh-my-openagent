@@ -56,7 +56,7 @@ Core glue layer. Files assemble the 12 OpenCode hook handlers wired into `Plugin
 ## TOOL REGISTRATION GATES
 
 ```typescript
-// src/plugin/tool-registry.ts — createToolRegistry()
+// src/plugin/tool-registry.ts - createToolRegistry()
 const factories: ToolRegistryFactories = { ...defaultToolRegistryFactories, ...toolFactories } // DI for tests
 const allTools = {
   ...createCoreTools({ ctx, pluginConfig, managers, skillContext, availableCategories, factories }),

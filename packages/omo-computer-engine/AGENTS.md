@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-Contract-only package. Today `src/index.ts` declares just `packageName` and `dependencyPackageNames` (the architecture edge to `@oh-my-opencode/omo-computer-protocol`). The package description promises locator/checksum/signature trust, stable-path launch, and bunshin descriptor — none of that exists in `src/` yet.
+Contract-only package. Today `src/index.ts` declares just `packageName` and `dependencyPackageNames` (the architecture edge to `@oh-my-opencode/omo-computer-protocol`). The package description promises locator/checksum/signature trust, stable-path launch, and bunshin descriptor - none of that exists in `src/` yet.
 
 ## STRUCTURE
 

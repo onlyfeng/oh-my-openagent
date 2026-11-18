@@ -1,4 +1,4 @@
-# src/memfs/ — Memory Markdown Substrate
+# src/memfs/ - Memory Markdown Substrate
 
 ## OVERVIEW
 
@@ -33,7 +33,7 @@ Parent: [`packages/memory-core/AGENTS.md`](../../AGENTS.md).
 ## ANTI-PATTERNS
 
 - Never emit an unquoted `description` frontmatter scalar by hand.
-- Never bypass the barrel when adding public surface — importers use
+- Never bypass the barrel when adding public surface - importers use
   `memory-core` package paths.
 - Do not loosen the strict YAML grammar to accept legacy headers; legacy input
   flows through `normalize.ts` instead.

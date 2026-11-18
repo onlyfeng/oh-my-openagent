@@ -1,4 +1,4 @@
-# src/models — Model Catalog, Exclusion, Distribution
+# src/models - Model Catalog, Exclusion, Distribution
 
 **Generated:** 2026-11-18 | c2691818a9
 
@@ -8,10 +8,10 @@
 
 | Path | Role |
 |------|------|
-| `excluded-models.ts` | `excludedModelPattern`, `isExcludedModel` — glob-style exclusion of a model id. |
-| `model-catalog-cycles.ts` | `findModelCatalogCycles` — detect cycles in the user-declared catalog graph. |
-| `model-reference-resolution.ts` | `resolveModelReferences` — resolve a reference (catalog entry, alias, provider/model) to a concrete model. |
-| `models-distribution.ts` | `createModelDistributor` — turn the resolved catalog into per-category chains. |
+| `excluded-models.ts` | `excludedModelPattern`, `isExcludedModel` - glob-style exclusion of a model id. |
+| `model-catalog-cycles.ts` | `findModelCatalogCycles` - detect cycles in the user-declared catalog graph. |
+| `model-reference-resolution.ts` | `resolveModelReferences` - resolve a reference (catalog entry, alias, provider/model) to a concrete model. |
+| `models-distribution.ts` | `createModelDistributor` - turn the resolved catalog into per-category chains. |
 | `index.ts` | Barrel re-export. |
 
 ## CONVENTIONS
@@ -24,7 +24,7 @@
 
 ## ANTI-PATTERNS
 
-- Do not duplicate the exclusion/cycle/distribution logic in an adapter — this module is the single owner.
+- Do not duplicate the exclusion/cycle/distribution logic in an adapter - this module is the single owner.
 
 ## COMMANDS
 

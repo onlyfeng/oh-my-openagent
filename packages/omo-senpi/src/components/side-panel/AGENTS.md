@@ -1,4 +1,4 @@
-# components/side-panel/ — TUI Side Panel (direct files)
+# components/side-panel/ - TUI Side Panel (direct files)
 
 ## OVERVIEW
 
@@ -28,7 +28,7 @@ and `SIDE_PANEL_FLAG`; the controller runtime is lazy-loaded via
   decides when the flag is absent.
 - Teardown must run on committed `session_shutdown`; `session_before_switch`
   may be cancelled.
-- An in-flight runtime import must not mount after teardown — check the
+- An in-flight runtime import must not mount after teardown - check the
   epoch before mounting.
 
 ## ANTI-PATTERNS

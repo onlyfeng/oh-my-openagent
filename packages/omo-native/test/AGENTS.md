@@ -1,4 +1,4 @@
-# test/ — omo-native package-contract + launcher tests
+# test/ - omo-native package-contract + launcher tests
 
 **Generated:** 2026-11-18 / c2691818a9
 
@@ -8,8 +8,8 @@
 
 | Need | File |
 |------|------|
-| Temp-root cleanup | `teardown.test-support.ts` — `teardownRoots(roots)` (the `afterEach` norm), `rmSyncEbusyTolerant`, `withDatabase`, `closeTrackedDatabases`, `TEARDOWN_FAILURE_PREFIX` |
-| Spawn-site enumeration | `spawn-call-sites.ts` — `spawnCallSites(repoRoot, files)` (AST + binding resolution) |
+| Temp-root cleanup | `teardown.test-support.ts` - `teardownRoots(roots)` (the `afterEach` norm), `rmSyncEbusyTolerant`, `withDatabase`, `closeTrackedDatabases`, `TEARDOWN_FAILURE_PREFIX` |
+| Spawn-site enumeration | `spawn-call-sites.ts` - `spawnCallSites(repoRoot, files)` (AST + binding resolution) |
 | Bun binary fixtures | `bun-bin-shim.fixture.ts` / `bun-bin-shim.test-support.ts` |
 | Keychain harness | `keychain-helper.test-support.ts` |
 
@@ -17,7 +17,7 @@
 
 - Isolate everything: `mkdtempSync` homes / config roots / agent dirs registered for `teardownRoots`; shared real homes, global installs and the user's credential/session stores are never fixtures.
 - `rmSyncEbusyTolerant` retries Windows `EBUSY` only, with escalating delays (50→400ms, 14 attempts, ~4.4s worst case); every other errno throws on the first attempt, and on POSIX it is byte-identical to `rmSync`. Close database handles first (`withDatabase`).
-- Process-spawn call sites are found by parsing (oxc-parser) and resolving bindings — aliases, wrappers, re-exports, parameter propagation — never by matching call text.
+- Process-spawn call sites are found by parsing (oxc-parser) and resolving bindings - aliases, wrappers, re-exports, parameter propagation - never by matching call text.
 - Secret values never travel over RPC or land in persisted output; credential-shaped env is scrubbed and restored around suites (see `category-coverage.test.ts`'s `CREDENTIAL_ENV` pattern).
 - Real-engine suites (`daemon-real-engine`, `category-coverage`) run the pinned senpi with fixture HOME/agent-dir, use explicit test budgets, and track + kill every spawned child.
 - Gates: POSIX-only OpenSSL/trust suites skip on win32; the `openssl` CLI is required when enabled; release-gated suites (e.g. `device-service-pin-served.test.ts`) need `OMO_RELEASE_GATE=1`.
@@ -27,4 +27,4 @@
 ## COMMANDS
 
 - Focused suite: `bun test packages/omo-native/test/<file>.test.ts` (whole-directory command in the parent AGENTS.md).
-- Support modules (`*.test-support.ts`, `*.fixture.ts`, `spawn-call-sites.ts`) carry no `.test.` name — Bun does not pick them up as suites.
+- Support modules (`*.test-support.ts`, `*.fixture.ts`, `spawn-call-sites.ts`) carry no `.test.` name - Bun does not pick them up as suites.

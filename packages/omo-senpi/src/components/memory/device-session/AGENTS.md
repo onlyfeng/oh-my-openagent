@@ -1,4 +1,4 @@
-# device-session — Device Account Resolution for Memory Sync
+# device-session - Device Account Resolution for Memory Sync
 
 **Generated:** 2026-11-18 / c2691818a9
 
@@ -12,9 +12,9 @@ Resolves the account a memory-sync-bound session acts as: the CLI credential sto
 
 | Task | File |
 |------|------|
-| Account model + CLI source | `account-source.ts` — `DeviceAccount = CliDeviceAccount \| DesktopSyncAccount \| DesktopSyncUnavailable`, `DeviceAccountSource`, `createCliAccountSource`, `DEFAULT_SERVICE_API`, `KeyringFactory`, `HeldCredentialRelay` |
-| Selection policy | `selected-account-source.ts` — `accountSourceFromSelection`, `selectedDeviceAccountSource` |
-| Resolver | `resolver.ts` — `createDeviceSessionResolver`, `DeviceSessionRuntime` |
+| Account model + CLI source | `account-source.ts` - `DeviceAccount = CliDeviceAccount \| DesktopSyncAccount \| DesktopSyncUnavailable`, `DeviceAccountSource`, `createCliAccountSource`, `DEFAULT_SERVICE_API`, `KeyringFactory`, `HeldCredentialRelay` |
+| Selection policy | `selected-account-source.ts` - `accountSourceFromSelection`, `selectedDeviceAccountSource` |
+| Resolver | `resolver.ts` - `createDeviceSessionResolver`, `DeviceSessionRuntime` |
 | Lazy sidecar load | `account-runtime.ts` + `account-runtime-loader.ts` (source built once from the loaded sidecar; a failed load is not cached) |
 | CLI operations | `cli-account-operation.ts` |
 | Behavior pins | `relay-readopt.test.ts`, `relay-readopt-late-service.test.ts`, `revoke-session.test.ts`, `first-session-repo.test.ts`, `keychain-pending.test.ts`, `desktop-account.test.ts`, `sibling-writer.fixture.ts` |

@@ -1,4 +1,4 @@
-# src/features/opencode-skill-loader/ — Multi-Source Skill Discovery
+# src/features/opencode-skill-loader/ - Multi-Source Skill Discovery
 
 **Generated:** 2026-11-18 / c2691818a9 (update pass)
 
@@ -13,7 +13,7 @@ bounded concurrency and lazy content loading).
 
 `discoverSkills()` / `discoverAllSkills()` combine:
 
-1. OpenCode project (`.opencode/skills/` — scope `opencode-project`)
+1. OpenCode project (`.opencode/skills/` - scope `opencode-project`)
 2. Claude project + Agents project dirs (scope `project`)
 3. OpenCode config/global (scope `opencode`)
 4. Claude user + Agents global dirs (scope `user`)
@@ -21,7 +21,7 @@ bounded concurrency and lazy content loading).
 
 ## MERGE PRIORITY (highest → lowest)
 
-`merger/scope-priority.ts` — higher number wins on same name:
+`merger/scope-priority.ts` - higher number wins on same name:
 
 ```
 opencode-project (6) > project (5) > opencode (4) > user (3) > config (2) > builtin = shared (1)
@@ -34,7 +34,7 @@ Same-named skill at higher priority replaces the lower; disabled names never loa
 
 | File | Purpose |
 |------|---------|
-| `loader.ts` | `discoverSkills()` / `discoverAllSkills()` / scope-specific `discover*` — orchestrates discovery → parse → merge |
+| `loader.ts` | `discoverSkills()` / `discoverAllSkills()` / scope-specific `discover*` - orchestrates discovery → parse → merge |
 | `async-loader.ts` | Async traversal, bounded concurrency, lazy content loading |
 | `merger.ts` + `merger/scope-priority.ts` | Priority-based deduplication across sources |
 | `skill-content.ts` | YAML frontmatter parsing from SKILL.md |
@@ -46,7 +46,7 @@ Same-named skill at higher priority replaces the lower; disabled names never loa
 | `git-master-template-injection.ts` | Git-master prompt template injection |
 | `skill-deduplication.ts` | Name-dedup rules across sources |
 | `types.ts` | `LoadedSkill`, `SkillScope`, `SkillDiscoveryResult` |
-| `skill-provenance.ts` | Canonical-path containment + descriptor identity; raises `SkillLinkBlockedError` ONLY for an escaped path — ordinary missing/unreadable I/O errors are preserved and reported, never disguised as security warnings |
+| `skill-provenance.ts` | Canonical-path containment + descriptor identity; raises `SkillLinkBlockedError` ONLY for an escaped path - ordinary missing/unreadable I/O errors are preserved and reported, never disguised as security warnings |
 | `checked-skill-read.ts` | The read seam that enforces the provenance checks (rethrows `SkillLinkBlockedError`, keeps original I/O errors) |
 
 ## SKILL FORMAT (SKILL.md)

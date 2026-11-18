@@ -1,4 +1,4 @@
-# claude-code-compat-core — Claude Code Compatibility Loaders (Core)
+# claude-code-compat-core - Claude Code Compatibility Loaders (Core)
 
 **Generated:** 2026-06-16 · **Updated:** 2026-11-18
 
@@ -14,7 +14,7 @@ Npm package: `@oh-my-opencode/claude-code-compat-core` (private). 78 TS files (5
 
 | Feature dir | What it loads | Key entry |
 |-------------|---------------|-----------|
-| `claude-code-plugin-loader/` | Claude Code plugins (commands, skills, agents, MCP servers, hooks) | `loader.ts` (`loadAllPluginComponents`) — own [AGENTS.md](src/features/claude-code-plugin-loader/AGENTS.md) |
+| `claude-code-plugin-loader/` | Claude Code plugins (commands, skills, agents, MCP servers, hooks) | `loader.ts` (`loadAllPluginComponents`) - own [AGENTS.md](src/features/claude-code-plugin-loader/AGENTS.md) |
 | `claude-code-mcp-loader/` | `.mcp.json` configs (user/project/local) into OpenCode SDK format | `loader.ts` |
 | `claude-code-command-loader/` | Slash commands from markdown files in project and config dirs | `loader.ts` |
 | `claude-code-agent-loader/` | Agent definitions from markdown and JSON configs | `loader.ts` |

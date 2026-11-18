@@ -1,10 +1,10 @@
-# src/features/skill-mcp-manager/ — Tier-3 Skill-Embedded MCP Shims
+# src/features/skill-mcp-manager/ - Tier-3 Skill-Embedded MCP Shims
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
-Every non-test `.ts` file here is a ONE-LINE shim: `export * from "@oh-my-opencode/mcp-client-core/skill-mcp-manager/<module>"`. The tier-3 implementation — `SkillMcpManager` client lifecycle, connection factory, transports, OAuth, cleanup — lives in [`packages/mcp-client-core/src/skill-mcp-manager/`](../../../../../packages/mcp-client-core/src/skill-mcp-manager) (guide: [`mcp-client-core/AGENTS.md`](../../../../../packages/mcp-client-core/AGENTS.md)). This directory keeps the OpenCode import paths stable. Do NOT add logic here — extend `mcp-client-core` and keep the shim.
+Every non-test `.ts` file here is a ONE-LINE shim: `export * from "@oh-my-opencode/mcp-client-core/skill-mcp-manager/<module>"`. The tier-3 implementation - `SkillMcpManager` client lifecycle, connection factory, transports, OAuth, cleanup - lives in [`packages/mcp-client-core/src/skill-mcp-manager/`](../../../../../packages/mcp-client-core/src/skill-mcp-manager) (guide: [`mcp-client-core/AGENTS.md`](../../../../../packages/mcp-client-core/AGENTS.md)). This directory keeps the OpenCode import paths stable. Do NOT add logic here - extend `mcp-client-core` and keep the shim.
 
 ## SHIM MAP
 

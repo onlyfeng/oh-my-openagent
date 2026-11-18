@@ -1,4 +1,4 @@
-# src/hooks/directory-readme-injector/ — README Context Injection
+# src/hooks/directory-readme-injector/ - README Context Injection
 
 ## OVERVIEW
 
@@ -13,7 +13,7 @@ Parent: [`src/hooks/AGENTS.md`](../AGENTS.md).
 
 | File | Role |
 |------|------|
-| `hook.ts` | `createDirectoryReadmeInjectorHook` — read-tool completion handling |
+| `hook.ts` | `createDirectoryReadmeInjectorHook` - read-tool completion handling |
 | `finder.ts` | Walk from file dir to project root locating `README.md` |
 | `injector.ts` | Root-first injection through the shared dynamic truncator |
 | `storage.ts` | Persistent injected-path state under OpenCode storage `directory-readme/` |
@@ -25,7 +25,7 @@ Parent: [`src/hooks/AGENTS.md`](../AGENTS.md).
   under the shared OpenCode storage directory.
 - Session state is cleared on deleted/compacted session events (handled in
   `hook.ts`).
-- Truncation uses the shared truncator — no local cutoff logic.
+- Truncation uses the shared truncator - no local cutoff logic.
 
 ## ANTI-PATTERNS
 

@@ -1,4 +1,4 @@
-# src/loader/ — Layered omo.json[c] Loader
+# src/loader/ - Layered omo.json[c] Loader
 
 ## OVERVIEW
 
@@ -36,7 +36,7 @@ resolvers, merge/prune helpers, and diagnostics types. Parent:
 
 - Never merge without stripping `__proto__` / `prototype` / `constructor`.
 - Do not surface hard errors for a single invalid layer when
-  `prune-invalid-leaves` semantics apply — collect diagnostics.
+  `prune-invalid-leaves` semantics apply - collect diagnostics.
 
 ## QA
 

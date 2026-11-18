@@ -1,4 +1,4 @@
-# .github/workflows — CI & Release Pipelines
+# .github/workflows - CI & Release Pipelines
 
 > Earned file (score 19, high complexity): 47 workflow YAMLs + 5 TypeScript operator-darwin verifier modules, ~11.9k lines. The repository's largest config surface and its release-critical core.
 
@@ -32,7 +32,7 @@
 - **DO NOT** outsource Mach-O signature verification to an external tool: `operator-darwin-macho.ts` hashes signed CodeDirectory coverage + special blobs itself; arm64e and malformed input are refused via `Refusal`.
 - `operator-darwin-verify.ts` refusal contract: exactly ONE `::error::operator_darwin_artifacts refused: ...` line on stdout + exit 1; success writes summary rows to `--summary` and prints nothing else.
 - CMS parser caps indefinite-length DER nesting at 32 (stack-exhaustion guard); primitive indefinite-length DER is refused.
-- **NEVER** treat a skipped CI leg as passing — macOS status helpers fail closed (see parent `.github/AGENTS.md`); report-only temp-leak lists may only shrink, never grow.
+- **NEVER** treat a skipped CI leg as passing - macOS status helpers fail closed (see parent `.github/AGENTS.md`); report-only temp-leak lists may only shrink, never grow.
 
 ## COMMANDS
 

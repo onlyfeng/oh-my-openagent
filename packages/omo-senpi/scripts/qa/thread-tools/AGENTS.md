@@ -1,18 +1,18 @@
-# thread-tools — Cross-Surface Thread QA Suite
+# thread-tools - Cross-Surface Thread QA Suite
 
 **Generated:** 2026-11-18 / c2691818a9
 
-**Score:** 17 (30 `.mjs` files, ~5.9k LOC; the Thread lane of the parent [`qa/AGENTS.md`](../AGENTS.md), which owns the harness/env rules — this file maps the scenarios).
+**Score:** 17 (30 `.mjs` files, ~5.9k LOC; the Thread lane of the parent [`qa/AGENTS.md`](../AGENTS.md), which owns the harness/env rules - this file maps the scenarios).
 
 ## OVERVIEW
 
-End-to-end scenarios proving thread create/send/steer works across surfaces: CLI, plugin, TUI host, and the real desktop client. `run-all.mjs` runs scenarios SEQUENTIALLY on purpose — each owns ports, sockets and pty terminals, and concurrency would make resource allocation the thing under test.
+End-to-end scenarios proving thread create/send/steer works across surfaces: CLI, plugin, TUI host, and the real desktop client. `run-all.mjs` runs scenarios SEQUENTIALLY on purpose - each owns ports, sockets and pty terminals, and concurrency would make resource allocation the thing under test.
 
 ## SUITES (`run-all.mjs`)
 
 | Suite | Harness | Engine | Notes |
 |-------|---------|--------|-------|
-| `gateway` (todo 16) | `lib/gateway.mjs` | RELEASED senpi from npm; `THREAD_QA_SENPI_VERSION` REQUIRED — unset/empty exits 2 before anything runs | kit installed once under `THREAD_QA_KIT_DIR` (default `<QA tmp root>/qa-thread-tools-kit`); real pty TUIs, shard hosts, `omo` CLI |
+| `gateway` (todo 16) | `lib/gateway.mjs` | RELEASED senpi from npm; `THREAD_QA_SENPI_VERSION` REQUIRED - unset/empty exits 2 before anything runs | kit installed once under `THREAD_QA_KIT_DIR` (default `<QA tmp root>/qa-thread-tools-kit`); real pty TUIs, shard hosts, `omo` CLI |
 | `legacy` (task 13/14) | `lib/harness.mjs` | SOURCE checkout via `THREAD_QA_SENPI_ROOT` + `THREAD_QA_DESKTOP_ROOT` | unmet prerequisites report `SKIP` with the missing path, never a silent drop |
 
 Flags: `--suite gateway|legacy|all`, `--out-dir`, `--with-mutant` (also runs `loop-guard.mjs --mutant` and REQUIRES it to fail), `--keep-kit`. Output lines starting `DEFECT` are product defects a scenario detected; they are counted in the summary.
@@ -30,7 +30,7 @@ Flags: `--suite gateway|legacy|all`, `--out-dir`, `--with-mutant` (also runs `lo
 
 ## LIB (`lib/`)
 
-`harness.mjs` (legacy: ONE harness, sanctioned `qa-shared/lib/*` modules, target-state assertions, self-cleaning), `gateway.mjs` (released-engine kit), `engine-version.mjs` + `qa-tmp.mjs` (`QA_TMP_ROOT`) — the two `.test.mjs` files sit at the suite root, beside `run-all.mjs`, not in `lib/` — `desktop-shell.mjs`.
+`harness.mjs` (legacy: ONE harness, sanctioned `qa-shared/lib/*` modules, target-state assertions, self-cleaning), `gateway.mjs` (released-engine kit), `engine-version.mjs` + `qa-tmp.mjs` (`QA_TMP_ROOT`) - the two `.test.mjs` files sit at the suite root, beside `run-all.mjs`, not in `lib/` - `desktop-shell.mjs`.
 
 ## COMMANDS
 

@@ -1,4 +1,4 @@
-# identity — Memory Identity Resolution
+# identity - Memory Identity Resolution
 
 **Score:** 12 (14 files, 2k LOC, index barrel, security-sensitive, confinement-tested). Parent [`packages/memory-core/AGENTS.md`](../../../AGENTS.md) documents `resolveAutoIdentity` and the opt-in `"git"` mode; this file maps the modules and their hard rules.
 
@@ -10,17 +10,17 @@ Resolves WHICH memory repository a session uses: memory-root layout, project sco
 
 | Task | Location |
 |------|----------|
-| Root layout — `MEMORY_ROOT_ENV_VAR`, `defaultMemoryRoot`, `resolveMemoryRoot`, `buildIdentityPaths`, directory names | `layout.ts` |
-| Identity slug + resolvers — `MemoryIdentity` | `resolve.ts` |
-| Project scope — `ProjectIdentity`, `createProjectIdentityResolver`, `PROJECT_SCOPE_SCAN_LIMIT` | `project-scope.ts` |
-| Filesystem probe seam — `ProjectScopeFs`, `createProjectScopeProbe`, `settle` | `project-scope-fs.ts` |
-| Linked-worktree → main-tree mapping — `GitEntryKind`, `GitLayoutProbe`, `resolveLinkedWorktreeSource` | `git-layout.ts` |
+| Root layout - `MEMORY_ROOT_ENV_VAR`, `defaultMemoryRoot`, `resolveMemoryRoot`, `buildIdentityPaths`, directory names | `layout.ts` |
+| Identity slug + resolvers - `MemoryIdentity` | `resolve.ts` |
+| Project scope - `ProjectIdentity`, `createProjectIdentityResolver`, `PROJECT_SCOPE_SCAN_LIMIT` | `project-scope.ts` |
+| Filesystem probe seam - `ProjectScopeFs`, `createProjectScopeProbe`, `settle` | `project-scope-fs.ts` |
+| Linked-worktree → main-tree mapping - `GitEntryKind`, `GitLayoutProbe`, `resolveLinkedWorktreeSource` | `git-layout.ts` |
 | Barrel (layout + project-scope + resolve) | `index.ts` |
 
 ## CONVENTIONS
 
 - `project-scope-fs.ts` is the ONLY filesystem seam: production code reaches disk through it so tests inject probes instead of fixtures on real paths.
-- `git-layout.ts` reads the `.git` pointer, `commondir`, the admin gitdir back-pointer and `core.worktree`/`core.bare` directly — it never spawns `git`.
+- `git-layout.ts` reads the `.git` pointer, `commondir`, the admin gitdir back-pointer and `core.worktree`/`core.bare` directly - it never spawns `git`.
 - Scope probing is bounded by `PROJECT_SCOPE_SCAN_LIMIT` and cannot escape the session/project root.
 
 ## ANTI-PATTERNS

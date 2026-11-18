@@ -1,4 +1,4 @@
-# coding-agent-sessions — Cross-Platform Session Finder (Python)
+# coding-agent-sessions - Cross-Platform Session Finder (Python)
 
 **Generated:** 2026-08-24 (f3642fcda)
 
@@ -25,14 +25,14 @@ coding-agent-sessions/
 | Module | Key exports |
 |--------|-------------|
 | `scanners.py` | `scan`, `DEFAULT_PLATFORMS`, `PLATFORM_SCANNERS`, per-platform `scan_*` (codex, claude, opencode, senpi, oh_my_pi, gajae_code, …) |
-| `types.py` | `Session`, `Options`, `Json`, `JsonMap` — imported by nearly every module and test |
+| `types.py` | `Session`, `Options`, `Json`, `JsonMap` - imported by nearly every module and test |
 | `transcript.py` | parallel file reads, normalization, timestamps, session ids; `recent`, `MAX_PLATFORM_FILES` |
-| `cli.py` | command parsing, filtering, payload construction, JSON emission (283 LOC — behavioral hotspot) |
+| `cli.py` | command parsing, filtering, payload construction, JSON emission (283 LOC - behavioral hotspot) |
 | platform adapters | `file_scanners.py` (file-backed providers), `opencode.py` (CLI/SQLite/storage fallbacks), `sqlite_scanners.py`, `sqlite_optional_scanners.py`, `pi_family.py`, `aside_scanner.py`, `kiro_scanner.py` |
 
 ## CLI CONTRACT
 
-`python3 -B scripts/find-agent-sessions.py <command>`; aliases `find`=`search`, `read`=`get`. Commands: `list`, `find`/`search` (repeated `--query` lanes, `--from 7d`, repeated `--platform`, `--workers`, `--cwd/--model`, `--include-subagents`, `--limit`), `get`/`read <session-id>`. Output is JSON with `match_reasons` and reconstructed first/last user prompts — that JSON shape is the stable contract.
+`python3 -B scripts/find-agent-sessions.py <command>`; aliases `find`=`search`, `read`=`get`. Commands: `list`, `find`/`search` (repeated `--query` lanes, `--from 7d`, repeated `--platform`, `--workers`, `--cwd/--model`, `--include-subagents`, `--limit`), `get`/`read <session-id>`. Output is JSON with `match_reasons` and reconstructed first/last user prompts - that JSON shape is the stable contract.
 
 ## CONVENTIONS
 
@@ -45,9 +45,9 @@ coding-agent-sessions/
 
 ## ANTI-PATTERNS
 
-- NEVER answer from normalized previews alone — pull the raw transcript (`read`/`get`) for exact evidence.
+- NEVER answer from normalized previews alone - pull the raw transcript (`read`/`get`) for exact evidence.
 - Usage-only stores are NOT transcript sources.
-- A Claude subagent's embedded `sessionId` is NOT its identity — use its `agentId` + parent-directory linkage.
+- A Claude subagent's embedded `sessionId` is NOT its identity - use its `agentId` + parent-directory linkage.
 - Don't add a platform by globbing blindly; register it in `PLATFORM_SCANNERS`/`DEFAULT_PLATFORMS` with a bounded root probe.
 
 ## COMMANDS

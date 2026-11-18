@@ -1,23 +1,23 @@
-# docs/ — User-Facing Documentation
+# docs/ - User-Facing Documentation
 
 **Generated:** 2026-11-18 / c2691818a9 (update mode)
 
 ## OVERVIEW
 
-61 tracked files: 4 at docs root + 6 subdirectories (guide 16, reference 34, examples 3 JSONC, legal 2, templates 1, troubleshooting 1). Categorized by audience: user-facing guides + reference, troubleshooting, legal. `packages/web/` generates omo.dev docs content from this tree — `web-ci.yml` and `web-deploy.yml` both trigger on `docs/**`.
+61 tracked files: 4 at docs root + 6 subdirectories (guide 16, reference 34, examples 3 JSONC, legal 2, templates 1, troubleshooting 1). Categorized by audience: user-facing guides + reference, troubleshooting, legal. `packages/web/` generates omo.dev docs content from this tree - `web-ci.yml` and `web-deploy.yml` both trigger on `docs/**`.
 
 ## STRUCTURE
 
 ```
 docs/
-├── manifesto.md                       # The "why" — referenced from README
+├── manifesto.md                       # The "why" - referenced from README
 ├── i18n-glossary.md                   # Translation glossary for READMEs + packages/web/messages
 ├── model-capabilities-maintenance.md  # Refreshing the model-capabilities cache
 ├── guide/             # 16 tutorial-style user guides (indexed below; no own AGENTS.md)
 ├── reference/         # 34 API/config/CLI/threat-model pages → reference/AGENTS.md
 ├── examples/          # 3 sample JSONC configs (default, coding-focused, planning-focused)
 ├── legal/             # privacy-policy.md + terms-of-service.md
-├── templates/         # AGENTS.md.example — copyable project-rules template
+├── templates/         # AGENTS.md.example - copyable project-rules template
 └── troubleshooting/   # ollama.md
 ```
 
@@ -26,9 +26,9 @@ docs/
 | Task | Location |
 |------|----------|
 | User guides ([docs/guide/](guide)) | overview · install/installation/binary-install · migrating-from-opencode · orchestration · team-mode · senpi-task · computer-use · agents · agent-model-matching · keywords · telemetry · btw · workflows · desktop-updates |
-| Any reference page (config, CLI, daemon, threat models…) | [docs/reference/AGENTS.md](reference/AGENTS.md) — per-page index |
+| Any reference page (config, CLI, daemon, threat models…) | [docs/reference/AGENTS.md](reference/AGENTS.md) - per-page index |
 | The "why" manifesto | [docs/manifesto.md](manifesto.md) |
-| Changing a translated term | [docs/i18n-glossary.md](i18n-glossary.md) — edit the glossary first, then every translation |
+| Changing a translated term | [docs/i18n-glossary.md](i18n-glossary.md) - edit the glossary first, then every translation |
 | Refreshing the model-capabilities cache | [docs/model-capabilities-maintenance.md](model-capabilities-maintenance.md) |
 | Sample configs | [docs/examples/](examples) |
 | Privacy & ToS | [docs/legal/](legal) |
@@ -47,6 +47,6 @@ docs/
 
 ## ANTI-PATTERNS
 
-- Never add a page to `reference/` without a `WHERE TO LOOK` entry in [docs/reference/AGENTS.md](reference/AGENTS.md); a new `guide/` page gets its entry HERE — `guide/` has no own AGENTS.md because `guide/agents.md` is a user-facing guide and a knowledge-base `AGENTS.md` would collide with it on case-insensitive filesystems.
+- Never add a page to `reference/` without a `WHERE TO LOOK` entry in [docs/reference/AGENTS.md](reference/AGENTS.md); a new `guide/` page gets its entry HERE - `guide/` has no own AGENTS.md because `guide/agents.md` is a user-facing guide and a knowledge-base `AGENTS.md` would collide with it on case-insensitive filesystems.
 - Never paste agent-facing system prompts here. Those live in [`packages/omo-opencode/src/agents/`](../packages/omo-opencode/src/agents/) or [`packages/skills-loader-core/src/features/builtin-skills/`](../packages/skills-loader-core/src/features/builtin-skills/).
 - Never document changing config keys without also updating [`packages/omo-opencode/src/config/schema/`](../packages/omo-opencode/src/config/schema/) and re-running `bun run build:schema`.

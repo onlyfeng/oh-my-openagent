@@ -1,10 +1,10 @@
-# src/sync/account/ — Account Lifecycle + Pairing Ceremonies
+# src/sync/account/ - Account Lifecycle + Pairing Ceremonies
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 14 (51 files, ~6.6k LOC, barrel, distinct domain: account lifecycle over the crypto chain)
 
 ## OVERVIEW
 
-The signed-in account's lifecycle on this device: enable, join/pair, approve, revoke, freeze — every step verified through the pinned trust anchor and the client chain from `../crypto/`. HTTP is a thin untrusted transport; correctness lives in the ceremony code.
+The signed-in account's lifecycle on this device: enable, join/pair, approve, revoke, freeze - every step verified through the pinned trust anchor and the client chain from `../crypto/`. HTTP is a thin untrusted transport; correctness lives in the ceremony code.
 
 ## WHERE TO LOOK
 
@@ -22,7 +22,7 @@ The signed-in account's lifecycle on this device: enable, join/pair, approve, re
 
 ## CONVENTIONS
 
-- `AccountChain` is the shared verified-state spine: freeze-settler, sealer, verifier, and account operations all consume it — do not keep a second verified copy.
+- `AccountChain` is the shared verified-state spine: freeze-settler, sealer, verifier, and account operations all consume it - do not keep a second verified copy.
 - Pairing ceremonies never trust a relay: transcript signatures + 6-digit code are the acceptance conditions.
 - Operations route through `admitSyncOperation` / authority boundaries (see `../operation-authority.ts`).
 

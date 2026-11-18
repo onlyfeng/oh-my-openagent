@@ -32,11 +32,11 @@ src/
 - `rewrite` may only reference metavariables captured by the pattern; empty replacement deletes the match.
 - Byte-counted limits: pattern 16 KiB, rewrite/inlineRules 64 KiB (UTF-8 bytes, not chars); runner caps: JSON record 1 MiB, stderr 64 KiB, MCP payload 4 MiB.
 - Matches: `maxMatches` 1-500, default 50. Timeout: default and max 300000 ms.
-- Tool descriptors avoid JSON-Schema composition (`oneOf`/`not`) — Cursor's AgentService gateway cannot convert it; parser-side validation (`parseScanInput` etc. in `src/tools/`) is authoritative.
+- Tool descriptors avoid JSON-Schema composition (`oneOf`/`not`) - Cursor's AgentService gateway cannot convert it; parser-side validation (`parseScanInput` etc. in `src/tools/`) is authoritative.
 
 ## ANTI-PATTERNS
 
 - Never combine JSON output and mutation in one `sg` invocation (sg cannot do both safely).
 - No ambient `sgconfig.yml` discovery in `scan`: exactly one explicit rule source (`ruleFile` XOR `inlineRules`).
-- Model-facing tool descriptions are verbatim contracts (`search`'s is marked `do not modify`) — never reword them.
-- `sg` CLI name is deprecated in favor of `ast-grep`; the runner still invokes `sg` — don't churn the binary name.
+- Model-facing tool descriptions are verbatim contracts (`search`'s is marked `do not modify`) - never reword them.
+- `sg` CLI name is deprecated in favor of `ast-grep`; the runner still invokes `sg` - don't churn the binary name.

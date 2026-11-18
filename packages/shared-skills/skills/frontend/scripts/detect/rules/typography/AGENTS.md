@@ -1,4 +1,4 @@
-# detect/rules/typography/ — Typography Rule Catalog
+# detect/rules/typography/ - Typography Rule Catalog
 
 **Score ~13** (39 files: 14 rules + 14 colocated tests + support; category aggregate).
 
@@ -16,14 +16,14 @@ The typography category of the frontend `detect` lint engine. Each rule is one `
 
 ## CONVENTIONS
 
-- The category index order determines lint output order — append deliberately.
+- The category index order determines lint output order - append deliberately.
 - Each rule is typed `PageRule`; the aggregate is `readonly Rule[]`.
 - Rule tests import their rule module directly; the aggregate is consumed by `detect/rules/index.ts`.
 
 ## ANTI-PATTERNS (parent rules-catalog)
 
 - NEVER add a rule to `index.ts` without its category aggregate.
-- NEVER put shared helpers next to rules — they belong in `support/`.
+- NEVER put shared helpers next to rules - they belong in `support/`.
 - A rule without a colocated test does not land.
 
 ## COMMANDS

@@ -1,4 +1,4 @@
-# onboarding — First-Run Onboarding + Setup Scan (direct files)
+# onboarding - First-Run Onboarding + Setup Scan (direct files)
 
 **Score:** 16 (43 direct files, 8.2k LOC). Claim semantics (`claimOnboarding`, `--onboard`, #9917), the scan RPC stream design, and the in-memory digest rules are documented in the parent [`packages/omo-senpi/AGENTS.md`](../../../../AGENTS.md); `session-history/` has its own AGENTS.md and is out of this file's scope.
 
@@ -21,13 +21,13 @@ The onboarding component (first-run flow) and the onboarding-scan component (`om
 
 ## CONVENTIONS
 
-- Scan loads lazily, once, only after a claim succeeds — never in `register()`; sessions that never onboard pay no scan cost (fail-open).
+- Scan loads lazily, once, only after a claim succeeds - never in `register()`; sessions that never onboard pay no scan cost (fail-open).
 - `claim-race-child.mjs` is a real subprocess probe, not a mock: race tests spawn it to prove single-claim across processes.
 - RPC/tool registrations are separate files per surface (state vs scan vs session-history); keep new surfaces in their own registration module.
 
 ## ANTI-PATTERNS
 
-- Do not persist anything a scan captured before explicit consent — digests stay in memory with the retained scan.
+- Do not persist anything a scan captured before explicit consent - digests stay in memory with the retained scan.
 - Do not add an unbounded read or parse a transcript format ad hoc in the session-history bridge (see `session-history/AGENTS.md`).
 
 ## COMMANDS

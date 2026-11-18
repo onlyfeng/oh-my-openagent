@@ -1,6 +1,6 @@
-# test/ — ULW-Loop Regression Suite
+# test/ - ULW-Loop Regression Suite
 
-**Generated:** 2026-11-18 / c2691818a9 | **Score:** 10 (67 spec files, ~12.2k LOC — the component's behavioral contract)
+**Generated:** 2026-11-18 / c2691818a9 | **Score:** 10 (67 spec files, ~12.2k LOC - the component's behavioral contract)
 
 ## OVERVIEW
 
@@ -23,9 +23,9 @@
 
 ## FIXTURES (`fixtures/`)
 
-- `checkpoint-builders.ts` — `goal`, `plan`, `snapshot`, `passGoal`, `NOW` (deterministic clock).
-- `cli-session.ts` — `CLI_TEST_SESSION_ID` / `CLI_TEST_SCOPE` scoping for the CLI suites.
-- `quality-gate-builder.ts` — `qaDirFor()` plus the artifact path constants (`QA_DIR`, `CODE_REVIEW_PATH`, `GATE_REVIEW_PATH`, `CLI_PASS_PATH`, `REJECTION_LOG_PATH`, `MISSING_ARTIFACT_PATH`).
+- `checkpoint-builders.ts` - `goal`, `plan`, `snapshot`, `passGoal`, `NOW` (deterministic clock).
+- `cli-session.ts` - `CLI_TEST_SESSION_ID` / `CLI_TEST_SCOPE` scoping for the CLI suites.
+- `quality-gate-builder.ts` - `qaDirFor()` plus the artifact path constants (`QA_DIR`, `CODE_REVIEW_PATH`, `GATE_REVIEW_PATH`, `CLI_PASS_PATH`, `REJECTION_LOG_PATH`, `MISSING_ARTIFACT_PATH`).
 - Detached-process probes (one-writer-per-JSONL contract): `commit-writer.ts`, `commit-child.ts`, `commit-crash.ts`, driven by `commit-cli-qa.mjs` / `commit-mutations.mjs`.
 - Synchronization: `barrier.ts` (cross-process barrier), `lease-clock.ts`.
 - Static payloads: `sample-plan.json`, `sample-quality-gate.json`, `sample-brief.md`, `steering-proposal.json`, `user-prompt-submit.json`, `codex-goal-snapshot.json`.
@@ -38,6 +38,6 @@
 ## COMMANDS
 
 ```bash
-npm test                               # vitest --run (CI invokes npm here — see parent)
+npm test                               # vitest --run (CI invokes npm here - see parent)
 bunx vitest run test/<file>.test.ts    # focused single spec
 ```

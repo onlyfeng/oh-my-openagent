@@ -1,4 +1,4 @@
-# src/plugin/hooks/ — Hook Composition (5-Tier)
+# src/plugin/hooks/ - Hook Composition (5-Tier)
 
 ## OVERVIEW
 
@@ -23,7 +23,7 @@ Parent: [`src/AGENTS.md`](../../AGENTS.md) carries the tier counts.
 ## CONVENTIONS
 
 - Registration pattern: `isHookEnabled(<name>) ? safeHook(<name>, factory(deps)) : null`
-  — a throwing factory becomes `null`, never a broken plugin.
+  - a throwing factory becomes `null`, never a broken plugin.
 - Each composer receives its dependencies explicitly (context, managers,
   options); no import of hook internals beyond the `src/hooks` barrel.
 - Adding a hook means picking the right composer here plus the hook dir and
@@ -31,7 +31,7 @@ Parent: [`src/AGENTS.md`](../../AGENTS.md) carries the tier counts.
 
 ## ANTI-PATTERNS
 
-- Do not wire `task-reminder` or `ralph-loop` casually — both are deliberate
+- Do not wire `task-reminder` or `ralph-loop` casually - both are deliberate
   WIP/unwired (parent hooks AGENTS.md).
 - Do not register a hook unconditionally; every hook goes through the
   enabled/safeHook pattern.

@@ -40,7 +40,7 @@ session.error / message.updated (with error) / session.status (retry signal)
 | `fallback-models.ts` / `fallback-bootstrap-model.ts` | Chain resolution from config hierarchy (strings + raw objects); initial model when state missing |
 | `fallback-retry-dispatcher.ts` | Toast + dispatch retry orchestration |
 | `auto-retry-dispatch.ts` | Prompt-gate reservation, marker preservation, bounded reservation backoff, stale-generation rollback |
-| `auto-retry-timeout.ts` / `auto-retry.ts` | `createFallbackTimeoutHelpers` — timeout-driven retry scheduling + expiry actions; abort, timeout scheduling, cleanup |
+| `auto-retry-timeout.ts` / `auto-retry.ts` | `createFallbackTimeoutHelpers` - timeout-driven retry scheduling + expiry actions; abort, timeout scheduling, cleanup |
 | `auto-retry-metadata.ts` / `last-user-retry-parts.ts` | `RetryPromptPart`, `resolveOriginalUserRetryMetadata`; extract last user message parts for retry |
 | `auto-retry-abort.ts` / `auto-retry-agent-context.ts` / `agent-resolver.ts` | `createAbortSessionRequest`, `createAgentContextResolver`; session → agent name normalization |
 | `auto-retry-cleanup.ts` / `stale-session-cleanup.ts` | Lazy fallback-state clearing for dead sessions |

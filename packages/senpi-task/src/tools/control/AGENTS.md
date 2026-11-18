@@ -1,4 +1,4 @@
-# tools/control/ — `task_send` / `task_cancel` (senpi-task)
+# tools/control/ - `task_send` / `task_cancel` (senpi-task)
 
 **Generated:** 2026-11-18 / c2691818a9 | Earned by score 13 (24 files, own barrel; sibling precedent [`../task/AGENTS.md`](../task/AGENTS.md)). Parent [`../../../AGENTS.md`](../../../AGENTS.md) pins the public tool names and factories; this file maps the steering surface.
 
@@ -6,12 +6,12 @@
 
 | File | Role |
 |------|------|
-| `send.ts` | `createTaskSendTool` / `runTaskSend` / `createMemberScopedTaskSendTool` — steering, resident-session revival, team routing (`TaskSendTeamRouting`), late-send outcomes (`LateSendOutcome` / `LateSendDelivery`) |
+| `send.ts` | `createTaskSendTool` / `runTaskSend` / `createMemberScopedTaskSendTool` - steering, resident-session revival, team routing (`TaskSendTeamRouting`), late-send outcomes (`LateSendOutcome` / `LateSendDelivery`) |
 | `send-schema.ts` / `send-results.ts` / `send-shutdown.ts` | Param schema; result shapes; shutdown approval traffic (`send-shutdown.test.ts` pins the handshake) |
 | `cancel.ts` | `createTaskCancelTool` / `runTaskCancel` |
 | `renderers.ts` (+ `renderers.test.ts`, `renderers-result.test.ts`, `member-scoped-renderer.test.ts`) | Tool-result rendering for send/cancel |
-| `tool-result.ts` | `toolResult` / `toolErrorResult` / `finalResponseHead` / `isTerminalStatus` — the one result envelope |
-| `clamp.ts` | `clampWaitTimeout` (`WaitBounds`) — every wait knob is clamped here |
+| `tool-result.ts` | `toolResult` / `toolErrorResult` / `finalResponseHead` / `isTerminalStatus` - the one result envelope |
+| `clamp.ts` | `clampWaitTimeout` (`WaitBounds`) - every wait knob is clamped here |
 | `caller-session.ts` / `types.ts` | `defaultResolveCallerSessionId`; manager ports (`SendManager`, `CancelManager`), carrier types |
 
 ## CONTRACT
@@ -21,7 +21,7 @@
 ## CONVENTIONS
 
 - Errors are data: `toolErrorResult` + typed details, never thrown out of `execute`.
-- Terminal checks go through `isTerminalStatus`; wait values through `clampWaitTimeout` — no inline bounds.
+- Terminal checks go through `isTerminalStatus`; wait values through `clampWaitTimeout` - no inline bounds.
 - Renderer changes ship with `renderers*.test.ts` expectations (TUI text is pinned).
 
 ## ANTI-PATTERNS

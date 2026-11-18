@@ -1,10 +1,10 @@
-# skills/ulw-plan/ — Senpi-Native Planning Skill
+# skills/ulw-plan/ - Senpi-Native Planning Skill
 
-**Score ~8** (7 files; distinct domain — approval-gated planning, no implementation).
+**Score ~8** (7 files; distinct domain - approval-gated planning, no implementation).
 
 ## OVERVIEW
 
-The Senpi-native `ulw-plan` skill: turns an ultrawork request into a guarded, approval-gated plan written only under `.omo/drafts` or `.omo/plans`. Planning is read-only — it never implements product code and never dispatches implementers. `SKILL.md` is the contract; `scripts/scaffold-plan.mjs` is the only sanctioned artifact producer.
+The Senpi-native `ulw-plan` skill: turns an ultrawork request into a guarded, approval-gated plan written only under `.omo/drafts` or `.omo/plans`. Planning is read-only - it never implements product code and never dispatches implementers. `SKILL.md` is the contract; `scripts/scaffold-plan.mjs` is the only sanctioned artifact producer.
 
 ## WHERE TO LOOK
 
@@ -24,7 +24,7 @@ The Senpi-native `ulw-plan` skill: turns an ultrawork request into a guarded, ap
 ## ANTI-PATTERNS
 
 - Never self-activate on a bare `ulw`; never implement product code or delegate implementation; never skip the approval gate.
-- Do NOT hand-build plan artifacts — use the scaffold script.
+- Do NOT hand-build plan artifacts - use the scaffold script.
 - Do not dispatch ordinary lanes with `category=`; only the documented advisory/reviewer exceptions apply.
 - Do not convert override phrases into authorization for irreversible/destructive/spending decisions.
 

@@ -1,6 +1,6 @@
-# components/config-watch/ — omo Config Watch Registration
+# components/config-watch/ - omo Config Watch Registration
 
-**Score ~9** (7 files, ~1.8k LOC; distinct domain — senpi config-watch protocol integration).
+**Score ~9** (7 files, ~1.8k LOC; distinct domain - senpi config-watch protocol integration).
 
 ## OVERVIEW
 
@@ -10,7 +10,7 @@ Registers omo config surfaces (`.omo/omo.jsonc` and friends) with senpi's option
 
 | File | Role |
 |------|------|
-| `index.ts` | `createConfigWatchComponent()` — registration + reload/reject handling |
+| `index.ts` | `createConfigWatchComponent()` - registration + reload/reject handling |
 | `paths.ts` | `resolveOmoConfigWatchTargetResolution`, watch-target globs, `isSenpiRestrictedTarget` |
 | `validate.ts` | `createOmoConfigValidator`, validation types; deprecated-key warnings on reload |
 
@@ -24,7 +24,7 @@ Registers omo config surfaces (`.omo/omo.jsonc` and friends) with senpi's option
 
 ## ANTI-PATTERNS
 
-- Must NOT synchronously re-register after a rejection — deferred retry with a bounded budget, reset on payload change (test-pinned).
+- Must NOT synchronously re-register after a rejection - deferred retry with a bounded budget, reset on payload change (test-pinned).
 
 ## COMMANDS
 

@@ -1,4 +1,4 @@
-# ast-grep/ — `sg` Binary Provisioning (utils)
+# ast-grep/ - `sg` Binary Provisioning (utils)
 
 **Generated:** 2026-11-18 / c2691818a9 | Earned by score 10 (14 files, own barrel, distinct domain: binary resolution + provisioning). Parent [`../../AGENTS.md`](../../AGENTS.md) keeps one row; this file maps the modules.
 
@@ -9,7 +9,7 @@
 | `index.ts` | Barrel re-exporting all seven modules |
 | `sg-manifest.ts` | The pinned sg version/platform manifest |
 | `sg-resolver.ts` | Resolution + cache paths; platform/arch normalized explicitly; suppresses a known deprecated-command warning (`sg-resolver.test.ts` pins the suppression) |
-| `sg-provisioner.ts` | `provisionSgBinary()` — plan, download, verify, extract into the cache |
+| `sg-provisioner.ts` | `provisionSgBinary()` - plan, download, verify, extract into the cache |
 | `install-script.ts` | Generates the standalone install script consumers run |
 | `sg-candidates.ts` | Candidate planning (which binary fits the host) |
 | `sg-install-hints.ts` | User-facing install hints |
@@ -20,7 +20,7 @@
 
 - Named environment-key constants; no inline env strings.
 - Platform/architecture pairs are normalized through the manifest tables, never stringly compared at call sites.
-- The deprecated-command suppression in `sg-resolver.ts` is intentional and test-pinned — do not "clean it up".
+- The deprecated-command suppression in `sg-resolver.ts` is intentional and test-pinned - do not "clean it up".
 
 ## ANTI-PATTERNS
 

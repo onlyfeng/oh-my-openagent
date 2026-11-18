@@ -1,6 +1,6 @@
-# layout/ — Layout Detection Rules
+# layout/ - Layout Detection Rules
 
-**Score 10** (39 files, ~3.5k LOC, own barrel + `support/` helpers). One of the six rule categories in [`../AGENTS.md`](../AGENTS.md) (which owns the catalog-level facts: `ALL_RULES` order, rule types, overrides, attribution, and the authoring rules — one rule per file, colocated tests, `support/` for shared helpers). This file maps THIS category's rules.
+**Score 10** (39 files, ~3.5k LOC, own barrel + `support/` helpers). One of the six rule categories in [`../AGENTS.md`](../AGENTS.md) (which owns the catalog-level facts: `ALL_RULES` order, rule types, overrides, attribution, and the authoring rules - one rule per file, colocated tests, `support/` for shared helpers). This file maps THIS category's rules.
 
 ## RULES (`index.ts` -> `LAYOUT_RULES: readonly Rule[]`, in registration order)
 
@@ -21,7 +21,7 @@
 | `content-hidden-at-rest.ts` | error | A large share of page text transparent/hidden instead of appearing as content |
 | `viewport-reflow.ts` | error | The document wider than the viewport, requiring sideways scrolling |
 
-## SUPPORT (`support/`, shared non-rule helpers — no `Rule` exports)
+## SUPPORT (`support/`, shared non-rule helpers - no `Rule` exports)
 
 `geometry.ts`, `cards.ts`, `clipping.ts`, `padding.ts`, `rhythm.ts`, `line-breaks.ts`, `hidden-interface.ts`, `declared-mockups.ts` (the mockup-region exemption), `layout-cases.ts`, `motion.ts`.
 

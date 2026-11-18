@@ -1,4 +1,4 @@
-# get-worker — `get.omo.dev` Cloudflare Worker
+# get-worker - `get.omo.dev` Cloudflare Worker
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 12 (29 files, ~1.3k LOC, standalone package boundary; role in [`../AGENTS.md`](../AGENTS.md) ROLE MAP)
 
@@ -22,7 +22,7 @@
 - **R2** `RELEASES` → bucket `omo-releases`.
 - **D1** `DB` → `omo-get` (`migrations/0001_downloads.sql`, `applied.txt`; `scripts/check-migrations-applied.sh` guards deploys).
 - **Analytics Engine** `DOWNLOADS` → `omo_downloads` (per-request download counting).
-- **Cron** `17 * * * *` → `downloads-rollup.ts` hourly rollup; needs the read-only `ANALYTICS_TOKEN` secret. `ROLLUP_FIRST_DAY` (2026-10-10) marks the day the account moved: the rollup must never overwrite it — a one-time backfill (both accounts' Analytics, summed) completed it.
+- **Cron** `17 * * * *` → `downloads-rollup.ts` hourly rollup; needs the read-only `ANALYTICS_TOKEN` secret. `ROLLUP_FIRST_DAY` (2026-10-10) marks the day the account moved: the rollup must never overwrite it - a one-time backfill (both accounts' Analytics, summed) completed it.
 - Custom domain `get.omo.dev` on the omo.dev zone (a Worker reaches another Worker on the same zone via custom domain, not a route; `/stable/*`, `/beta/*` are omo-desktop-releases' zone routes). Text modules rule for `**/*.sh` / `**/*.ps1`.
 
 ## WHERE TO LOOK

@@ -14,7 +14,7 @@ OpenCode 1.4.x sorts agents by `agent.name` with native string comparison (NOT `
 
 ### History
 
-15+ commits, 8+ PRs, multiple reverts: #3260 removed ZWSP injection (reverted by `0d5b08744` — OpenCode 1.4.x ignores `order`, removal alone causes alphabetical fallback); #3329 introduced `CANONICAL_CORE_AGENT_ORDER` and locked the policy (insufficient alone); #3267 proposed the sort shim, revived with cubic-P1 mitigations.
+15+ commits, 8+ PRs, multiple reverts: #3260 removed ZWSP injection (reverted by `0d5b08744` - OpenCode 1.4.x ignores `order`, removal alone causes alphabetical fallback); #3329 introduced `CANONICAL_CORE_AGENT_ORDER` and locked the policy (insufficient alone); #3267 proposed the sort shim, revived with cubic-P1 mitigations.
 
 ### Forbidden Patterns
 

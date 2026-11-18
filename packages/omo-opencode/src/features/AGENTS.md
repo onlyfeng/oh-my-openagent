@@ -1,4 +1,4 @@
-# src/features/ — 24 Feature Modules
+# src/features/ - 24 Feature Modules
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
@@ -10,7 +10,7 @@ Standalone feature modules wired into `plugin/` layer. Each is self-contained wi
 
 | Module | Complexity | Has sub-AGENTS.md | Purpose |
 |--------|------------|-------------------|---------|
-| **team-mode** | HIGH | yes | Parallel multi-agent coordination — 12 `team_*` tools; domain primitives live in `packages/team-core/` with OpenCode runtime/session wiring here |
+| **team-mode** | HIGH | yes | Parallel multi-agent coordination - 12 `team_*` tools; domain primitives live in `packages/team-core/` with OpenCode runtime/session wiring here |
 | **background-agent** | HIGH | yes | Task lifecycle, concurrency (5/key), 3s polling, spawner pattern, circuit breaker. Newer files include `parent-wake-notifier.ts`, `loop-detector`, `error-classifier`, `fallback-retry-handler`, `process-cleanup`, `subagent-spawn-limits`, `session-status-classifier`, and `compaction-aware-message-resolver`. |
 | **btw-side** | HIGH | no | Codex-aligned ephemeral side conversations: TUI commands and controls, bounded parent-context injection, session metadata, lifecycle cleanup, and isolation guards |
 | **tmux-subagent** | HIGH | yes | Tmux pane management, grid planning, session orchestration via `runTmuxCommand`; reusable tmux primitives live in `packages/tmux-core/` |
@@ -20,12 +20,12 @@ Standalone feature modules wired into `plugin/` layer. Each is self-contained wi
 | **mcp-oauth** | HIGH | yes | OAuth 2.0 + PKCE + DCR (RFC 7591) + step-up auth for MCP servers |
 | **claude-code-agent-loader** | LOW | yes | OpenCode adapter for agents from `.opencode/agents/` and Claude Code plugins; shared loader lives in `packages/claude-code-compat-core/` |
 | **claude-code-mcp-loader** | MEDIUM | yes | OpenCode adapter for tier-2 MCP loader; `.mcp.json` parse + `${VAR}` env expansion live in `packages/claude-code-compat-core/` |
-| **tool-metadata-store** | LOW–MED | no | Tool execution metadata cache; publish/recover lifecycle + task metadata contract |
+| **tool-metadata-store** | LOW-MED | no | Tool execution metadata cache; publish/recover lifecycle + task metadata contract |
 | **boulder-state** | LOW | yes | Persistent state for boulder (active work plan tracking across sessions/worktrees) |
 | **context-injector** | LOW | no | AGENTS.md/README.md injection into session context |
 | **hook-message-injector** | LOW | no | System message injection helper used by hooks |
 | **run-continuation-state** | LOW | no | Persistent state for `oh-my-opencode run` continuation across invocations |
-| **opencode-runtime-skills** | LOW–MED | no | Runtime security-skill source — `selectRuntimeSecuritySkills()` + `createRuntimeSkillSourceServer()` serve security skills to sessions at runtime |
+| **opencode-runtime-skills** | LOW-MED | no | Runtime security-skill source - `selectRuntimeSecuritySkills()` + `createRuntimeSkillSourceServer()` serve security skills to sessions at runtime |
 | **claude-code-command-loader** | LOW | no | Load `/commands` from `.opencode/commands/` and Claude Code plugins |
 | **claude-tasks** | MEDIUM | yes | Sisyphus task schema + atomic file storage + OpenCode todo API sync |
 | **task-toast-manager** | MEDIUM | no | Task progress notifications |
@@ -50,14 +50,14 @@ Core orchestration engine. `BackgroundManager` manages task lifecycle:
 ### team-mode (~13k LOC)
 
 Parallel multi-agent coordination, OFF by default. Harness-neutral domain primitives are extracted to `packages/team-core/`; this directory owns OpenCode-specific spawning, tool registration, and hook integration. Subdirs:
-- `team-registry/` — load/validate `~/.omo/teams/{name}/config.json`
-- `team-state-store/` — durable runtime state with atomic locks
-- `team-runtime/` — `team_create`, status, shutdown lifecycle
-- `team-mailbox/` — async messaging (send/poll/ack)
-- `team-tasklist/` — shared tasks with atomic claiming
-- `team-worktree/` — git worktree per member
-- `team-layout-tmux/` — optional tmux pane visualization
-- `tools/` — 12 `team_*` tool implementations
+- `team-registry/` - load/validate `~/.omo/teams/{name}/config.json`
+- `team-state-store/` - durable runtime state with atomic locks
+- `team-runtime/` - `team_create`, status, shutdown lifecycle
+- `team-mailbox/` - async messaging (send/poll/ack)
+- `team-tasklist/` - shared tasks with atomic claiming
+- `team-worktree/` - git worktree per member
+- `team-layout-tmux/` - optional tmux pane visualization
+- `tools/` - 12 `team_*` tool implementations
 
 Eligible members: sisyphus, atlas, sisyphus-junior, hephaestus only. See [`team-mode/AGENTS.md`](team-mode/AGENTS.md).
 
@@ -70,10 +70,10 @@ Eligible members: sisyphus, atlas, sisyphus-junior, hephaestus only. See [`team-
 
 ### tmux-subagent (~3.6k LOC)
 
-State-first tmux integration. Shared tmux primitives are extracted to `packages/tmux-core/`, while this feature owns OpenCode session tracking and pane decisions. Centralized tmux command execution goes through the shared runner. Direct `Bun.spawn(["tmux", ...])` is FORBIDDEN — would drift from retry/timeout discipline.
+State-first tmux integration. Shared tmux primitives are extracted to `packages/tmux-core/`, while this feature owns OpenCode session tracking and pane decisions. Centralized tmux command execution goes through the shared runner. Direct `Bun.spawn(["tmux", ...])` is FORBIDDEN - would drift from retry/timeout discipline.
 
 ### builtin-skills (extracted)
 
-The built-in skill catalog now lives entirely in `packages/skills-loader-core/src/features/builtin-skills/` — see [its AGENTS.md](../../../skills-loader-core/src/features/builtin-skills/AGENTS.md) for the skill table and browser-variant selection rules. Import through `@oh-my-opencode/skills-loader-core/builtin-skills`.
+The built-in skill catalog now lives entirely in `packages/skills-loader-core/src/features/builtin-skills/` - see [its AGENTS.md](../../../skills-loader-core/src/features/builtin-skills/AGENTS.md) for the skill table and browser-variant selection rules. Import through `@oh-my-opencode/skills-loader-core/builtin-skills`.
 
 `browser_automation_engine` selects one of `playwright`, `dev-browser`, or `playwright-cli`; the provider enum lives in `config/schema/browser-automation.ts`. Removed providers fail schema validation and the `browser-provider` doctor check reports migration guidance. Browser QA guidance in the shipped skills comes from omowright (the `browser` skill's owned and attached engines); the OpenCode provider enum is independent of it.

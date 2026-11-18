@@ -1,10 +1,10 @@
-# src/tools/call-omo-agent/ — Direct Agent Invocation Tool
+# src/tools/call-omo-agent/ - Direct Agent Invocation Tool
 
 **Generated:** 2026-11-18 / c2691818a (update pass)
 
 ## OVERVIEW
 
-26 `.ts` files (~2/3 tests). The `call_omo_agent` tool — direct invocation of named agents (explore, librarian only). Distinct from `delegate-task`: no category system, no skill loading, no model selection. Fixed agent set, same execution modes (background/sync).
+26 `.ts` files (~2/3 tests). The `call_omo_agent` tool - direct invocation of named agents (explore, librarian only). Distinct from `delegate-task`: no category system, no skill loading, no model selection. Fixed agent set, same execution modes (background/sync).
 
 ## DISTINCTION FROM delegate-task
 
@@ -17,7 +17,7 @@
 
 ## ALLOWED AGENTS
 
-Only `explore` and `librarian` — enforced via `ALLOWED_AGENTS` constant in `constants.ts`. Case-insensitive validation. Dynamic runtime agents never expand the allowlist (`tools-edge-cases.test.ts` R2).
+Only `explore` and `librarian` - enforced via `ALLOWED_AGENTS` constant in `constants.ts`. Case-insensitive validation. Dynamic runtime agents never expand the allowlist (`tools-edge-cases.test.ts` R2).
 
 ## EXECUTION MODES
 
@@ -32,7 +32,7 @@ Same two modes as delegate-task, routed by `tools.ts`:
 
 | File | Purpose |
 |------|---------|
-| `tools.ts` | `createCallOmoAgent()` factory — validates agent, routes to executor |
+| `tools.ts` | `createCallOmoAgent()` factory - validates agent, routes to executor |
 | `background-executor.ts` | Launch background work via `BackgroundManager.launch()` |
 | `sync-executor.ts` | Synchronous session: create → send prompt → poll → fetch result |
 | `session-creator.ts` | Create OpenCode session for sync execution |
@@ -47,4 +47,4 @@ Same two modes as delegate-task, routed by `tools.ts`:
 
 ## SESSION CONTINUATION
 
-Pass `session_id` to resume an existing session rather than create a new one — handled in both executors.
+Pass `session_id` to resume an existing session rather than create a new one - handled in both executors.

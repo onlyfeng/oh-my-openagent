@@ -1,6 +1,6 @@
-# src/shared/ — Config-Dir, Discovery & Shell-Env Helpers
+# src/shared/ - Config-Dir, Discovery & Shell-Env Helpers
 
-**Score:** 11 (11 source files, ~870 LOC; one of the highest-fan-out module families in the repo — importers across omo-opencode, boulder-state, claude-code-compat-core and more).
+**Score:** 11 (11 source files, ~870 LOC; one of the highest-fan-out module families in the repo - importers across omo-opencode, boulder-state, claude-code-compat-core and more).
 
 ## OVERVIEW
 
@@ -21,11 +21,11 @@ Config-directory resolution, project skill/command discovery, shell detection/es
 ## CONVENTIONS
 
 - Desktop OpenCode config dirs are detected via Tauri identifiers (`ai.opencode.desktop` / `.dev`) with `isDevBuild(version)`.
-- `detectShellType` checks PowerShell profile vars BEFORE `PSModulePath` — `PSModulePath` is always set on Windows and would misdetect (step scoped to Windows for that reason).
-- Identity constants must be derived from `PRODUCT_IDENTITY`, never hand-duplicated — one rename must not strand a reference.
+- `detectShellType` checks PowerShell profile vars BEFORE `PSModulePath` - `PSModulePath` is always set on Windows and would misdetect (step scoped to Windows for that reason).
+- Identity constants must be derived from `PRODUCT_IDENTITY`, never hand-duplicated - one rename must not strand a reference.
 - New helpers here ripple repo-wide (highest import fan-out in the package): keep signatures stable, prefer additive exports, and route through `./shared/*` subpath exports.
 
 ## ANTI-PATTERNS
 
-- Do not reimplement utils here — `skill-path-resolver` / `internal-initiator-marker` re-export on purpose.
+- Do not reimplement utils here - `skill-path-resolver` / `internal-initiator-marker` re-export on purpose.
 - Do not cache worktree detection outside the `detectWorktreePath`/`clearWorktreeCache` pair (the cache pair is the contract).

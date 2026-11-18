@@ -34,7 +34,7 @@ Harness-neutral LSP engine (`@oh-my-opencode/lsp-core`). Manages language server
 ## NOTES
 
 - **Tool surface:** 9 tools: `lsp_diagnostics`, `lsp_goto_definition`, `lsp_find_references`, `lsp_symbols`, `lsp_prepare_rename`, `lsp_rename`, `lsp_format`, `lsp_status`, and `lsp_install_decision`. Pinned by `src/tool-surface.test.ts`.
-- **Subpath exports:** `.`, `./tools`, `./request-context`, `./missing-dependency-result`, `./mcp`, `./post-edit`, and wildcard `./lsp/*` — all point at source `.ts`, no dist build.
+- **Subpath exports:** `.`, `./tools`, `./request-context`, `./missing-dependency-result`, `./mcp`, `./post-edit`, and wildcard `./lsp/*` - all point at source `.ts`, no dist build.
 - **RequestContext seam:** `request-context.ts` uses `AsyncLocalStorage` so the MCP proxy can thread `cwd` and `env` through shared daemon sessions.
 - **Config priority:** project `.codex/lsp-client.json` beats user `~/.codex/lsp-client.json` beats `BUILTIN_SERVERS`.
 - **Binary resolution:** `resolveServerBinary()` probes a path-shaped command, then marker-gated repo-local bin directories walking up from the request cwd, then `PATH`. A local bin directory is only trusted when a sibling project marker (`package.json`, `pyproject.toml`, `Gemfile`, `go.mod`, ...) proves it belongs to that ecosystem, so an unmarked `node_modules/.bin` is never trusted; the walk stops at a `.git` boundary. Results are cached per process, keyed by working directory and command. Live QA driver: `scripts/qa/local-binary-resolution-e2e.mjs`.

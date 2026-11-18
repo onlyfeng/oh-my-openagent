@@ -1,6 +1,6 @@
-# components/ultrawork/ — Ultrawork Keyword Arming
+# components/ultrawork/ - Ultrawork Keyword Arming
 
-**Score ~12** (9 files, ~2.4k LOC; distinct domain — keyword detection + directive arming).
+**Score ~12** (9 files, ~2.4k LOC; distinct domain - keyword detection + directive arming).
 
 ## OVERVIEW
 
@@ -12,7 +12,7 @@ Detects a standalone `ulw`/`ultrawork` keyword in user input and arms the sessio
 |------|------|
 | `index.ts` | `createUltraworkComponent()`, `classifyUltraworkInput()`, `isUltraworkInput()`, `sharedSessionArming()`, `armingSnapshot()` |
 | `generated-directive.ts` | `SENPI_ULTRAWORK_DIRECTIVE`, `SENPI_ASTRA_ULTRAWORK_DIRECTIVE` |
-| `ultrawork.test.ts` | Behavior suite (~577 LOC — the hotspot) |
+| `ultrawork.test.ts` | Behavior suite (~577 LOC - the hotspot) |
 
 ## CONVENTIONS
 
@@ -23,7 +23,7 @@ Detects a standalone `ulw`/`ultrawork` keyword in user input and arms the sessio
 
 ## ANTI-PATTERNS
 
-- Do NOT reuse a shared arming ledger when either directive text differs — exact text equality is intentional (a prior 32-bit FNV-1a revision admitted collisions).
+- Do NOT reuse a shared arming ledger when either directive text differs - exact text equality is intentional (a prior 32-bit FNV-1a revision admitted collisions).
 - Do NOT re-arm after a rejected compaction: the transcript still holds the directive.
 - Never match identifiers/paths (`ulwfoo`, `ulw_helper`, `.omo/ulw/`).
 

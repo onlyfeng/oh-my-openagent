@@ -1,4 +1,4 @@
-# .agents/ — Project-Scope Skills & Commands (Migration Target)
+# .agents/ - Project-Scope Skills & Commands (Migration Target)
 
 **Generated:** 2026-11-18 / c2691818a9 (refreshed; verified against disk)
 
@@ -39,8 +39,8 @@ Identical set to `.opencode/command/`:
 
 ## OTHER CONTENTS
 
-- `background-tasks.json` — Runtime state (parallel to `.opencode/background-tasks.json` during the transition).
-- `skills/.npmignore` — Co-located npm exclusion guard for internal-only assets (`__*`, `.private/`, `.draft/`). Root `.npmignore` does not work for directories listed in `package.json#files` under Bun 1.3.x, so the guard lives next to the published content and `script/package-layout-exclusion.test.ts` enforces it.
+- `background-tasks.json` - Runtime state (parallel to `.opencode/background-tasks.json` during the transition).
+- `skills/.npmignore` - Co-located npm exclusion guard for internal-only assets (`__*`, `.private/`, `.draft/`). Root `.npmignore` does not work for directories listed in `package.json#files` under Bun 1.3.x, so the guard lives next to the published content and `script/package-layout-exclusion.test.ts` enforces it.
 
 ## MIGRATION STATUS
 

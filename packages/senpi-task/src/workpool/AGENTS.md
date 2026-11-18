@@ -1,4 +1,4 @@
-# src/workpool/ — Durable Parallel Worker Pool
+# src/workpool/ - Durable Parallel Worker Pool
 
 **Score ~20** (38 files, ~4.6k LOC; durable scheduling engine, schema-validated records).
 
@@ -10,8 +10,8 @@ The `workpool` engine behind senpi-task's parallel multi-worker coordination. Ow
 
 | File | Role |
 |------|------|
-| `engine.ts` | `createWorkpoolEngine` — orchestration: lifecycle, grants, aggregate delivery, subscriptions, attach/dispose (~320 LOC) |
-| `dispatcher.ts` | `createWorkpoolDispatcher` — admission, recovery, completion/reconcile, worker reuse (~303 LOC) |
+| `engine.ts` | `createWorkpoolEngine` - orchestration: lifecycle, grants, aggregate delivery, subscriptions, attach/dispose (~320 LOC) |
+| `dispatcher.ts` | `createWorkpoolDispatcher` - admission, recovery, completion/reconcile, worker reuse (~303 LOC) |
 | `store.ts` | Durable JSON record store |
 | `schema.ts` / `record-schema.ts` | Strict Zod command/record schemas (discriminated op commands, branded `wp_`/`wi_` ids) |
 | `reconcile.ts` | Reconcile durable receipts vs live state |

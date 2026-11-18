@@ -1,4 +1,4 @@
-# worktree-sweep — Stale Git Worktree Sweeper
+# worktree-sweep - Stale Git Worktree Sweeper
 
 **Score:** 12 (11 files, 1.2k LOC, index barrel, own CLI semantics). Parent [`src/cli/AGENTS.md`](../AGENTS.md) documents the command row and the default exclude prefixes (`~/.codex/worktrees`, `~/.codex-gui-cli-remote/worktrees`).
 
@@ -10,12 +10,12 @@ Classifies and sweeps stale linked worktrees for the `omo worktree-sweep` comman
 
 | Task | Location |
 |------|----------|
-| Classification + excludes | `classify.ts` — `classifyWorktree`, `DEFAULT_EXCLUDE_PREFIXES`, `isExcludedPath` |
-| List parsing | `parse-worktree-list.ts` — `parseWorktreeList`, `linkedWorktrees` |
-| Option parsing | `options.ts` — `parseOlderThanDays` (non-negative integer, else throws) |
-| Sweep execution | `sweep.ts` — `sweepWorktrees` |
-| CLI adapter | `worktree-sweep.ts` — `worktreeSweep` (command entry) |
-| Output | `format.ts` — `formatClassification`, `formatResult`, `formatSummary` |
+| Classification + excludes | `classify.ts` - `classifyWorktree`, `DEFAULT_EXCLUDE_PREFIXES`, `isExcludedPath` |
+| List parsing | `parse-worktree-list.ts` - `parseWorktreeList`, `linkedWorktrees` |
+| Option parsing | `options.ts` - `parseOlderThanDays` (non-negative integer, else throws) |
+| Sweep execution | `sweep.ts` - `sweepWorktrees` |
+| CLI adapter | `worktree-sweep.ts` - `worktreeSweep` (command entry) |
+| Output | `format.ts` - `formatClassification`, `formatResult`, `formatSummary` |
 | Git access + types | `git.ts`, `types.ts`; barrel `index.ts` |
 
 ## CONVENTIONS
@@ -27,7 +27,7 @@ Classifies and sweeps stale linked worktrees for the `omo worktree-sweep` comman
 
 ## ANTI-PATTERNS
 
-- Never sweep a worktree whose path matches an exclude prefix — external tools own those roots.
+- Never sweep a worktree whose path matches an exclude prefix - external tools own those roots.
 - Never delete in the same pass that reports; classification and removal stay separable for the dry-run contract.
 
 ## COMMANDS

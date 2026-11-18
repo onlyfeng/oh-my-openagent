@@ -1,4 +1,4 @@
-# tests/ — ulw-research Script Test Support + Fixtures
+# tests/ - ulw-research Script Test Support + Fixtures
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 13 (40 files, 7 subdirs; the support seam + fixtures for the `../` suites). Cluster map and invariants of the runtime itself live in [`../AGENTS.md`](../AGENTS.md).
 
@@ -10,7 +10,7 @@ Shared test-support modules (imported directly by the `../` `*.test.ts` suites) 
 
 | File | Role |
 |------|------|
-| `derive-clock.ts` | `derive` wrapper — ALL successful test derivations use caller-owned FIXED observation time (default `2026-10-23T08:00:00Z`); spec may override `now` |
+| `derive-clock.ts` | `derive` wrapper - ALL successful test derivations use caller-owned FIXED observation time (default `2026-10-23T08:00:00Z`); spec may override `now` |
 | `contracts-support.ts` | Contracts test support |
 | `delivery-barrier-session.ts` | Delivery-barrier session support |
 | `fact-derive-support.ts` / `fact-unit-dimensions-support.ts` / `fact-unit-rules-support.ts` | Fact-derive/unit supports (import the `../` `.mjs` production modules directly) |
@@ -20,12 +20,12 @@ Shared test-support modules (imported directly by the `../` `*.test.ts` suites) 
 
 ## CONVENTIONS
 
-- Supports import production `.mjs` modules (`fact-derive.mjs`, `fact-ledger.mjs`, `unit-rules.mjs`, `units.mjs`) directly — no build step, no re-exports.
+- Supports import production `.mjs` modules (`fact-derive.mjs`, `fact-ledger.mjs`, `unit-rules.mjs`, `units.mjs`) directly - no build step, no re-exports.
 - Runner is `bun:test`; same command as the parent.
 
 ## ANTI-PATTERNS
 
-- Never derive with wall-clock `now` — a successful derivation must be reproducible; pass a fixed time.
+- Never derive with wall-clock `now` - a successful derivation must be reproducible; pass a fixed time.
 - Do not copy fixture content into suites; reference the fixture files (they are the single source).
 
 ## COMMANDS

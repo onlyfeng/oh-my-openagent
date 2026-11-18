@@ -1,10 +1,10 @@
-# delegate-core — Delegate Model Selection + Retry Guidance (Core)
+# delegate-core - Delegate Model Selection + Retry Guidance (Core)
 
 **Generated:** 2026-11-18 / c2691818a (verified against source; content unchanged from the 2026-08-24 pass)
 
 ## OVERVIEW
 
-Two harness-neutral primitives for the `task`/delegate tool: (1) resolve which model a category/agent delegation should run on, with a multi-step fallback chain; (2) detect common `task()` invocation errors and build corrective retry guidance. Purely functional — zero state, zero IO, all deps injected. Package: `@oh-my-opencode/delegate-core`.
+Two harness-neutral primitives for the `task`/delegate tool: (1) resolve which model a category/agent delegation should run on, with a multi-step fallback chain; (2) detect common `task()` invocation errors and build corrective retry guidance. Purely functional - zero state, zero IO, all deps injected. Package: `@oh-my-opencode/delegate-core`.
 
 ## PUBLIC API (`src/index.ts` barrel)
 
@@ -12,7 +12,7 @@ Two harness-neutral primitives for the `task`/delegate tool: (1) resolve which m
 |--------|-------------|
 | `model-selection.ts` | `resolveModelForDelegateTask(input, deps)`; types `DelegateFallbackEntry`, `DelegateModelResolutionInput/Result/Deps` |
 | `retry-patterns.ts` | `detectDelegateTaskError(output)`, `DELEGATE_TASK_ERROR_PATTERNS` (9 entries) |
-| `retry-guidance.ts` | `buildRetryGuidance(errorInfo)` — fix hint + available options + example call |
+| `retry-guidance.ts` | `buildRetryGuidance(errorInfo)` - fix hint + available options + example call |
 
 ### Resolution order (`resolveModelForDelegateTask`)
 
@@ -29,7 +29,7 @@ Two harness-neutral primitives for the `task`/delegate tool: (1) resolve which m
 
 ## NOTES
 
-- **Cold-cache `skipped` sentinel:** when `availableModels` AND `connectedProviders` caches are both empty, resolution defers — caller waits for the model cache rather than picking wrong.
+- **Cold-cache `skipped` sentinel:** when `availableModels` AND `connectedProviders` caches are both empty, resolution defers - caller waits for the model cache rather than picking wrong.
 - **`-high` models** are matched on their base model exactly, never fuzzy-downgraded to a non-high variant.
 - **Variant propagation:** a matched `DelegateFallbackEntry`'s variant flows through to the result.
 - **Fallback-chain provider shaping:** each entry's model passes through `transformModelForProvider` before exact matching, so provider-prefixed IDs (e.g. Vercel `openai/gpt-5.6-sol`) resolve on the owning entry. A rung resolves only on the providers it lists (#9146): a gateway re-publishing the model (`openrouter/anthropic/claude-opus-5.5`) or any other unlisted provider is never selected. `allowUnlistedProviders: true` opts back into cross-provider fuzzy matching for callers whose rungs are the user's own selection (the omo-senpi `model_profile` matcher); that step skips providers holding a later dedicated rung for the same model, so the earlier variant is kept.

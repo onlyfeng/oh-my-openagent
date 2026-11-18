@@ -1,4 +1,4 @@
-# src/ — Device Service Core (direct files)
+# src/ - Device Service Core (direct files)
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 22 (20 direct TS files + 4 subdirs; barrel consumed by the omo-senpi `device-service` component and the desktop app). This file covers ONLY the directory's own files; subdirs are pointers.
 
@@ -25,7 +25,7 @@ Vendored device-service core (`@oh-my-opencode/device-service-core`): device ide
 ## CONVENTIONS
 
 - Wire properties are `readonly`; literal tuples derive union types.
-- Time is injectable (`Timers`, `realTimers` default) — tests never sleep.
+- Time is injectable (`Timers`, `realTimers` default) - tests never sleep.
 - Vendored provenance lives in source headers and `local-api/PIN.json`; the parity test rejects any extra file in that directory.
 
 ## COMMANDS

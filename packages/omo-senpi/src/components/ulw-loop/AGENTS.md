@@ -1,4 +1,4 @@
-# components/ulw-loop/ — Senpi ULW Loop Component
+# components/ulw-loop/ - Senpi ULW Loop Component
 
 ## OVERVIEW
 
@@ -26,7 +26,7 @@ Parent: [`src/AGENTS.md`](../../AGENTS.md).
   run whose ownership cannot be established.
 - Unknown/failed/malformed status reads must NOT be treated as proof that
   no plan exists.
-- Continuation budget is spent only after `agent_settled` — never at
+- Continuation budget is spent only after `agent_settled` - never at
   `agent_end` (abort and host retry/compaction state may still change).
 - Steering goes through the SDK in a JS eval cell; no session ID or plan
   path is passed; never spawn the removed toolkit CLI or call the removed

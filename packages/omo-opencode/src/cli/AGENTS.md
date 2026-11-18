@@ -1,4 +1,4 @@
-# src/cli/ — CLI: install, run, doctor, config, mcp (oauth), refresh-model-capabilities, get-local-version, version, boulder, worktree-sweep, cleanup, ulw-loop
+# src/cli/ - CLI: install, run, doctor, config, mcp (oauth), refresh-model-capabilities, get-local-version, version, boulder, worktree-sweep, cleanup, ulw-loop
 
 **Generated:** 2026-11-18 / c2691818a9
 
@@ -44,7 +44,7 @@ cli/
 ├── doctor/
 │   ├── runner.ts                # Parallel check execution
 │   ├── formatter.ts             # Output formatting
-│   └── checks/                  # 27 check files (9 non-Codex + 3 Codex-only registered) — see [doctor/AGENTS.md](doctor/AGENTS.md)
+│   └── checks/                  # 27 check files (9 non-Codex + 3 Codex-only registered) - see [doctor/AGENTS.md](doctor/AGENTS.md)
 ├── run/                         # Session launcher
 │   ├── runner.ts                # Main orchestration
 │   ├── agent-resolver.ts        # Flag → env → config → Sisyphus

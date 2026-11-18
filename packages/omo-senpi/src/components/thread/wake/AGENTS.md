@@ -1,4 +1,4 @@
-# components/thread/wake/ — Cross-Session Wake
+# components/thread/wake/ - Cross-Session Wake
 
 ## OVERVIEW
 
@@ -15,7 +15,7 @@ Parent: [`src/AGENTS.md`](../../../AGENTS.md).
 | File | Role |
 |------|------|
 | `runtime.ts` | Runtime composition: carrier, connection, consumer, minimum-version, host-ensure |
-| `carrier.ts` | `createCarrier` — wake leases, opening, event handling, evaluation, retries, sweeps (hotspot, 531 LOC) |
+| `carrier.ts` | `createCarrier` - wake leases, opening, event handling, evaluation, retries, sweeps (hotspot, 531 LOC) |
 | `carrier-connection.ts`, `engine-minimum.ts` | Host connection; `MIN_WAKE_ENGINE_VERSION`, `engineDropsRetainedRecord` |
 | `session-target.ts`, `session-waker.ts` | `resolveWakeTarget`, `WakeOutcome`, `SessionWaker` |
 | `consumer-start.ts`, `pending-sweep.ts` | Delivery consumer startup; pending-record sweeps |

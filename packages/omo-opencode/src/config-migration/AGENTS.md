@@ -1,4 +1,4 @@
-# src/config-migration/ — Legacy Config Discovery + Transforms
+# src/config-migration/ - Legacy Config Discovery + Transforms
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 

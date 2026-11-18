@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-Sibling to `claude-code-mcp-loader`. Loads Claude Code agent definitions from `.opencode/agents/`, `~/.claude/agents/`, and inline `opencode.json` config, then translates them to OpenCode `AgentConfig`. Every file here is a one-line `export *` shim re-exporting [`packages/claude-code-compat-core/claude-code-agent-loader`](../../../../claude-code-compat-core/AGENTS.md) — all implementation lives in Core; edit there, not here.
+Sibling to `claude-code-mcp-loader`. Loads Claude Code agent definitions from `.opencode/agents/`, `~/.claude/agents/`, and inline `opencode.json` config, then translates them to OpenCode `AgentConfig`. Every file here is a one-line `export *` shim re-exporting [`packages/claude-code-compat-core/claude-code-agent-loader`](../../../../claude-code-compat-core/AGENTS.md) - all implementation lives in Core; edit there, not here.
 
 ## LOAD PIPELINE (implemented in Core)
 
@@ -23,11 +23,11 @@ loadUserAgents() / loadProjectAgents() / loadOpencodeGlobalAgents() / loadOpenco
 | File | Re-exports from `@oh-my-opencode/claude-code-compat-core/claude-code-agent-loader/` |
 |------|------------------------------------------------------------------------------------|
 | `index.ts` | barrel (`...` root) |
-| `loader.ts` | `/loader` — `loadUserAgents()`, `loadProjectAgents()`, `loadOpencode*Agents()` |
-| `agent-definitions-loader.ts` | `/agent-definitions-loader` — `parseMarkdownAgentFile()`, `loadAgentDefinitions()` |
-| `json-agent-loader.ts` | `/json-agent-loader` — `parseJsonAgentFile()` (JSON/JSONC) |
-| `claude-model-mapper.ts` | `/claude-model-mapper` — Claude aliases -> OpenCode `providerID/modelID` |
-| `types.ts` | `/types` — `ClaudeCodeAgentConfig`, `AgentScope`, `LoadedAgent` |
+| `loader.ts` | `/loader` - `loadUserAgents()`, `loadProjectAgents()`, `loadOpencode*Agents()` |
+| `agent-definitions-loader.ts` | `/agent-definitions-loader` - `parseMarkdownAgentFile()`, `loadAgentDefinitions()` |
+| `json-agent-loader.ts` | `/json-agent-loader` - `parseJsonAgentFile()` (JSON/JSONC) |
+| `claude-model-mapper.ts` | `/claude-model-mapper` - Claude aliases -> OpenCode `providerID/modelID` |
+| `types.ts` | `/types` - `ClaudeCodeAgentConfig`, `AgentScope`, `LoadedAgent` |
 
 ## INTEGRATION
 

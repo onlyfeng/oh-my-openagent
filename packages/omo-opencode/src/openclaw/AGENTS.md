@@ -1,10 +1,10 @@
-# src/openclaw/ — OpenClaw Adapter Shims (implementation in openclaw-core)
+# src/openclaw/ - OpenClaw Adapter Shims (implementation in openclaw-core)
 
 **Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh
 
 ## OVERVIEW
 
-Every `.ts` file here (except `AGENTS.md`) is a ONE-LINE re-export shim: `export * from "@oh-my-opencode/openclaw-core/<module>"`. The harness-neutral gateway, daemon, session registry, and tmux-injection primitives live in [`packages/openclaw-core/`](../../../openclaw-core/AGENTS.md); this directory exists only to keep the OpenCode import paths (`../openclaw`, `../openclaw/reply-listener-*`, ...) stable while the implementation moves. Do NOT add logic here — extend `openclaw-core` and keep the shim. `__tests__/config.test.ts` is the only real code (config parsing contract).
+Every `.ts` file here (except `AGENTS.md`) is a ONE-LINE re-export shim: `export * from "@oh-my-opencode/openclaw-core/<module>"`. The harness-neutral gateway, daemon, session registry, and tmux-injection primitives live in [`packages/openclaw-core/`](../../../openclaw-core/AGENTS.md); this directory exists only to keep the OpenCode import paths (`../openclaw`, `../openclaw/reply-listener-*`, ...) stable while the implementation moves. Do NOT add logic here - extend `openclaw-core` and keep the shim. `__tests__/config.test.ts` is the only real code (config parsing contract).
 
 ## FLOW (semantics live in openclaw-core)
 

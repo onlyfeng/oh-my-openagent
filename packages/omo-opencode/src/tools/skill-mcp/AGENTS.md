@@ -1,4 +1,4 @@
-# src/tools/skill-mcp/ — Skill-Embedded MCP Tool (OpenCode)
+# src/tools/skill-mcp/ - Skill-Embedded MCP Tool (OpenCode)
 
 ## OVERVIEW
 
@@ -22,7 +22,7 @@ by the `SkillMcpManager` (tier-3 client lifecycle; see
 
 - All client work delegates to the manager; this directory owns argument
   parsing and result shaping only.
-- Environment grants to spawned servers follow the manager's env policy —
+- Environment grants to spawned servers follow the manager's env policy -
   never widen it locally.
 
 ## ANTI-PATTERNS

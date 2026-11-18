@@ -17,7 +17,7 @@ host, not a Bun-callable clone operation.
 - `IsolationUnavailableError` permits fallback. Other errors propagate. A failed
   teardown preserves the tree rather than recursively removing an active mount.
 - `chooseBaseDir(repoRoot, homeDir, id)` selects a same-device location (mkdir/remove probe; optional I/O seam for deterministic device tests); a cross-device home fallback excludes tree-cloning backends.
-- `ensureIsolation` claims a `.creating-<pid>` sibling before starting, then publishes via the backend's optional `relocate(fromBase, toBase)` hook (or rename for non-mounted backends); retention uses the same hook. Published/in-flight directories are never overwritten — reclaim via stale sweeping.
+- `ensureIsolation` claims a `.creating-<pid>` sibling before starting, then publishes via the backend's optional `relocate(fromBase, toBase)` hook (or rename for non-mounted backends); retention uses the same hook. Published/in-flight directories are never overwritten - reclaim via stale sweeping.
 - Ownership is checked before age. Foreign, retained, live and unknown owners
   are never automatically deleted. Creating/malformed markers get a ten-minute
   grace period. A live creating owner survives regardless of age.
@@ -57,11 +57,11 @@ device/liveness probes. `started_at` is an ISO timestamp recorded after successf
 start; old `{ backend }` markers remain readable by the sweeper. ZFS markers also
 record dataset/snapshot identity, and overlay markers retain the lower path.
 
-The Linux filesystem workflow creates real loopback btrfs and (when the kernel module loads) ZFS, exercising publication, COW and teardown; required check `Isolation Linux filesystems / linux-fs` for isolation-core and isolated-child PRs (branch protection is not managed here — the PR must request it). Missing filesystem env vars produce explicit local skip reasons; the workflow also mutation-tests EOPNOTSUPP rejection on the runner's ext4 /tmp. Reflink's Node-hosted fallback uses argv-only `cp -a --reflink=always`, never a silent plain copy; FFI walks and rcopy plain copies account bytes during traversal, reserve 10% headroom, and default to a 2 GiB ceiling (no separate prewalk).
+The Linux filesystem workflow creates real loopback btrfs and (when the kernel module loads) ZFS, exercising publication, COW and teardown; required check `Isolation Linux filesystems / linux-fs` for isolation-core and isolated-child PRs (branch protection is not managed here - the PR must request it). Missing filesystem env vars produce explicit local skip reasons; the workflow also mutation-tests EOPNOTSUPP rejection on the runner's ext4 /tmp. Reflink's Node-hosted fallback uses argv-only `cp -a --reflink=always`, never a silent plain copy; FFI walks and rcopy plain copies account bytes during traversal, reserve 10% headroom, and default to a 2 GiB ceiling (no separate prewalk).
 
 ## ReFS manual verification (D2)
 
-Hosted Windows runners do not provide ReFS; the default is native-contract tests only — never describe those as a live ReFS proof. On a disposable, provisioned ReFS volume (e.g. `R:`), from the repo root in PowerShell:
+Hosted Windows runners do not provide ReFS; the default is native-contract tests only - never describe those as a live ReFS proof. On a disposable, provisioned ReFS volume (e.g. `R:`), from the repo root in PowerShell:
 
 ```powershell
 fsutil fsinfo volumeinfo R:

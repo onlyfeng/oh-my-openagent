@@ -1,10 +1,10 @@
-# boulder-state — Work-Tracking State Machine (Core)
+# boulder-state - Work-Tracking State Machine (Core)
 
 **Generated:** 2026-11-18 / c2691818a (update pass)
 
 ## OVERVIEW
 
-Tracks the active work plan (the "boulder") across sessions, worktrees, and subagent task delegations. State persists in `<worktree-root>/.omo/boulder.json` (`schema_version: 2`). Zero npm dependencies — pure functional state machine over JSON. Package: `@oh-my-opencode/boulder-state`.
+Tracks the active work plan (the "boulder") across sessions, worktrees, and subagent task delegations. State persists in `<worktree-root>/.omo/boulder.json` (`schema_version: 2`). Zero npm dependencies - pure functional state machine over JSON. Package: `@oh-my-opencode/boulder-state`.
 
 ## STATE MODEL
 
@@ -31,7 +31,7 @@ Every `BoulderState` carries `active_work_id` + a `works` map. The root-level fi
 
 ## NOTES
 
-- **Prototype-pollution guard:** `RESERVED_KEYS = {__proto__, prototype, constructor}` — task upserts reject matching keys.
+- **Prototype-pollution guard:** `RESERVED_KEYS = {__proto__, prototype, constructor}` - task upserts reject matching keys.
 - **Session IDs are normalized** with an `opencode:` / `codex:` / `senpi:` prefix (`normalizeSessionId`). Senpi callers must pass a pre-prefixed `senpi:<id>` to read APIs such as `getWorkForSession`; the default platform stays `opencode`.
 - **`readBoulderState` rejects empty `{}`** as invalid (returns null), alongside non-object and array payloads.
 - **Stale works:** `completeBoulder` is the only completion transition, so a work whose session died abnormally would stay `active` forever (#8413). `reconcileStaleWorks(directory, options?)` demotes an `active` work to `paused` and stamps `stale_since` when its last activity - the newest of its sessions' transcript mtimes, `updated_at` and `started_at` - is at least `OMO_BOULDER_STALE_WORK_THRESHOLD_MS` (default 6h) old; a work with no activity evidence at all is stale. Nothing stale means no write, `completed`/`abandoned` and status-less records are never touched, and every failure is swallowed. Transcripts are read only under session directories whose alphanumeric shape matches the work's own cwd or worktree, because an agent home accumulates thousands of them. `selectActiveWork`/`appendSessionIdForWork` return a `stale_since` work to `active` and drop the stamp; a work paused without the stamp keeps its status. Readers are unchanged - `getActiveWorks`/`getWorkResumeOptions` still filter `completed`/`abandoned` only.

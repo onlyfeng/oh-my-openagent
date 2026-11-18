@@ -3,7 +3,7 @@ name: agents-directory
 description: Developer reference for all 11 Oh My OpenAgent agent definitions, factory patterns, tool restrictions, and model routing.
 ---
 
-# src/agents/ — 11 Agent Definitions
+# src/agents/ - 11 Agent Definitions
 
 Model-specific system cores come from `@code-yeongyu/senpi/prompt-presets` via
 `native-model-prompt.ts` (PR #9856); `native-prompt-frame.ts` rebuilds the generated
@@ -13,7 +13,7 @@ prompts without a Native core.
 
 ## OVERVIEW
 
-11 built-in agents. Type enum: [`src/config/schema/agent-names.ts`](../config/schema/agent-names.ts) `BuiltinAgentNameSchema`. 10 register via [`builtin-agents.ts`](builtin-agents.ts) `agentSources`. **Prometheus is special-cased** — no `createPrometheusAgent` factory; [`prometheus-agent-config-builder.ts`](../plugin-handlers/prometheus-agent-config-builder.ts) constructs its config directly during `agent-config-handler` Phase 3.
+11 built-in agents. Type enum: [`src/config/schema/agent-names.ts`](../config/schema/agent-names.ts) `BuiltinAgentNameSchema`. 10 register via [`builtin-agents.ts`](builtin-agents.ts) `agentSources`. **Prometheus is special-cased** - no `createPrometheusAgent` factory; [`prometheus-agent-config-builder.ts`](../plugin-handlers/prometheus-agent-config-builder.ts) constructs its config directly during `agent-config-handler` Phase 3.
 
 ## AGENT INVENTORY
 
@@ -39,7 +39,7 @@ Oracle/Librarian/Explore deny `write, edit, task, call_omo_agent`; Momus denies 
 
 ## TEAM-MODE ELIGIBILITY
 
-Registry: [`AGENT_ELIGIBILITY_REGISTRY`](../features/team-mode/types.ts). `eligible`: sisyphus, atlas, sisyphus-junior. `conditional`: hephaestus (lacks `teammate: "allow"` by default — D-36 / `tool-config-handler.ts`; use `subagent_type: "sisyphus"`). `hard-reject`: oracle, librarian, explore, multimodal-looker, metis, momus, prometheus — read-only agents are rejected at TeamSpec parse time; the lead delegates via `task` instead. See [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md).
+Registry: [`AGENT_ELIGIBILITY_REGISTRY`](../features/team-mode/types.ts). `eligible`: sisyphus, atlas, sisyphus-junior. `conditional`: hephaestus (lacks `teammate: "allow"` by default - D-36 / `tool-config-handler.ts`; use `subagent_type: "sisyphus"`). `hard-reject`: oracle, librarian, explore, multimodal-looker, metis, momus, prometheus - read-only agents are rejected at TeamSpec parse time; the lead delegates via `task` instead. See [`team-mode/AGENTS.md`](../features/team-mode/AGENTS.md).
 
 ## STRUCTURE
 
@@ -67,4 +67,4 @@ agents/
 
 ## DYNAMIC PROMPT BUILDER
 
-`dynamic-agent-*.ts` supply the reusable role-context sections — core (identity/mode/restrictions), policy (citation/verification/anti-patterns), tool categorization, category-skills guide. The Sisyphus prompt's "AGENTS / CATEGORY + SKILLS" tables come from here.
+`dynamic-agent-*.ts` supply the reusable role-context sections - core (identity/mode/restrictions), policy (citation/verification/anti-patterns), tool categorization, category-skills guide. The Sisyphus prompt's "AGENTS / CATEGORY + SKILLS" tables come from here.

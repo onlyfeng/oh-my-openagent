@@ -1,6 +1,6 @@
-# state/ — Task Record + Transition Core (senpi-task)
+# state/ - Task Record + Transition Core (senpi-task)
 
-**Generated:** 2026-11-18 / c2691818a9 | Earned by score 16 (30 files, own barrel, imported by store/lifecycle/manager/tools alike). Parent [`../../AGENTS.md`](../../AGENTS.md) names the enums and lifecycle rules; this file maps the modules. Pure data + functions: no IO, no process access — that purity is what keeps `senpi-task` runnable without a live Senpi import (optional peers).
+**Generated:** 2026-11-18 / c2691818a9 | Earned by score 16 (30 files, own barrel, imported by store/lifecycle/manager/tools alike). Parent [`../../AGENTS.md`](../../AGENTS.md) names the enums and lifecycle rules; this file maps the modules. Pure data + functions: no IO, no process access - that purity is what keeps `senpi-task` runnable without a live Senpi import (optional peers).
 
 ## STRUCTURE
 
@@ -16,15 +16,15 @@
 
 ## CONVENTIONS
 
-- Status/residency vocabulary lives ONLY in `types.ts`; every consumer imports it — no string literals.
+- Status/residency vocabulary lives ONLY in `types.ts`; every consumer imports it - no string literals.
 - The transition table is data (`transitions-table.test.ts` pins it); a new transition is a table row plus an audit expectation, not an `if`.
-- Residency-regression, run-pause, and start-failure-reset suites pin the epoch/reset edge cases — extend them with any rule change.
+- Residency-regression, run-pause, and start-failure-reset suites pin the epoch/reset edge cases - extend them with any rule change.
 
 ## ANTI-PATTERNS
 
 - Do not add a status/residency value without auditing every switch and the parent lifecycle's epoch rules (non-terminal reattach bumps `run_epoch` exactly once).
 - Do not read/write the filesystem or process table here; that belongs to `store/` and `lifecycle/`.
-- Do not compare task ids lexically — `id.ts` owns ordering.
+- Do not compare task ids lexically - `id.ts` owns ordering.
 
 ## COMMANDS
 

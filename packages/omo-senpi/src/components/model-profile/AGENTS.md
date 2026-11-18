@@ -1,4 +1,4 @@
-# model-profile/ — Session-Start Model Profile Component
+# model-profile/ - Session-Start Model Profile Component
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 22 (19 files, ~3.7k LOC). Component conventions (factories, `register(pi, ctx)`, structural ports) are owned by [`../../AGENTS.md`](../../AGENTS.md).
 
@@ -11,11 +11,11 @@ Applies a named ordered model profile at session start: a lane of `{ providers, 
 | File | Role |
 |------|------|
 | `index.ts` | `createModelProfileComponent` + the three outcome message types (`MODEL_PROFILE_{APPLIED,UNAVAILABLE,UNKNOWN}_TYPE`) |
-| `resolve.ts` | Pure resolver: `mergeModelProfiles`, `resolveModelProfile` — rung matching through the delegate-core resolver; `builtin \| user \| pin` sources |
+| `resolve.ts` | Pure resolver: `mergeModelProfiles`, `resolveModelProfile` - rung matching through the delegate-core resolver; `builtin \| user \| pin` sources |
 | `builtin-profiles.ts` / `custom-providers.ts` / `default-profile.ts` | Builtin lanes, custom provider declarations, default profile |
-| `models-json.ts` | `<agentDir>/models.json` as JSONC — cached parsed trees deeply frozen and readonly |
+| `models-json.ts` | `<agentDir>/models.json` as JSONC - cached parsed trees deeply frozen and readonly |
 | `request-auth.ts` | Credential/request probe (~280 LOC) |
-| `describe.ts` | Profile view builder; `notice.ts` — user-facing notice |
+| `describe.ts` | Profile view builder; `notice.ts` - user-facing notice |
 | `credential-policy.ts` | Credential policy for profile rungs |
 
 ## CONVENTIONS
@@ -26,7 +26,7 @@ Applies a named ordered model profile at session start: a lane of `{ providers, 
 
 ## ANTI-PATTERNS
 
-- `model_profile` is NOT the unrelated `omo.json` `profiles` overlay — never conflate them.
+- `model_profile` is NOT the unrelated `omo.json` `profiles` overlay - never conflate them.
 - No aliases/migrations for retired model-profile ids (the builtin source states none exist).
 - Don't infer a builtin rung from an aggregator's vendor-prefixed copy or an undeclared custom provider model; custom-provider fallback requires the exact model id declared in `models.json`.
 

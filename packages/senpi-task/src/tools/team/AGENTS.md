@@ -1,6 +1,6 @@
-# src/tools/team/ — Lead Team Tool Family
+# src/tools/team/ - Lead Team Tool Family
 
-**Score ~13** (18 files; distinct domain — lead-facing `team_*` tool factories).
+**Score ~13** (18 files; distinct domain - lead-facing `team_*` tool factories).
 
 ## OVERVIEW
 
@@ -13,7 +13,7 @@ The lead-side team tool surface for senpi-task: factories for team lifecycle (`t
 | `index.ts` | Barrel: re-exports factories, `run*` handlers, param schemas, types; `LeadTeamTool` union |
 | `lifecycle.ts` | `createTeamCreateTool` / `createTeamDeleteTool`, `runTeamCreate` / `runTeamDelete` |
 | `tasks.ts` | Team task create/get/list/update factories + `run*` + params |
-| `messaging.ts` | `runTeamSend` — member/lead delivery views |
+| `messaging.ts` | `runTeamSend` - member/lead delivery views |
 | `shutdown.ts` | `runTeamShutdownRequest` / `runTeamApproveShutdown` / `runTeamRejectShutdown` |
 | `classify-error.ts` | `classifyMailboxError`, `isMissingStateError`, `MailboxErrorKind` |
 | `renderers.ts` | renderCall/renderResult formatting |

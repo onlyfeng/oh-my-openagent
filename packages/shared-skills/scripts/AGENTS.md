@@ -1,8 +1,8 @@
-# shared-skills/scripts — Skill Materialization + Parity Dev Scripts
+# shared-skills/scripts - Skill Materialization + Parity Dev Scripts
 
 **Generated:** 2026-11-18 | c2691818a9
 
-Build-time scripts that materialize the frontend third-party references out of pinned submodules and a parity detector for the upstream `impeccable` rule set. Development-only — nothing here ships in the npm tarball.
+Build-time scripts that materialize the frontend third-party references out of pinned submodules and a parity detector for the upstream `impeccable` rule set. Development-only - nothing here ships in the npm tarball.
 
 ## WHERE TO LOOK
 
@@ -16,7 +16,7 @@ Build-time scripts that materialize the frontend third-party references out of p
 
 ## CONVENTIONS
 
-- NEVER hand-edit a materialized copy under `skills/frontend/references/` — regenerate via `materialize-frontend-refs.mjs`. The materialized files are gitignored and re-ignored away in `.npmignore` so they ship.
+- NEVER hand-edit a materialized copy under `skills/frontend/references/` - regenerate via `materialize-frontend-refs.mjs`. The materialized files are gitignored and re-ignored away in `.npmignore` so they ship.
 - Parity scripts require a local upstream checkout (and a browser for the live oracle); they are not run in CI.
 
 ## COMMANDS
@@ -27,4 +27,4 @@ bun packages/shared-skills/scripts/detect-parity-oracle.ts <impeccable-checkout>
 bun packages/shared-skills/scripts/detect-source-parity.ts <upstream-checkout>
 ```
 
-Parent: [`../AGENTS.md`](../AGENTS.md) — full frontend third-party pipeline + provenance gates.
+Parent: [`../AGENTS.md`](../AGENTS.md) - full frontend third-party pipeline + provenance gates.

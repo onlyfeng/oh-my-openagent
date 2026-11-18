@@ -1,4 +1,4 @@
-# senpi-desktop-tool — Computer Tool + `/computer` Command
+# senpi-desktop-tool - Computer Tool + `/computer` Command
 
 **Generated:** 2026-11-18 / c2691818a9 | **Score:** 28 (35 files; 17 modules under `src/`). One-row placement in the parent role map.
 
@@ -11,7 +11,7 @@ The `computer` tool definition, permission tiers, host policy, TypeBox settings,
 | File | Role |
 |------|------|
 | `src/index.ts` | Full surface: activation handle, `/computer` command, action schemas/parsers + action tool, host policy, permission parser/tiering, settings schema/resolver, session helpers, skill materialization, tool definition/runner/factory |
-| `src/registration.ts` | The deliberately NARROW second entry: command, definitions, host policy, permission, host-context type, settings, skill — omits implementation-facing tool/service action exports so a registration-only bundle never reaches the desktop service or engine |
+| `src/registration.ts` | The deliberately NARROW second entry: command, definitions, host policy, permission, host-context type, settings, skill - omits implementation-facing tool/service action exports so a registration-only bundle never reaches the desktop service or engine |
 | `src/tool.ts` / `tool-definition.ts` | Tool runner (`COMPUTER_TOOL_NAME`, ~365 LOC) + definition |
 | `src/command.ts` | `/computer` subcommands (`COMPUTER_SUBCOMMANDS`, usage) |
 | `src/permission.ts` | `COMPUTER_PERMISSION`, `computerPermissionParser`, `computerTier` |
@@ -25,8 +25,8 @@ The `computer` tool definition, permission tiers, host policy, TypeBox settings,
 
 ## ANTI-PATTERNS
 
-- NEVER broaden `src/registration.ts` to import service/engine implementation — its purpose is keeping the registration-only bundle free of those runtime dependencies.
-- Permission and host policy stay isolated in their named modules — don't inline policy checks into the tool runner.
+- NEVER broaden `src/registration.ts` to import service/engine implementation - its purpose is keeping the registration-only bundle free of those runtime dependencies.
+- Permission and host policy stay isolated in their named modules - don't inline policy checks into the tool runner.
 
 ## COMMANDS
 

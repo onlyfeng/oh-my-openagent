@@ -1,4 +1,4 @@
-# src/tools/delegate-task/ — Task Delegation Engine
+# src/tools/delegate-task/ - Task Delegation Engine
 
 **Generated:** 2026-11-18 | c2691818a9
 
@@ -17,7 +17,7 @@ The `task` tool implementation delegates work to subagents via background or syn
 
 | File | Purpose |
 |------|---------|
-| `tools.ts` | `createDelegateTask()` factory — main entry point |
+| `tools.ts` | `createDelegateTask()` factory - main entry point |
 | `executor.ts` | Execution-routing barrel: re-exports the `execute*` entry points and resolvers |
 | `types.ts` | `DelegateTaskArgs`, `DelegateTaskToolOptions`, `ToolContextWithMetadata` |
 | `category-resolver.ts` | Map category name → model + config |
@@ -25,7 +25,7 @@ The `task` tool implementation delegates work to subagents via background or syn
 | `model-selection.ts` | Model availability checking + fallback |
 | `skill-resolver.ts` | Resolve `load_skills[]` → skill content for injection |
 | `prompt-builder.ts` | Build system/user prompt with skill content, categories |
-| `available-models.ts` | `getAvailableModelsForDelegateTask()` — provider model listing |
+| `available-models.ts` | `getAvailableModelsForDelegateTask()` - provider model listing |
 | `subagent-request-preflight.ts` | Reject direct Sisyphus-Junior, plan→plan, and coordinator targets |
 | `timing.ts` | Sync-polling / unstable-monitor timings (+ `__setTimingConfig` test seams) |
 
@@ -62,7 +62,7 @@ Moved out of this directory: `packages/omo-opencode/src/shared/model-string-pars
 
 ## ANTI-PATTERNS
 
-- `category` XOR `subagent_type` — supplying both is a contract mistake (category wins in execution).
+- `category` XOR `subagent_type` - supplying both is a contract mistake (category wins in execution).
 - `task_id` is a continuation session id (`ses_...`), never a background id; background launch returns `bg_...` for `background_output`.
 - Omitted `run_in_background` counts as `false` (sync); only explicit `true` is background.
 - Sync session creation and unstable background launch deny the `question` permission.

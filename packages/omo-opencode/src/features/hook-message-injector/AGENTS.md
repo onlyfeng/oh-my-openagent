@@ -1,6 +1,6 @@
-# src/features/hook-message-injector/ — Hook Message Injection
+# src/features/hook-message-injector/ - Hook Message Injection
 
-**Score ~14** (15 files, ~1.3k LOC; distinct domain — injecting hook messages into session history).
+**Score ~14** (15 files, ~1.3k LOC; distinct domain - injecting hook messages into session history).
 
 ## OVERVIEW
 
@@ -27,7 +27,7 @@ Injects hook-produced messages into an OpenCode session by locating the right an
 
 ## ANTI-PATTERNS
 
-- Do not bypass the anchor-message lookup and write messages blindly — injection must attach to the correct nearest/first message context.
+- Do not bypass the anchor-message lookup and write messages blindly - injection must attach to the correct nearest/first message context.
 
 ## COMMANDS
 

@@ -1,4 +1,4 @@
-# src/tools — Memory Tool Operations
+# src/tools - Memory Tool Operations
 
 **Generated:** 2026-11-18 / c2691818a9
 
@@ -14,9 +14,9 @@ Operations behind the memory tools: path-validated mutations over the git MemFS,
 |------|------|
 | `memory` ops (`create`/`str_replace`/`insert`/`delete`/`rename`/`update_description`) | `memory.ts` |
 | Multi-file Codex patches | `memory-apply-patch.ts` + `patch-parser.ts` + `patch-apply.ts` |
-| Locked commit helper | `commit-write.ts` — `commitMemoryWrite`: memory-write lock, clean-tree check, effective-change check, agreements-violation check for memory-tool writes, commit, secret + stranded-lock failure handling |
-| Provenance | `claim-frontmatter.ts` — `stampReceipt`, `restampContent`, legacy-header checks, trailer formatting, `readHeader` |
-| Leaked-argument repair | `leaked-arguments.ts` — `repairLeakedArguments`, `describeRepairs` |
+| Locked commit helper | `commit-write.ts` - `commitMemoryWrite`: memory-write lock, clean-tree check, effective-change check, agreements-violation check for memory-tool writes, commit, secret + stranded-lock failure handling |
+| Provenance | `claim-frontmatter.ts` - `stampReceipt`, `restampContent`, legacy-header checks, trailer formatting, `readHeader` |
+| Leaked-argument repair | `leaked-arguments.ts` - `repairLeakedArguments`, `describeRepairs` |
 | Rollback | `rollback-behind-lock.ts` (`pending-rollback` tests pin it) |
 | Guards + errors | `agreements-write-guard.ts` (automation cannot touch `by: human` items), `tool-errors.ts` |
 

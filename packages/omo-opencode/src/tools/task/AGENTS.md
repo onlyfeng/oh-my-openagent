@@ -1,6 +1,6 @@
-# task — task_* CRUD tools over the claude-tasks store
+# task - task_* CRUD tools over the claude-tasks store
 
-**Score 8** (14 modules, ~3.2k LOC; distinct domain: task-system CRUD + todo bridge). Registration/gating (`experimental.task_system`) is covered by the parent `tools/AGENTS.md` — not repeated.
+**Score 8** (14 modules, ~3.2k LOC; distinct domain: task-system CRUD + todo bridge). Registration/gating (`experimental.task_system`) is covered by the parent `tools/AGENTS.md` - not repeated.
 
 ## OVERVIEW
 
@@ -11,8 +11,8 @@ Four `ToolDefinition` factories (`createTaskCreateTool`, `createTaskGetTool`, `c
 | Task | Location |
 |------|----------|
 | Tool factories | `task-create.ts` (auto `T-{uuid}` id, threadID from context, `blockedBy`/`blocks` dependency-planning prompt), `task-get.ts`, `task-list.ts`, `task-update.ts` |
-| Todo bridge | `todo-sync.ts` — `syncTaskToTodo` / `syncAllTasksToTodos` / `syncTaskTodoUpdate`, `TodoInfo`; `mapTaskStatusToTodoStatus` drops `deleted` tasks (null) from the todo list, priority is extracted from `metadata` |
-| Schema / model | `types.ts` — `TaskObjectSchema` (`.strict()`), `TaskStatusSchema` (`pending` / `in_progress` / `completed` / `deleted`), Claude Code-style aliases, Zod input schemas |
+| Todo bridge | `todo-sync.ts` - `syncTaskToTodo` / `syncAllTasksToTodos` / `syncTaskTodoUpdate`, `TodoInfo`; `mapTaskStatusToTodoStatus` drops `deleted` tasks (null) from the todo list, priority is extracted from `metadata` |
+| Schema / model | `types.ts` - `TaskObjectSchema` (`.strict()`), `TaskStatusSchema` (`pending` / `in_progress` / `completed` / `deleted`), Claude Code-style aliases, Zod input schemas |
 
 ## CONVENTIONS
 

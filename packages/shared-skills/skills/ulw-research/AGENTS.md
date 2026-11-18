@@ -1,4 +1,4 @@
-# ulw-research — Research Orchestration + report-tools Runtime
+# ulw-research - Research Orchestration + report-tools Runtime
 
 **Generated:** 2026-11-18 / c2691818a9 (update pass)
 
@@ -37,7 +37,7 @@ ulw-research/
 
 ## SURFACE
 
-`node "$SKILL_DIR/scripts/report-tools.mjs" <command>` — the frozen `COMMANDS` list (23): `check`, `layout-probe`, `repair decide`, `outcome init|set|gate|render|state|verify|finish|briefing`, `format-extract`, `fact add|quote|retract|export|fill|verify|derive`, `source snapshot|refresh|probe-conversion`, `claims index`, plus `--help --json`. Gates recorded by `outcome gate`, in order (`GATE_NAMES` in `contracts.mjs`): `static`, `fidelity`, `layout`, `visual`, `proofread` (`fidelity` is `fact verify` on every reader-facing edition; HTML, or Markdown with its fill map). Exit codes: `0` pass, `1` semantic failure (blockers, a failed verify, a blocked repair), `2` usage or IO. JSON on stdout, one summary line on stderr. Flags per command: `references/deliverable-phase.md` section 10.
+`node "$SKILL_DIR/scripts/report-tools.mjs" <command>` - the frozen `COMMANDS` list (23): `check`, `layout-probe`, `repair decide`, `outcome init|set|gate|render|state|verify|finish|briefing`, `format-extract`, `fact add|quote|retract|export|fill|verify|derive`, `source snapshot|refresh|probe-conversion`, `claims index`, plus `--help --json`. Gates recorded by `outcome gate`, in order (`GATE_NAMES` in `contracts.mjs`): `static`, `fidelity`, `layout`, `visual`, `proofread` (`fidelity` is `fact verify` on every reader-facing edition; HTML, or Markdown with its fill map). Exit codes: `0` pass, `1` semantic failure (blockers, a failed verify, a blocked repair), `2` usage or IO. JSON on stdout, one summary line on stderr. Flags per command: `references/deliverable-phase.md` section 10.
 
 ## CONVENTIONS
 

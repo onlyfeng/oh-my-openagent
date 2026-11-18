@@ -1,4 +1,4 @@
-# thread/tools/ — Thread Tool Surface
+# thread/tools/ - Thread Tool Surface
 
 **Score ~11** (13 files; thread tool + relay/extension wiring domain).
 

@@ -28,7 +28,7 @@ This shape follows the package layering refactor in [`ROADMAP.md`](../../../../.
 
 ## PROMPT LOADING
 
-`getPrometheusPrompt(model?, disabledTools?)` always loads `packages/prompts-core/prompts/prometheus/default.md` — model family never selects different markdown. The body is loaded once into `PROMETHEUS_SYSTEM_PROMPT`; each call filters the fixed tool list (`read`, `grep`, `glob`, `bash`, `edit`, `write`, `question`, `skill`) by `disabledTools` and runs `buildNativeAgentPrompt(model, body, tools)` from `../native-model-prompt.ts`, so `model` now shapes native prompt framing/preset resolution while the markdown asset stays single-variant.
+`getPrometheusPrompt(model?, disabledTools?)` always loads `packages/prompts-core/prompts/prometheus/default.md` - model family never selects different markdown. The body is loaded once into `PROMETHEUS_SYSTEM_PROMPT`; each call filters the fixed tool list (`read`, `grep`, `glob`, `bash`, `edit`, `write`, `question`, `skill`) by `disabledTools` and runs `buildNativeAgentPrompt(model, body, tools)` from `../native-model-prompt.ts`, so `model` now shapes native prompt framing/preset resolution while the markdown asset stays single-variant.
 
 Keep prompt edits in `default.md`. Do not add model-specific markdown files, copied prompt bodies, or adapter-side routing. If the planning workflow changes, update the `ulw-plan` skill and its references rather than expanding the Prometheus prompt.
 

@@ -1,10 +1,10 @@
-# src/cli/config-manager/ — CLI Installation Utilities
+# src/cli/config-manager/ - CLI Installation Utilities
 
 **Generated:** 2026-05-15 (update pass 2026-11-18 / c2691818a9)
 
 ## OVERVIEW
 
-30 files (23 source modules + colocated tests). Stateless utility functions for the `install` command. Handles OpenCode config manipulation, provider configuration, JSONC operations, binary detection, and npm registry queries. No class — flat utility collection.
+30 files (23 source modules + colocated tests). Stateless utility functions for the `install` command. Handles OpenCode config manipulation, provider configuration, JSONC operations, binary detection, and npm registry queries. No class - flat utility collection.
 
 ## FILE CATALOG
 
@@ -15,7 +15,7 @@
 | `antigravity-provider-configuration.ts` | Handle Antigravity provider setup (special case) |
 | `auth-plugins.ts` | Detect auth plugin requirements per provider (oauth vs key) |
 | `bun-install.ts` | Run `bun install` / `npm install` for plugin setup |
-| `config-context.ts` | `ConfigContext` — shared config state across install steps |
+| `config-context.ts` | `ConfigContext` - shared config state across install steps |
 | `deep-merge-record.ts` | Deep merge utility for JSONC config objects |
 | `detect-current-config.ts` | Read existing OpenCode config, detect installed plugins |
 | `ensure-config-directory-exists.ts` | Create `.opencode/` dir if missing |
@@ -28,9 +28,9 @@
 | `parse-opencode-config-file.ts` | Parse opencode.json/opencode.jsonc with fallback |
 | `plugin-name-with-version.ts` | Resolve `oh-my-opencode@X.Y.Z` for installation |
 | `write-omo-config.ts` | Write generated config to `~/.omo/omo.jsonc` |
-| `add-tui-plugin-to-tui-config.ts` | `ensureTuiPluginEntry()` — register the plugin in the TUI config |
-| `backup-config.ts` | `backupConfigFile()` — copy a config aside before modification |
-| `refresh-opencode-plugin-sandbox.ts` | `refreshOpenCodePluginSandboxes()` — sandbox lease refresh |
+| `add-tui-plugin-to-tui-config.ts` | `ensureTuiPluginEntry()` - register the plugin in the TUI config |
+| `backup-config.ts` | `backupConfigFile()` - copy a config aside before modification |
+| `refresh-opencode-plugin-sandbox.ts` | `refreshOpenCodePluginSandboxes()` - sandbox lease refresh |
 | `version-compatibility.ts` | `checkVersionCompatibility()`, `extractVersionFromPluginEntry()` |
 
 ## USAGE PATTERN
@@ -51,6 +51,6 @@ Functions are called sequentially by `src/cli/install.ts` / `src/cli/tui-install
 
 ## NOTES
 
-- All functions are pure / stateless (except disk I/O) — no shared module state
-- `jsonc-provider-editor.ts` uses comment-preserving JSONC library — NEVER use `JSON.parse` on JSONC files
+- All functions are pure / stateless (except disk I/O) - no shared module state
+- `jsonc-provider-editor.ts` uses comment-preserving JSONC library - NEVER use `JSON.parse` on JSONC files
 - `opencode-binary.ts` searches PATH + common install locations (`.local/bin`, `~/.bun/bin`, etc.)

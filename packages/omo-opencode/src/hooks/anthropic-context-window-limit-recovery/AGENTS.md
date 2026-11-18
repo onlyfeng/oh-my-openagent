@@ -29,7 +29,7 @@
 | `tool-result-storage.ts` | Store/retrieve individual tool call results |
 | `message-builder.ts` | Build retry messages after recovery |
 | `client.ts` | `Client` type the hook needs beyond `PluginInput`: `session.promptAsync` + `tui.showToast` |
-| `session-timeout-map.ts` | `clearSessionTimeout` / `clearAllSessionTimeouts` — per-session timers must be cleared (300 ms debounce before compaction) |
+| `session-timeout-map.ts` | `clearSessionTimeout` / `clearAllSessionTimeouts` - per-session timers must be cleared (300 ms debounce before compaction) |
 | `message-storage-directory.ts` | `getMessageIds(sessionID)` over the shared `getMessageDir` |
 | `storage-paths.ts` | `MESSAGE_STORAGE_DIR` / `PART_STORAGE_DIR` re-exports + `TRUNCATION_MESSAGE` |
 | `tool-part-types.ts` | `StoredToolPart`, `ToolResultInfo` shapes |
