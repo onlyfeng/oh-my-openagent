@@ -1,49 +1,55 @@
 # .opencode/ — Project-Scope Skills & Commands
 
-**Generated:** 2026-08-24
+**Generated:** 2026-11-18 (update mode)
 
 ## OVERVIEW
 
-Project-scope OpenCode configuration: 4 skills and 5 slash commands committed alongside the source. Picked up by [`packages/omo-opencode/src/features/opencode-skill-loader/`](../packages/omo-opencode/src/features/opencode-skill-loader/) and the slash-command discovery pipeline.
+Project-scope OpenCode config: 3 skills + 5 slash commands, all git-tracked; loaded by [`opencode-skill-loader`](../packages/omo-opencode/src/features/opencode-skill-loader/) and the slash-command discovery pipeline.
 
-**Relationship to `.agents/`:** `.agents/` is the migration target during the `oh-my-opencode` → `oh-my-openagent` rename. It is a SUPERSET of `.opencode/` (mirrors all 4 skills + adds 9 more, mirrors the 5 commands). Both directories load during the transition; consumers should prefer `.agents/`.
+## WHERE TO LOOK
 
-## SKILLS (4)
+| Need | Location |
+|------|----------|
+| Add/edit a slash command | `command/<name>.md` — frontmatter `description`, optional `argument-hint` |
+| Add/edit a skill | `skills/<name>/SKILL.md` + optional `scripts/`, `references/`, `assets/` |
+| GitHub fetch CLI | `skills/github-triage/scripts/gh_fetch.py` — `uv run --script gh_fetch.py {issues|prs|all} [--repo owner/repo]` (typer+rich, py>=3.11) |
+| Background-task runtime state | `background-tasks.json` |
+
+## SKILLS (3)
 
 | Skill | Purpose |
 |-------|---------|
-| `work-with-pr/` | Full PR lifecycle skill: worktree → implement → atomic commits → PR → verification loop → merge. |
-| `github-triage/` | Read-only triage of issues + PRs. 1 item = 1 background task. Writes evidence-backed reports. Never takes GitHub actions. |
-| `hyperplan/` | Adversarial multi-agent planning. 5 hostile category members cross-critique, lead synthesizes. |
-| `pre-publish-review/` | Nuclear-grade 12-agent pre-publish release gate. Runs `/get-unpublished-changes`, spawns ultrabrain agents per change, oracle for synthesis. |
+| `work-with-pr/` | PR lifecycle in a task-owned worktree: implement with evidence-bound manual QA → atomic commits → PR → CI/Cubic verification loop → merge. |
+| `github-triage/` | Read-only triage of issues + PRs; 1 item = 1 background `quick` task; every claim needs a GitHub permalink. ZERO GitHub mutations. |
+| `pre-publish-review/` | 12-agent release gate: `/get-unpublished-changes` → up to 10 ultrabrain agents per change → oracle synthesis. ONLY on explicit request; `/publish` never triggers it. |
 
-Each skill follows the standard layout (`SKILL.md` + optional `scripts/`, `references/`, `assets/`).
+(`hyperplan` is documented in older snapshots but lives in `.agents/skills/` only — NOT here.)
 
-## COMMANDS (5 slash commands)
+## COMMANDS (5)
 
 | Command | Purpose |
 |---------|---------|
-| `/get-unpublished-changes` | Compare HEAD with the latest published npm version and list unpublished changes. |
-| `/omomomo` | Easter-egg command — about oh-my-opencode. |
-| `/publish` | Publish via GitHub Actions workflow. Argument: `<patch|minor|major|explicit-semver>`. |
-| `/remove-deadcode` | Remove unused code with LSP-verified safety + atomic commits. |
-| `/security-research` | Run the Team Mode security-research audit with 3 vulnerability hunters and 2 PoC engineers. |
+| `/get-unpublished-changes` | Diff HEAD against the latest published npm versions, by release layer. |
+| `/publish` | Release via GitHub Actions `publish.yml` (`gh workflow run`). Arg: `<patch|minor|major|explicit-semver>`. Ships only — never reviews, repairs, or opens PRs. |
+| `/remove-deadcode` | LSP-verified dead-code removal via parallel agents, atomic commits. |
+| `/security-research` | Team Mode audit: 3 vulnerability hunters + 2 PoC engineers. |
+| `/omomomo` | Easter egg. |
 
-## OTHER CONTENTS
+## MIRROR RULE (`.agents/`)
 
-- `background-tasks.json` — Runtime state for active background tasks (gitignored from sensitive content but tracked structurally).
-- `bun.lock`, `package.json`, `node_modules/` — Skill dependencies (some skills install their own packages).
-- `.gitignore` — Local scope ignore patterns.
+`.agents/` is the rename-transition migration target and a SUPERSET: its `skills/` holds 13 skills — the 3 here mirrored **byte-identical** plus 10 more — and its `command/` mirrors all 5 commands. Both trees load during the transition; consumers prefer `.agents/`. **Never edit one side of a mirrored pair alone.**
 
 ## CONVENTIONS
 
-- **Skill YAML frontmatter is mandatory.** [`opencode-skill-loader`](../packages/omo-opencode/src/features/opencode-skill-loader/) rejects skills without `name` + `description`.
-- **Project-scope > user-scope.** A skill at `.opencode/skills/X/` overrides `~/.config/opencode/skills/X/` of the same name.
-- **Trigger words** in the skill description determine when OpenCode loads the skill. Be specific.
-- **Commands are user-visible.** Name them with a leading `/` (the loader normalizes filename → command).
+- Skill YAML frontmatter (`name` + `description`) is mandatory; the loader rejects skills without it.
+- Trigger words inside `description` control when a skill loads — be specific.
+- Project scope overrides user scope: `.opencode/skills/X/` beats `~/.config/opencode/skills/X/`.
+- Command filenames normalize to leading-slash commands; the workflow contract lives inline in the file.
+- `command/.npmignore` + `skills/.npmignore` keep `__*`/`.private`/`.draft` assets out of npm. Root `.npmignore` does NOT apply to dirs listed in `package.json#files` under Bun 1.3.x — the co-located ignores are load-bearing, enforced by `script/package-layout-exclusion.test.ts`.
 
 ## ANTI-PATTERNS
 
-- Never duplicate a built-in skill from `packages/skills-loader-core/src/features/builtin-skills/` here without a clear reason.
-- Never commit `background-tasks.json` contents that include session IDs or token secrets.
-- Never write a skill that calls `session.promptAsync` directly — go through `dispatchInternalPrompt` (see root AGENTS.md "Internal message injection is dangerous").
+- Never duplicate a built-in skill from `packages/skills-loader-core/src/features/builtin-skills/` here.
+- Never commit `background-tasks.json` containing session IDs/tokens. Open hygiene issue: the currently tracked file contains `ses_*` IDs — scrub before next release.
+- Never call `session.promptAsync` from a skill — route through `dispatchInternalPrompt` (`packages/omo-opencode/src/features/background-agent/manager.ts`).
+- GitHub-triage subagents never mutate GitHub: no comments, merges, closes, labels, reviews; no `gh api` POST/PUT/PATCH/DELETE — reports only.

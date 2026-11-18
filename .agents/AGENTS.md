@@ -1,6 +1,6 @@
 # .agents/ — Project-Scope Skills & Commands (Migration Target)
 
-**Generated:** 2026-08-24 / f3642fcda
+**Generated:** 2026-11-18 / c2691818a9 (refreshed; verified against disk)
 
 ## OVERVIEW
 
