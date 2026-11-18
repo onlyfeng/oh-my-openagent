@@ -18,7 +18,7 @@ Vendored device-service core (`@oh-my-opencode/device-service-core`): device ide
 | Account | `account-state.ts` | `classifyAccountShow`, `accountStateNotice` |
 | Release | `release/` | `deviceServiceHost` (`acquire.ts`) |
 | Cold wake | `cold-wake/` | `installColdWake` / `readColdWake` / `uninstallColdWake`; `service-table.ts` (only the `omo` entry is owned; an unparseable table is never rewritten) |
-| Vendored wire | `local-api/` (own AGENTS.md) | The vendored `sisyphuslabs/omo-relay-daemon` local API; `.git/`-side state |
+| Vendored wire | `local-api/` (no own AGENTS.md) | The vendored `sisyphuslabs/omo-relay-daemon` local API; `PIN.json` permits only pinned upstream files plus ported `spec-proto.ts` |
 | Crypto | `strict-ed25519/` | Strict Ed25519 helpers |
 | Support | `wire.ts`, `pin.ts` (`DEVICE_SERVICE_VERSION`), `timers.ts` (`realTimers`), `state-dir.ts`, `background-transport.ts`, `delegated-channel.ts`, `listing-rows.ts`, `local-only.ts`, `minimum-in-effect.ts`, `not-sent-error.ts` | Wire shapes, pin, injectable timers, state dir, transports, error semantics |
 
@@ -26,7 +26,7 @@ Vendored device-service core (`@oh-my-opencode/device-service-core`): device ide
 
 - Wire properties are `readonly`; literal tuples derive union types.
 - Time is injectable (`Timers`, `realTimers` default) — tests never sleep.
-- Vendored provenance lives in source headers and `PIN.json` (see `local-api/AGENTS.md`).
+- Vendored provenance lives in source headers and `local-api/PIN.json`; the parity test rejects any extra file in that directory.
 
 ## COMMANDS
 

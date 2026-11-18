@@ -18,7 +18,7 @@ TypeScript detect/lint engine behind the `frontend` skill: renders pages at mult
 ## STRUCTURE
 
 - `core/` — pure helpers: color math (`blend`, `contrastRatio`, `parseColor`), page ignore logic (`isIgnored`), source extension dispatch, shadow DOM, characters.
-- `render/` — `Renderer` contract (`RenderTarget`, `RenderError`), `createWebViewRenderer` (Bun.WebView), HTML probe placement.
+- `render/` — `Renderer` contract (`RenderTarget`, `RenderError`), the default renderer factory, HTML probe placement.
 - `rules/` — the catalog: six families (color, copy, decoration, layout, source, typography) folded into `ALL_RULES`; own AGENTS.md.
 - `snapshot/` — `collectPageSnapshot` + `STYLE_PROPS` (which computed styles are captured).
 - `testing/` — `build-snapshot.ts`: Chromium default computed styles for hand-built test snapshots.
