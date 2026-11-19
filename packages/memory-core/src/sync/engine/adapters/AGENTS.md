@@ -12,7 +12,7 @@ Implementations of the sync engine's `ItemStore` / `SyncRepo` / `Transport` port
 |------|------|
 | `device-item-store.ts` | `createDeviceItemStore` - CRDT item snapshots + materialized state under `<repo>/.git/omo-sync/crdt/`; writes via temp file + rename |
 | `git-sync-repo.ts` | `createGitSyncRepo` - private index, compare-and-swap HEAD update, `SyncCommitError`; never requires a clean working tree |
-| `http-transport.ts` | `createHttpTransport` - `SyncHttpError`/`SyncAuthError`/`SyncNetworkError`; digest conversion `b64urlOfHex`/`hexOfB64url` |
+| `http-transport.ts` | `createHttpTransport` - `SyncHttpError`/`SyncAuthError`/`SyncNetworkError`; digest conversion `b64urlOfHex`/`hexOfB64url`; both ordinary requests and `/v1/me/events` SSE use `syncRequestHeaders` so bearer authentication always carries the contract version and phrase capability. |
 | `device-item-recovery.ts` | `createItemRecovery` - `Baseline`/`ItemStoreState` recovery |
 | `git-sync-repo.test-support.ts`, `wire-server.test-support.ts`, `qa-device.test-support.ts`, `qa-repo.test-support.ts` | Test supports: repo fixtures, a wire server, QA device/repo stands |
 

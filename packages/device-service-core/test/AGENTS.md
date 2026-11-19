@@ -1,10 +1,10 @@
 # test/ - Device-Service Conformance Suite
 
-**Generated:** 2026-11-18 / c2691818a9 | **Score:** 10 (24 files, ~3.2k LOC - the protocol's observable contract)
+**Generated:** 2026-11-18 / c2691818a9 | **Score:** 10 (~3.2k LOC - the protocol's observable contract)
 
 ## OVERVIEW
 
-22 `bun:test` specs plus 2 shared supports, driving the package ONLY through its public surface (`../src/index.ts`). Protocol conformance with fakes throughout: fake local-API owners/worlds, generated Ed25519 credentials, per-test temp directories - no real device, no network.
+`bun:test` suites cover the public device-service surface, injected client/timer seams, cold-wake units and local-API conformance. Shared fake owners, generated credentials and per-test temporary directories keep behavioral checks isolated; cold-wake suites emulate systemd, launchd and the operator host.
 
 ## WHERE TO LOOK
 
@@ -12,15 +12,16 @@
 |---------|------|
 | `registrant-support.ts` | The reused harness: `useRegistrantWorld` (fake local-API owner + recorder), `ownerAt`/`stopOwner`, `registers`, `deafWatch`, `credential`, `AGENT_DIR`, `SELF` - consumed by the registrant-*, delivery, timer, and adopt-account-skew suites |
 | `release-fixture.ts` | `buildRelease`/`serveRelease` (`ServedRelease`), `ReleaseKey`/`releaseKey`, pinned `RELEASE_ORIGIN`/`PIN_VERSION`/`ENGINE_VERSION` - release/bootstrap/install fixtures |
-| `device-service.test.ts`, `device-service-{rows,timers}.test.ts` | Core service lifecycle, row projection, timers |
+| `device-service.test.ts`, `device-service-{rows,timers}.test.ts`, `endpoint-lookup-not-sent.test.ts`, `wake-mark-gates.test.ts` | Lifecycle, rows 4 fallback, command budgets, primary endpoint refusal and the boundary between proven not-sent and uncertain wake outcomes |
 | `registrant-{device,watch,silent-watch,triggers,support}.test.ts` | Agent-dir registrant behavior against a fake owner |
 | `delivery-consumer`, `attach-events`, `acquire`, `endpoint-lookup-not-sent` | Delivery consumer attach, event plumbing, acquire paths, endpoint resolution |
 | `bootstrap`, `install`, `release-code-signature`, `hand-device-keys` | Bootstrap/install ceremonies, release signature verification, device key handoff |
 | `delegated-channel-forget`, `local-only`, `minimum-in-effect`, `state-dir`, `wake-mark-gates` | Edge/behavioral pins |
+| `cold-wake/` | Install, unit rendering, host-aware readback and older-runtime refresh; shared `cold-wake-fakes.ts` owns fake systemd/launchd hosts and temp-home cleanup |
 
 ## CONVENTIONS
 
-- Tests import the SDK source entry (`../src/index.ts`): `connectDeviceService`, `connectDeliveryConsumer`, `DeviceService`, `DeviceCredential`, `LocalApiError`, `NotSentError`, release/bootstrap/install APIs - never internal modules.
+- Public SDK tests use `../src/index.ts`; client/timer probes and `cold-wake/` tests also import narrow internal modules intentionally to drive routing, deadlines, unit rendering and refresh behavior.
 - Fake owners/worlds come from the two shared supports; extend those before duplicating a fake.
 - Temp state per test; credentials are freshly generated Ed25519 pairs, never baked in.
 

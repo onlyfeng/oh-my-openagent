@@ -4,7 +4,7 @@
 
 ## OVERVIEW
 
-`@oh-my-opencode/omo-codex` (private, v5.1.75): the Codex harness adapter = the **Light Edition** (omo for the OpenAI Codex CLI). Vendors a Codex plugin namespace `omo` + a TypeScript installer + telemetry. Public distribution = the live `lazycodex-ai` npm package/bin alias. `lazycodex` remains a root bin alias and the [`code-yeongyu/lazycodex`](https://github.com/code-yeongyu/lazycodex) repository identity, but is not an npm package. Codex marketplace identity = `sisyphuslabs` / plugin `omo` (`omo@sisyphuslabs`). Full identity + the publish/deploy pipeline live in the root [`AGENTS.md`](../../AGENTS.md) "CODEX LIGHT EDITION" section.
+`@oh-my-opencode/omo-codex` (private, v5.1.78): the Codex harness adapter = the **Light Edition** (omo for the OpenAI Codex CLI). Vendors a Codex plugin namespace `omo` + a TypeScript installer + telemetry. Public distribution = the live `lazycodex-ai` npm package/bin alias. `lazycodex` remains a root bin alias and the [`code-yeongyu/lazycodex`](https://github.com/code-yeongyu/lazycodex) repository identity, but is not an npm package. Codex marketplace identity = `sisyphuslabs` / plugin `omo` (`omo@sisyphuslabs`). Full identity + the publish/deploy pipeline live in the root [`AGENTS.md`](../../AGENTS.md) "CODEX LIGHT EDITION" section.
 
 ## QA (Codex mechanics; the full cross-harness mandate lives in the root AGENTS.md)
 

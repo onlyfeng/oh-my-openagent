@@ -1,6 +1,6 @@
 # consumer - Thread Delivery Consumer
 
-**Score:** 9 (7 files, 1.1k LOC, distinct state machine, consumed by `thread/wake`). Parent [`thread/AGENTS.md`](../AGENTS.md) owns the fourteen-tool surface; this directory is the delivery-intake half behind it.
+**Score:** 9 (7 files, 1.1k LOC, distinct state machine, consumed by `thread/wake`). Parent [`thread/AGENTS.md`](../AGENTS.md) owns the fifteen-tool surface; this directory is the delivery-intake half behind it.
 
 ## OVERVIEW
 
@@ -21,6 +21,8 @@
 - Listeners are installed BEFORE the `serve` acknowledgement - deliveries may arrive immediately after ack, and an early delivery must not be dropped.
 - Tracked async work routes failures through `onError`, never as unhandled rejections (`consumer-rejection.test.ts` pins this with a colocated comment).
 - Refusals decode to codes via `refusalCode`; do not string-match refusal text.
+- Queued intake reads the target cwd's engine `threads.chainCountLimit` before store admission; refusals retain `details.reason` and numeric `chain_count`/`limit` rather than flattening them to the coarse tool code.
+- A rejected limit read is reported through `onError` when supplied and admits without a limit, preserving the existing queue behavior.
 
 ## ANTI-PATTERNS
 

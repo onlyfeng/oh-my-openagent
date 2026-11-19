@@ -13,8 +13,9 @@ Source root of the Senpi adapter package. The package barrel (`index.ts`) export
 | Bundled remote MCPs | `components/builtin-mcps/` | `context7` + `grep_app` HTTP declarations, `CONTEXT7_API_KEY` bearer gating, and the disable switches. Own AGENTS.md. |
 | X search | `components/x-search/` | Credential-gated `x_search` tool and conditional skill (files, gating, contract, error codes, backtest pointer). Own AGENTS.md. |
 | Small components | `components/*` | Single-purpose factories (ulw-loop, onboarding, config-watch, ...) documented in `../AGENTS.md`; `fallback-architect/` and `model-profile/` now have their own files. |
+| Shared call deadline | `components/call-budget/call-deadline.ts` | Async-local 50-second tool-call budget; command/wait bounds, read reserve, and escape for background work that outlives the call. |
 
-`src/components/` holds 35 component dirs; 11 of them carry their own AGENTS.md (the deep rows above plus `builtin-mcps`, `x-search`, `fallback-architect`, and `model-profile`); nested files exist under `memory/desktop-sync/`, `side-panel/data/`, and `thread/gateway/testing/`. A new component registers in `extension/component-list.ts` and gets documented in `../AGENTS.md` unless it earns a deeper file.
+`src/components/` holds 41 source/support dirs. Component guidance lives in the per-directory AGENTS.md files and `../AGENTS.md`; nested files cover deeper memory, side-panel and thread domains. `call-budget/` is shared deadline support rather than a registered component. A new component registers in `extension/component-list.ts` and gets documented in `../AGENTS.md` unless it earns a deeper file.
 
 ## Root audit gates
 

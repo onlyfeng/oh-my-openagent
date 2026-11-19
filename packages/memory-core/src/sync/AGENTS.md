@@ -17,7 +17,7 @@ Security boundary of memory synchronization: device keys, RFC 8785 canonical JSO
 | `redact.ts` | The ONE secret scanner: matches on a normalised shadow (format chars + zero-width stripped, NBSP folded), spans map back to rewrite original bytes |
 | `operation-authority.ts` | `SyncOperationAuthority` - captured caller authority; `admit` throws if the owner retired; optional `boundary` holds the credential-writer lock through a generation check |
 | `publication.ts` | `publishSyncRename` - credential-writer lock spans admission and the synchronous rename, on every raw retry |
-| `contract-version.ts` | `SYNC_CONTRACT_VERSION` (mirrors omo-service `contract/version.ts`), `SYNC_CAPABILITIES` (`phrase`), `syncHeaders()` |
+| `contract-version.ts` | `SYNC_CONTRACT_VERSION`, `SYNC_CAPABILITIES` (`phrase`), `syncRequestHeaders(token)` (contract headers plus bearer token), and `FLOORED_ROUTE_PREFIX`/`missesSyncContract` for the `/v1/sync/` client-floor boundary |
 | `pin-dir.ts` | `syncPinDir(memoryRoot)` → `<root>/sync-device` - trust pins live BESIDE identity repositories, never inside |
 | `device-retire.ts` | The ONE seam retiring a sync trust pin (#12280); called exactly when the principal's private keys are discarded; imports nothing from `crypto/` |
 | `mirror.ts` (+ `mirror.test-support.ts`, `mirror-hook-pipes.test.ts`) | Remote mirror upload; output MUST pass `redact.ts` first |
@@ -27,6 +27,7 @@ Security boundary of memory synchronization: device keys, RFC 8785 canonical JSO
 - Every server/relay answer is untrusted input: verify through the client chain (`crypto/`) before use.
 - Security-sensitive files stay small and single-purpose; `keyring-port.ts`, `canonical-json*.ts`, `redact.ts`, `hpke-sealed-box.ts` are the review hotspots.
 - Subdir barrels (`account/`, `crypto/`) expose narrow type-plus-factory surfaces; consumers also import narrow submodules directly.
+- Sync-path HTTP clients use `syncRequestHeaders(token)` for every request, including event streams and account/device reads; do not reconstruct bearer-only headers. Account/device routes carry these headers even though the current floor applies to `/v1/sync/`.
 
 ## ANTI-PATTERNS
 

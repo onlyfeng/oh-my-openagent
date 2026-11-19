@@ -7,7 +7,10 @@ description: Developer reference for all 11 Oh My OpenAgent agent definitions, f
 
 Model-specific system cores come from `@code-yeongyu/senpi/prompt-presets` via
 `native-model-prompt.ts` (PR #9856); `native-prompt-frame.ts` rebuilds the generated
-core for the request model without replacing user appends. Do not add copies of
+core and any owned Hephaestus role for the request model without replacing user
+appends. Hephaestus omits its appended role on the standalone `gpt-6.2` preset
+and restores it when switching to another supported preset. The frame states
+refusal-is-final once for agents that carry the rule. Do not add copies of
 Native model bodies. Explore, librarian and multimodal-looker keep their original
 prompts without a Native core.
 
@@ -28,7 +31,7 @@ Modes verified from each agent file's `const MODE: AgentMode = ...` and (for Pro
 | **Explore** | gpt-6-luna-fast | 0.1 | subagent | claude-haiku-5-5 medium → qwen3.7-plus → minimax-m3 → minimax-m2.7 → gpt-5.4-nano | Contextual grep |
 | **Multimodal-Looker** | gpt-5.6-sol low | 0.1 | subagent | kimi-k3 → glm-4.6v → gpt-5-nano | PDF/image analysis |
 | **Metis** | claude-fable-5-2 max | **0.3** | subagent | claude-fable-5-1 max → claude-opus-5-5 max → kimi-k3 max | Pre-planning consultant |
-| **Momus** | gpt-5.6-terra high | 0.1 | subagent | gpt-5.6-sol xhigh (high on Copilot) → claude-opus-5-5 max → gemini-4-argon high → gemini-3.1-pro high → glm-5.2 | Plan reviewer |
+| **Momus** | gpt-6.2-astra xhigh (OpenAI lanes; gpt-6-astra high on Copilot) | 0.1 | subagent | gpt-6-astra xhigh → gpt-6-astra high (Copilot) → gpt-6.2-astra high → gpt-6-astra high → claude-opus-5-5 max → gemini-4-argon high → gemini-3.1-pro high → glm-5.2 | Plan reviewer |
 | **Atlas** | claude-sonnet-5 | 0.1 | primary | kimi-k3 → gpt-5.6-sol medium → minimax-m3 → MiniMax-M3 → minimax-m2.7 | Todo-list orchestrator |
 | **Prometheus** | claude-fable-5-2 xhigh | (override-only) | primary | claude-fable-5-1 xhigh → claude-opus-5-5 max → kimi-k3.1-pro max → kimi-k3 max | Strategic planner (interview); built via `buildPrometheusAgentConfig` (not in `agentSources`) |
 | **Sisyphus-Junior** | claude-sonnet-5 | 0.1 (`SISYPHUS_JUNIOR_DEFAULTS`) | subagent | kimi-k3 → gpt-5.6-sol medium → minimax-m3 → MiniMax-M3 → minimax-m2.7 → big-pickle | Category-spawned executor |

@@ -2,7 +2,7 @@
 
 ## OVERVIEW
 
-41 TypeScript files. The signed-helper protocol for macOS Keychain access in
+46 TypeScript files. The signed-helper protocol for macOS Keychain access in
 service auth: pinned helper executable, spawn/verify lifecycle, locked store
 binding, migration and recovery. Consumed by `../keystore.ts` (imports
 `client`, `darwin-backend`, `darwin-store`, `store-binding` directly - there
@@ -17,6 +17,7 @@ storage. Parent: [`src/cli/AGENTS.md`](../../AGENTS.md).
 | `store-binding.ts` | `bindKeychainHelper`, `lockedStoreView`, `LockedStore` - store integration seam |
 | `darwin-backend.ts` | Backend creation/access; keystore error mapping |
 | `darwin-read.ts`, `darwin-store.ts` | Locked read + store, approval-before-lock, migration/recovery |
+| `dedicated-store.ts`, `dedicated-switch.ts` | Active-store state/refusal messages; credential-lock-protected enable/disable with copy/read-back and explicit store selection |
 | `pin.ts` | Signed-copy pinning; verified before every spawn |
 | `location.ts` | Helper discovery (fixed locations only) |
 | `owner-marker.ts` | Attribute-only ownership probe |
@@ -26,9 +27,16 @@ storage. Parent: [`src/cli/AGENTS.md`](../../AGENTS.md).
 
 - OS/process/signature boundaries use explicit injected callbacks/options;
   helper replies validated by a strict Zod schema.
-- Mutating verbs (`write`, `stage`, `retire`, `promote`, `remove`) must hold
+- Mutating verbs (`write`, `stage`, `retire`, `promote`, `remove`,
+  `store-create`, `store-activate`, `store-deactivate`, `store-erase`) must hold
   the session-lock lease (`client.ts`).
 - macOS paths joined with POSIX separators even on non-macOS hosts.
+- The active store is chosen on every backend lookup. While OmO's own
+  keychain is active, calls explicitly name `store: "omo"`; a missing or
+  unverified helper is a hard error, with no login-keychain fallback.
+- Enable copies and reads back before activation; disable copies and reads
+  back before deactivation. `omo-migrate` and `login` select migration paths
+  (`dedicated-switch.ts`).
 
 ## ANTI-PATTERNS
 

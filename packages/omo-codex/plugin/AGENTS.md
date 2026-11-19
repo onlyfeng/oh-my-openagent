@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-The shipped Codex plugin namespace `omo` (marketplace `sisyphuslabs`), v5.1.75. npm workspaces root for the 10 component packages; owns aggregate hook wiring, MCP declarations, and the build/sync pipeline. Component roster, sync-skills pipeline, and install targets are owned by the package AGENTS.md - not repeated here.
+The shipped Codex plugin namespace `omo` (marketplace `sisyphuslabs`), v5.1.78. npm workspaces root for the 10 component packages; owns aggregate hook wiring, MCP declarations, and the build/sync pipeline. Component roster, sync-skills pipeline, and install targets are owned by the package AGENTS.md - not repeated here.
 
 ## STRUCTURE
 

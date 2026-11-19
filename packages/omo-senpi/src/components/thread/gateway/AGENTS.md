@@ -33,6 +33,8 @@ Tables: `deliveries` (the single delivery authority: `queued -> admitting -> adm
 - Wake markers are ordered with commits: the inbox marker is created under the write lock, the outbox marker via temp-file + rename. A joined extension transaction gets after-commit/rollback callbacks for its marker effects.
 - Persisted fields are snake_case; TS types are readonly with literal unions; timestamps UTC RFC 3339; schema versions explicit.
 - Every API returns discriminated data (`kind: ok` / `kind: error` + taxonomy + next action); expected failures never throw.
+- A create's first prompt carries `authority: "creator"` through the shared delivery pipeline: model text is the brief plus a creator reply address, while display text is the original brief. Ordinary peer/external delivery keeps its provenance framing.
+- A gateway schema newer than this binary refuses with `gateway_schema_too_new` and structured found/supported versions across the worker boundary; keep an extension's schema failure distinct from the gateway's.
 
 ## ANTI-PATTERNS
 
@@ -50,4 +52,4 @@ tsgo --noEmit -p packages/omo-senpi/tsconfig.json
 bun run test:senpi                                          # full gate: build + typecheck + tests
 ```
 
-Parent: [`../AGENTS.md`](../AGENTS.md) - the fourteen tools, addressing rules, budgets, the delivery table, and the QA harnesses.
+Parent: [`../AGENTS.md`](../AGENTS.md) - the fifteen tools, addressing rules, budgets, the delivery table, and the QA harnesses.

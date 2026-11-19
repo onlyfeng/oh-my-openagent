@@ -14,6 +14,8 @@ not repeated here.
 | File | Role |
 |------|------|
 | `engine.ts` | `SyncEngine` core; constructed by `open.ts` (`openDeviceSync`) |
+| `journal.ts` / `status-tracker.ts` | Durable sync status and displayed failures; `updatedWhileOffline` is nullable in the journal and optional in `EngineStatus`, preserving a real zero after an offline gap. |
+| `index.ts` | Public sync-engine barrel also exports `disableSync`, `DisableOutcome`, `isDeviceSyncOff`, `DeviceSyncOff`, and `loadTrustAnchor`. |
 | `receive.ts` / `apply.ts` | Verify + apply untrusted remote operations |
 | `local-capture.ts` / `push-cycle.ts` | Local change capture and outbound push |
 | `legacy-cycle.ts` | Pre-engine journal compatibility |
@@ -31,6 +33,7 @@ not repeated here.
 - Behavioral invariants are test-enforced: no oversized items sent, no foreign
   peer operations imported, no peer edits lost, unsafe received paths
   rejected, a copied device's journal is not resent.
+- An offline gap starts when an engine opens a previously synced journal or its displayed failure becomes offline. It closes only on a refusal-free cycle; received-memory counts accumulate across its cycles. A later no-gap receive clears the count, while an empty cycle preserves it. First sync and a dropped event stream alone are not gaps.
 
 ## ANTI-PATTERNS
 

@@ -1,6 +1,6 @@
 # service-auth - Hidden CLI Login + Credential Store (direct files)
 
-**Score:** 16 (75 direct files - 27 production, 40+ tests/fixtures; curated barrel). Scope note: this file covers the directory's own files only; `keychain-helper/` (nested) is out of scope here. Parent: [`src/cli/AGENTS.md`](../AGENTS.md) (the hidden `service-auth login` command).
+**Score:** 16 (direct service-auth files; curated barrel). Scope note: this file covers the directory's own files only; `keychain-helper/` (nested) is out of scope here. Parent: [`src/cli/AGENTS.md`](../AGENTS.md) (the hidden `service-auth login` command).
 
 ## OVERVIEW
 
@@ -12,9 +12,9 @@ Service authentication for the omo account: device/loopback/browser login flows,
 |------|----------|
 | Public barrel | `index.ts` - `accountHome`, `credentialLockPaths`, `withCredentialLock`, `currentServiceDevice`, `createCredentialStore`, `createSession`, `SignInError`, `retireSyncPinOnDiscard` |
 | CLI command wiring | `commands.ts` - `configureServiceAuthCommands`, `serviceAuthProgram`, `runServiceAuthCommand`, `beginLogin` |
-| Login flows | `device-flow.ts`, `loopback.ts` (`loginLoopback`), `browser.ts` (`openSignInBrowser`), `closed-device-login.ts`, `machine-device.ts` |
+| Login flows | `login-routes.ts` (`signInByRoute`), `device-flow.ts`, `loopback.ts` (`loginLoopback`), `browser.ts` (`openSignInBrowser`), `closed-device-login.ts`, `machine-device.ts`, `replace-device.ts` (`decideReplace`) |
 | Credential store | `keystore.ts` (`CredentialStore`, `KeychainApprovalPendingError`, `quietNotice`), `credential-lock.ts`, `credential-owner.ts`, `secret-service-lock.ts` |
-| Sessions + discard | `session.ts` (`Session`, `BeforeKeysDiscarded`, `DiscardedCredential`), `owned-refresh.ts`, `refresh-attempt.ts`, `sync-pin-retire.ts` |
+| Sessions + discard | `session.ts` (`Session`, `BeforeKeysDiscarded`, `DiscardedCredential`), `owned-refresh.ts`, `refresh-attempt.ts`, `machine-reconcile.ts` (post-refresh machine binding and generated-name repair), `sync-pin-retire.ts` |
 | Protocol | `protocol.ts`, `protocol-v2.ts`, `protocol-request.ts`, `machine-digest.ts`, `device-keys.ts`, `device-name.ts` |
 | Gates + state | `accounts-gate.ts`, `account-home.ts`, `cli-service-auth-state.ts`, `signed-out-marker.ts`, `recovery-clock.ts`, `terminal-text.ts` |
 
@@ -22,6 +22,8 @@ Service authentication for the omo account: device/loopback/browser login flows,
 
 - Focused kebab-case modules; colocated `*.test.ts`, `*.fixture.ts`, and `test-support.ts`.
 - Tests inject fake APIs, temporary homes, and fake clocks; integration tests call `buildServiceAuth(false, ...)` from `script/build-service-auth` in `beforeAll`.
+- A browser `machine_exists` refusal can continue through device-code replacement after consent; `--replace` agrees without a prompt, while interactive confirmation defaults to No (`login-routes.ts`, `replace-device.ts`, `commands.ts`).
+- Post-refresh machine reconciliation runs outside the credential lock with a 5 s default overall budget; its failures do not invalidate the refreshed token (`session.ts`, `machine-reconcile.ts`).
 
 ## ANTI-PATTERNS
 

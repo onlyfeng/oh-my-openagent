@@ -11,6 +11,7 @@ Protocol conformance + adversarial tests for the device-service local API: typed
 | Task | Location |
 |------|----------|
 | Conformance runner + fake owner | `conformance/` - `runner.ts`, `fake-owner.ts`, `fake-owner-sessions.ts`, `fake-owner-state.ts`, `world.ts`, `fake-clock.ts`, `raw-peer.ts`, `rejection.ts`, `patterns.ts` |
+| Listing and delegated routing fakes | `conformance/fake-owner-rows.ts`, `fake-owner-sessions.ts`, `fake-owner-handlers.ts`, `world.ts` - default rows 4 with version-gated fields, requested primary endpoint replies, and attach-less `<device>.<key>` session commands |
 | Numbered protocol cases | `la1-version-refusal.test.ts` … `la22-listing-row-durable-id.test.ts` (numbered order = protocol story order) |
 | Security cases | `la3-squatting-server`, `la4-wrong-client-proof`, `la5-stale-token`, `la6-insecure-state-dir`, `la17-exact-windows-dacl` + `dacl-verdict.test.ts` |
 | Pinned captures | `fixtures/` - `device-service-0.1.2x-omo-5.1.66-*.json` real service endpoint/handshake snapshots |
@@ -22,6 +23,7 @@ Protocol conformance + adversarial tests for the device-service local API: typed
 - Fake owners are typed TypeScript harnesses over JSON fixtures - no live service needed; `raw-peer.ts` speaks the wire for adversarial frames.
 - Platform differences are explicit: Windows DACL checks (`la17`), Unix socket path limits in the transport tests.
 - Largest suites: `la21-reply-unknown-fields.test.ts` (337 LOC) - unknown-field tolerance is a contract, not an accident.
+- Fake listing projections expose links from rows 2, durable ids from rows 3, and model/archived from rows 4; the default supported version is 4. Primary endpoint replies are included only when requested.
 
 ## ANTI-PATTERNS
 

@@ -20,6 +20,7 @@ Reusable harness + fake runtime driving real subprocess extensions (`.mjs` drive
 | `store-extension.mjs` | Store extension fixture |
 | `extension-sdk-smoke.mjs` | SDK smoke driver |
 | `v4/` | Pinned schema-v4 worker fixture (`gateway-store-worker.mjs` + `README.md` with the pinned source commit and build recipe) |
+| `newer-schema.ts` | `storeMigratedByNewerBuild(agentDir, ahead = 1)` builds the current gateway schema then advances `user_version`, returning gateway/binary versions for old-binary refusal tests |
 
 ## ANTI-PATTERNS
 

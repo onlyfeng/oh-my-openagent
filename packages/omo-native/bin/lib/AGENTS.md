@@ -32,10 +32,12 @@ Hand-written ESM modules behind `bin/omo.js` and the compiled entry (`runCompile
 ## omo daemon
 
 `daemon.js`: `run|adopt|status|stop|handoff|gc|rollback-prepare`, a thin wrapper over the engine's `senpi host`. `run` ensures the operator daemon on `rpc.sock` then warms it through the thread SDK (refused/failed warm → one stderr line, exit stays 0). `status` / `gc` / `handoff` / `stop --all` / `rollback-prepare` cover every endpoint (operator daemon, per-session `p-*` task hosts, Desktop `i-*` thread hosts). `--foreground` exits 2 (the host always detaches); `--persistent` is accepted and ignored. Exit codes 2/3/4/5 live in `daemon-args.js`. Terminal (`tui`) rows render in `daemon-status.js` but never take lifecycle commands (`daemon-operations.js` `operable()`). `adopt` (`daemon-adopt.js`): locate via thread SDK, `release_session`; refusals → 4, not-found/unserved → 3, `release_failed` twice → 5; the launcher then runs the interactive launch on `--session <path>`. Contract: `docs/reference/omo-daemon.md`.
+Refusal summaries include any supplied reason, detail, socket and holder engine version/generation/instance (`daemon.js`).
 
 ## omo thread
 
 `thread.js`: `list|send|read|bind|unbind|rebind|bindings|report|answer|outbox|ack [--json]`, a thin wrapper over the plugin thread SDK (`plugin/runtime/thread-sdk/sdk.js`) run as `cli:<uid>`; `loadThreadSdk` hands it the client sidecar's remote surface (alias / other-device reads, local-only read kept when the sidecar lacks it). `node:sqlite` is probed with a lazy import before the SDK loads (missing → exit 4). `answer` requires `--binding` (never inferred); `send --binding` is the connector inbound path (`--mode auto|follow_up` capped by the binding, `--author-*` flags). Exit codes: 0 ok, 1 refused-as-data, 2 usage, 3 `host_unavailable`, 4 win32 or no `node:sqlite`, 5 `internal_error`. `--json` shapes are a contract: `docs/reference/omo-thread.md`.
+`list --state` accepts running, idle, inactive and archived, comma-separated or repeated; the default excludes archived. `loadThreadSdk` no longer supplies an `engineStatusAll` callback and uses the SDK's default endpoint discovery. Human list output prefers `state` over legacy `status`.
 
 `host-status.js`: `omo host status --all` = engine inventory + `last_activity_at` per `tui` row; the compiled entry self-marks `OMO_HOST_STATUS_RAW=1`.
 

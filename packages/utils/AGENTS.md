@@ -28,6 +28,7 @@ Harness-neutral pure-TypeScript core package (`@oh-my-opencode/utils`). Consumed
 | **Path classification** | `classify-path-environment.ts`, `contains-path.ts` | Path-environment classification + containment guards |
 | **Config text** | `config-merge.ts`, `config-section-parser.ts`, `extract-semver.ts`, `format-duration.ts` | Config merge/section parsing, semver extraction, duration formatting |
 | **Misc** | `snake-case.ts`, `jsonc-parser.ts`, `record-type-guard.ts`, `logger.ts` | Key transformation, safe JSONC parse, type guards, injectable shared logger stub |
+| **Display escaping** | `escape-for-display.ts` | `escapeForDisplay()` - renders Unicode control/format characters and line/paragraph separators as visible escapes; exported through the root barrel and `./escape-for-display` |
 
 ## NOTES
 

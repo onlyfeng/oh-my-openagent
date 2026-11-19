@@ -15,6 +15,7 @@ Resolves the account a memory-sync-bound session acts as: the CLI credential sto
 | Account model + CLI source | `account-source.ts` - `DeviceAccount = CliDeviceAccount \| DesktopSyncAccount \| DesktopSyncUnavailable`, `DeviceAccountSource`, `createCliAccountSource`, `DEFAULT_SERVICE_API`, `KeyringFactory`, `HeldCredentialRelay` |
 | Selection policy | `selected-account-source.ts` - `accountSourceFromSelection`, `selectedDeviceAccountSource` |
 | Resolver | `resolver.ts` - `createDeviceSessionResolver`, `DeviceSessionRuntime` |
+| Joined-device repository | `joined-repo.ts` - `joinedDeviceRepoCreator` uses `prepareMemoryEngineSession`; the resolver attempts creation only for an account with a valid trust pin, while sync is enabled. Creation failure leaves the repo deferred for retry; only the creator logs. |
 | Lazy sidecar load | `account-runtime.ts` + `account-runtime-loader.ts` (source built once from the loaded sidecar; a failed load is not cached) |
 | CLI operations | `cli-account-operation.ts` |
 | Behavior pins | `relay-readopt.test.ts`, `relay-readopt-late-service.test.ts`, `revoke-session.test.ts`, `first-session-repo.test.ts`, `keychain-pending.test.ts`, `desktop-account.test.ts`, `sibling-writer.fixture.ts` |
@@ -24,6 +25,9 @@ Resolves the account a memory-sync-bound session acts as: the CLI credential sto
 - Structural ports only; no concrete host types leak in.
 - Credential generation + currentness checks surround async operations; private keys stay in credential storage except keyring material.
 - A desktop-unavailable selection PRESERVES its reason and must NOT fall through to CLI credential access.
+- A deferred missing-repo retry retains the account id and lifetime signal, avoiding repeated credential access while that account remains live; after joining, the same retry can create the repo.
+- Resolved sessions expose `turnedOff()` from the per-account local sync-off mark so the runner can stop an engine after another process disables this device.
+- CLI account reads and device listing use `syncRequestHeaders`; `disableDeviceSync` accepts only the bound service device id.
 
 ## ANTI-PATTERNS
 

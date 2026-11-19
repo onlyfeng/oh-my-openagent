@@ -27,8 +27,12 @@ Parent: [`src/AGENTS.md`](../../../AGENTS.md).
 
 - Small single-purpose modules; lifecycle seams (leases, epochs, retries)
   are injected for deterministic tests.
-- Engine-version filter runs before any retained-record decision: an engine
-  below minimum drops retained records rather than misinterpreting them.
+- The version gate runs before startup: below minimum, no carrier starts and
+  the consumer opens no connection or declaration. The shipped minimum maps
+  Senpi >= 2026.11.15-2, compiled OmO >= 5.1.72, and omob dev stamps; OmO/omob
+  stamps do not satisfy a caller-supplied different minimum.
+- A finished-looking session whose release is refused for a delivery gets a 2-minute grace before interrupting release; working again resets that refusal streak.
+- Consumer startup passes a per-cwd read of the engine's `threads.chainCountLimit` to queued intake.
 
 ## ANTI-PATTERNS
 

@@ -16,8 +16,11 @@ The omo-senpi thread component's tool implementations: thread read ops, relay/ex
 | `gateway-services.ts` | Gateway service access |
 | `ports.ts` | Injected host ports |
 | `internals.ts` | Shared internal helpers |
-| `reply-target.ts` / `reply-permission.ts` | Reply-target resolution + permission |
+| `reply-target.ts` / `reply-permission.ts` | Consumed-sender reply resolution and permission; other sends delegate to the shared locality rule |
 | `model-match.ts` / `send-view.ts` / `thread-row.ts` | Model matching, send view, thread row shaping |
+| `archive-ops.ts` / `thread-state.ts` | Archive flag mutation; shared state/activity/model projection and list-state filtering |
+| `render.ts` | Call/result rows for people; collapsed summaries, full structured expanded result, terminal-control stripping |
+| `local-permission.ts` | Locality-scoped permission requests; local/read calls auto-approve ask while allow/deny rules still apply |
 
 ## CONVENTIONS
 

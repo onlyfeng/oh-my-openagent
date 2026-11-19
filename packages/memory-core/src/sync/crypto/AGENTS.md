@@ -27,6 +27,7 @@ The client-side verification core of memory sync: trust anchors, the append-only
 - Brand types (`declare const` brands) separate verified from unverified values; never cast across the brand boundary.
 - The barrel is explicit named exports (no `export *`); keep it curated.
 - `account/` consumes this chain through `AccountChain` - verification logic stays here, lifecycle stays there.
+- `rootChangeNotice` compares the newly pinned root with local retired pins after a successful ceremony. It returns `rootChanged` or a skipped `rootCheck` with a sanitized code and never undoes the pin. Missing retired files may fall through; the newest existing malformed or unreadable pin makes the comparison unknown, never a comparison against an older root.
 
 ## ANTI-PATTERNS
 

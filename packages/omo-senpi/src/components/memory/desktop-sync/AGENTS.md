@@ -16,7 +16,7 @@ The desktop memory-sync seam: signed-in account binding, typed wire protocol, wo
 | `desktopSyncOperation.ts` | Operation handles scoping sync requests |
 | `bootClaim.ts` / `bootGate.ts` / `desktopClaim.ts` | Boot/desktop authority claims and gates |
 | `launchClassification.ts` / `hostSelection.ts` | Launch classification (desktop vs engine) and host selection (+ fixtures) |
-| `desktopSyncPortSchema.ts` / `desktopSyncReplicationPort.ts` / `desktopSyncBoundary.ts` / `desktopSyncAccountPorts.ts` | Port schemas, replication port, boundary, account ports |
+| `desktopSyncPortSchema.ts` / `desktopSyncReplicationPort.ts` / `desktopSyncBoundary.ts` / `desktopSyncAccountPorts.ts` | Port schemas, replication port, boundary and account ports; `disableDeviceSync` checks the bound service device id and sends one request to desktop main, which owns confirmation and token consumption. Service errors below 500 become refusal values; other errors propagate. |
 
 ## ANTI-PATTERNS
 

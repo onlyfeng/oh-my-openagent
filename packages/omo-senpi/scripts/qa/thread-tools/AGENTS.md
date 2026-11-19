@@ -2,7 +2,7 @@
 
 **Generated:** 2026-11-18 / c2691818a9
 
-**Score:** 17 (30 `.mjs` files, ~5.9k LOC; the Thread lane of the parent [`qa/AGENTS.md`](../AGENTS.md), which owns the harness/env rules - this file maps the scenarios).
+**Score:** 17 (37 `.mjs` files; the Thread lane of the parent [`qa/AGENTS.md`](../AGENTS.md), which owns the harness/env rules - this file maps the scenarios).
 
 ## OVERVIEW
 
@@ -27,10 +27,13 @@ Flags: `--suite gateway|legacy|all`, `--out-dir`, `--with-mutant` (also runs `lo
 | Fault injection | `receiver-crash.mjs`, `sender-death.mjs` |
 | Report origin | `report-origin.mjs`, `report-origin-steer.mjs`, `report-origin-auto-steer.mjs` |
 | Loop safety | `loop-guard.mjs` (send-cycle check; `--mutant` disables it and must fail) |
+| Create + reopen | `create-prompt-authority.mjs` (creator brief is the first user message), `create-atomic.mjs` (same idempotency key creates one durable session), `reopen-exited.mjs` (reopens and reads an exited session under its existing id) |
+| Approval boundary | `local-approvals.mjs` (routine local thread calls add no approval beyond the eval cell; another-device create retains its own approval) |
+| Workspace scope | `free-plan-cross-workspace.mjs` (scoped listing/send hides or refuses another project; `all_scope` reaches it on the same device) |
 
 ## LIB (`lib/`)
 
-`harness.mjs` (legacy: ONE harness, sanctioned `qa-shared/lib/*` modules, target-state assertions, self-cleaning), `gateway.mjs` (released-engine kit), `engine-version.mjs` + `qa-tmp.mjs` (`QA_TMP_ROOT`) - the two `.test.mjs` files sit at the suite root, beside `run-all.mjs`, not in `lib/` - `desktop-shell.mjs`.
+`harness.mjs` (legacy: ONE harness, sanctioned `qa-shared/lib/*` modules, target-state assertions, self-cleaning), `gateway.mjs` (released-engine kit), `scratch-layout.mjs` (scratch home/agent/work layout; explicitly tightens the agent directory to `0700`), `engine-version.mjs` + `qa-tmp.mjs` (`QA_TMP_ROOT`), and `desktop-shell.mjs`. `engine-version.test.mjs` and `qa-tmp.test.mjs` sit at the suite root; `lib/gateway-scratch.test.mjs` checks the scratch agent-directory mode under a permissive POSIX umask.
 
 ## COMMANDS
 

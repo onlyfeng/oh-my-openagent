@@ -1,6 +1,6 @@
 # sync/recovery - Recovery-Key Enrollment + Fresh-Device Recovery
 
-**Score:** 17 (53 files, 9.6k LOC, >20 files, own subtree with bip39/fixtures/testing). Parent: [`packages/memory-core/AGENTS.md`](../../../../AGENTS.md).
+**Score:** 17 (53 files, 9.6k LOC, >20 files, own subtree with bip39/fixtures/testing). Parent: [`packages/memory-core/AGENTS.md`](../../../AGENTS.md).
 
 ## OVERVIEW
 
@@ -16,6 +16,7 @@ Crypto recovery for the sync account: derive recovery keys, enroll them on the s
 | Bridge + availability | `bridge.ts` (`createRecoveryBridge`), `availability.ts` (`recoveryAvailability`) |
 | Phrase variant | `enroll-phrase.ts` (`enrollPhraseRecoveryKey`, `rotateRecoveryPhrase`, `PhraseAcknowledgeUnverifiedError`), `bridge-enroll-phrase.ts`, `bridge-recover-phrase.ts`, `bridge-recover.ts`, `phrase-hints.ts` |
 | Join classification + veto | `join-notice.ts` (`classifyRecoveryJoin`, `VETO_WINDOW_MS`) |
+| Recovered-root notice | `recover-join.ts` (`pinRecoveredRoot`) - Pins the verified recovery join, then returns `RootChangeNotice`; emits `sync.trust.root_changed` or `sync.trust.root_check_skipped`. Successful `RecoverOutcome` variants preserve the notice. |
 | Crypto primitives + markers | `hpke-seal.ts`, `key-material.ts`, `keyring-append.ts`, `enroll-marker.ts`, `recovery-handles.ts`, `canary` tests |
 | Adapter ports | `ports.ts` - `RecoveryBridge`, `RecoveryTransport`, authenticator types |
 | Wordlists / test data / fakes | `bip39/`, `fixtures/`, `testing/` (fake world, server, passkey helpers) |

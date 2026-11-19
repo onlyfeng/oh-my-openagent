@@ -2,7 +2,7 @@
 
 **Generated:** 2026-11-18 / c2691818a9
 
-**Score:** 29 (70 direct files, 9 subdirs, package barrel + public subpaths). WHAT each utility does lives in the parent [`packages/utils/AGENTS.md`](../AGENTS.md) category map - this file covers only the directory's own layout doctrine.
+**Score:** 29 (72 direct source files, 9 subdirs, package barrel + public subpaths). WHAT each utility does lives in the parent [`packages/utils/AGENTS.md`](../AGENTS.md) category map - this file covers only the directory's own layout doctrine.
 
 ## OVERVIEW
 
@@ -26,6 +26,7 @@ Consumers import the root barrel or a `package.json` subpath - `./atomic-write`,
 | `prompt-async-gate.ts` | flat entry over `prompt-async-gate/` |
 | `zip-entry-listing.ts` | flat entry over `zip-entry-listing/` |
 | `skill-path-resolver.ts`, `internal-initiator-marker.ts` | adapter-facing helpers exported as subpaths |
+| `escape-for-display.ts` | shared display helper exported by `src/index.ts` and public subpath `./escape-for-display` |
 
 ## CONVENTIONS
 

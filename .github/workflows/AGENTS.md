@@ -8,7 +8,7 @@
 |------|----------|-------|
 | Main CI: event routing, path/matrix classification, test sharding, gates | `ci.yml` | 1,438 lines; typecheck / lint / `lint:ratchet` / knip + package shards; macOS legs fail closed via `../scripts/ci-macos-status.sh` |
 | npm publishing | `publish.yml` | 2,294 lines, largest file; gates release on post-publish-verify + installer-mirror, then calls `release-announce.yml` |
-| Platform binary publishing | `publish-platform.yml` | 1,499 lines; invokes the operator-darwin verifier (~line 477) |
+| Platform binary publishing | `publish-platform.yml` | 1,500 lines; invokes the operator-darwin verifier (~line 477) |
 | Darwin artifact signature verification | `operator-darwin-verify.ts` + `-macho` / `-cms` / `-services` / `-anchors` `.ts` | Linux-side Mach-O + CMS chain check before publish; `TEAM_ID 523JNR86LZ` |
 | Computer-use engine QA | `computer-{engine,fixtures,live-linux,live-windows-full}.yml`, `trust-mutations.yml`, `engine-trust-helper.yml` | fixtures include sabotage/negative controls |
 | Desktop QA | `desktop-{bench,engine,linux-qa,windows-qa}.yml` | explicit failure controls on Linux/Windows legs |

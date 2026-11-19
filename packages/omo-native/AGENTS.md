@@ -2,7 +2,7 @@
 
 **Generated:** 2026-11-18 / c2691818a9
 
-**Role:** Adapter - distribution package for the senpi-based omo native edition. Publishes npm `omo-ai` (v5.1.75, bin `omo`, Node >= 24, exact-pinned `@code-yeongyu/senpi` 2026.11.15-4) on the channel its version names: prerelease → `beta`, stable → `latest`. The launcher runs the pinned senpi CLI with `--extension <pkgRoot>/plugin`, where `plugin/` is the staged omo-senpi payload produced by `bun run build:omo-native` (gitignored, never committed).
+**Role:** Adapter - distribution package for the senpi-based omo native edition. Publishes npm `omo-ai` (v5.1.78, bin `omo`, Node >= 24, exact-pinned `@code-yeongyu/senpi` 2026.11.18-2) on the channel its version names: prerelease → `beta`, stable → `latest`. The launcher runs the pinned senpi CLI with `--extension <pkgRoot>/plugin`, where `plugin/` is the staged omo-senpi payload produced by `bun run build:omo-native` (gitignored, never committed).
 
 ## WHERE TO LOOK
 
@@ -10,11 +10,12 @@
 |------|---------|
 | `bin/omo.js` | Launcher entry: dispatch, doctor, setup, senpi passthrough |
 | `bin/lib/` | Launcher runtime library - module map, generated bundles, daemon/thread CLI reference: [`bin/lib/AGENTS.md`](bin/lib/AGENTS.md) |
-| `compile-entry.ts` | Compiled-launcher orchestration: `runCompiledLauncher`, `answerCompiledFastPath`, `compiledBannerLines`, update selection (557 LOC hotspot) |
+| `compile-entry.ts` | Compiled-launcher orchestration: `runCompiledLauncher`, `answerCompiledFastPath`, `compiledBannerLines`, update selection; refreshes an older installed session host unit before pruning provisioned runtimes |
 | `remote-*.ts` | Remote CLI: session verbs (`runSession`), local parser/dispatch (`runLocalRemoteVerb`), `runRemoteVerb` / `prepareRemoteAttach`, args, bootstrap, attach presentation, renderer |
-| `account-*.ts` | Account CLI; `account-show.ts` `showAccount` deliberately never contacts the account service; an uncertain refresh is not "running" when its recovery attempt is ineligible |
+| `account-*.ts` | Account CLI; `account-show.ts` `showAccount` deliberately never contacts the account service; `account-store.ts` owns macOS `store status|enable|disable [--discard]` under the credential lock; an uncertain refresh is not "running" when its recovery attempt is ineligible |
 | `trust-*.ts` | Engine trust acquisition / generation (`writeTrustGeneration`, `verifyTrustGeneration`) / staging / retention / policy + platform helpers (macOS / Windows split) + `openssl-hash-dir.ts` |
-| `keychain-helper/` | Native keychain helper (`src/` + `test-support/`) |
+| `keychain-helper/` | Native macOS keychain helper (`src/` + `test-support/`); `dedicated*.c` and `store-select.c` implement the opt-in OmO keychain lifecycle and explicit store routing |
+| `sync-cli.ts`, `sync-phrase-tty.ts`, `nonblocking-tty-readable.ts` | Memory sync enable/recover CLI; recovery words use only the controlling terminal, with secret input echo disabled and a cancellable nonblocking POSIX reader |
 | `test/` | Package-contract + launcher tests; `pty-signal-qa.py` is the real-surface QA harness (boots the real chain on a pty whose session leader outlives the launcher, SIGTERMs the launcher, asserts the engine ran graceful shutdown and left no survivor) |
 | `knip.workspace.jsonc` | Package-owned knip entries composed by the root config; its ignored-export annotations are pre-existing, not new defects |
 

@@ -2,7 +2,7 @@
 
 > **REPO MID-REFACTOR TOWARD A MULTI-HARNESS AGENT OS (OpenCode, Codex, Senpi, native). READ [`ROADMAP.md`](./ROADMAP.md) BEFORE TRUSTING ANY LAYOUT CLAIM BELOW.**
 
-**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh | **Release:** v5.1.75
+**Generated:** 2026-11-18 | **Source snapshot:** c2691818a91020e6d9d8ffb513bedca364ebceee | **Branch:** local/agents-md-refresh | **Release:** v5.1.78
 
 ## QA GATE (BINDING, EVERY CHANGE)
 
@@ -49,7 +49,7 @@ oh-my-openagent/                  # Bun monorepo, 44 workspaces / 59 packages; N
 | Add agent / hook / tool / feature | `packages/omo-opencode/src/{agents,hooks,tools,features}/` | `hooks/AGENTS.md` owns the 61-dir roster + 5-tier composition (58 HookNames) |
 | Config schema / loader / migration | `packages/omo-config-core/src/` + `omo-opencode/src/config/` | `assets/omo.schema.json` has a freshness test |
 | Task engine internals | `packages/senpi-task/src/` | per-dir AGENTS.md throughout (27 tree-wide); `dag/` = 69 files ~20.8k LOC |
-| Senpi components | `packages/omo-senpi/src/components/` | 35 dirs; live QA drivers in `packages/omo-senpi/scripts/qa/` |
+| Senpi components | `packages/omo-senpi/src/components/` | 41 source/support dirs; live QA drivers in `packages/omo-senpi/scripts/qa/` |
 | Desktop / computer-use | `crates/` + senpi-desktop-* + omo-computer-* | v2 ships, v3 in port; parity ledger via `script/computer-v3-guards.ts` |
 | Codex installer / plugin | `packages/omo-codex/src/install/`, `plugin/components/` | 10 live components; marketplace sync automated in publish.yml |
 | Build / publish / QA automation | `script/` (hub: `script/AGENTS.md`, `script/qa/`) | real-artifact drivers; terminal visual QA is browser-rendered, never tmux |
