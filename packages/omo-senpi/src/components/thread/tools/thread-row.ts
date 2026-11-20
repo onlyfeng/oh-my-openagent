@@ -8,10 +8,12 @@ type RowSource = Pick<ThreadSummary, "thread_id" | "name" | "status" | "cwd" | "
   Partial<
     Pick<
       ThreadResultSummary,
+      | "unnamed"
       | "model"
       | "activity"
       | "error_code"
       | "turn_id"
+      | "waiting_on"
       | "as_of"
       | "device"
       | "alias"
@@ -30,16 +32,32 @@ type RowSource = Pick<ThreadSummary, "thread_id" | "name" | "status" | "cwd" | "
  * internals stay in the address book.
  */
 export function threadRow(thread: RowSource, machine?: string): ThreadResultSummary {
-  const { model, activity, error_code, turn_id, as_of, device, alias, surface, controls, error_note, skills } = thread
+  const {
+    unnamed,
+    model,
+    activity,
+    error_code,
+    turn_id,
+    waiting_on,
+    as_of,
+    device,
+    alias,
+    surface,
+    controls,
+    error_note,
+    skills,
+  } = thread
   return {
     thread: thread.thread_id,
     name: thread.name,
+    ...(unnamed === undefined ? {} : { unnamed }),
     status: thread.status,
     state: thread.state,
     ...(model === undefined ? {} : { model: { provider: model.provider, id: model.id } }),
     ...(activity === undefined ? {} : { activity }),
     ...(error_code === undefined ? {} : { error_code }),
     ...(turn_id === undefined ? {} : { turn_id }),
+    ...(waiting_on === undefined ? {} : { waiting_on }),
     ...(as_of === undefined ? {} : { as_of }),
     ...(machine === undefined || machine === "" ? {} : { machine }),
     cwd: thread.cwd,

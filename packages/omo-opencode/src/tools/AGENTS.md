@@ -39,9 +39,9 @@ Tools registered via [`createToolRegistry()`](../plugin/tool-registry.ts) in `sr
 | Category | Default Model | Domain |
 |----------|---------------|--------|
 | `visual-engineering` | anthropic/claude-fable-5-2 (max) | Visual design, UI/UX, frontend |
-| `ultrabrain` | openai/gpt-6-astra (max) | Hard logic / heavy reasoning; GPT-6 Astra-specific prompt append |
-| `deep-low` | openai/gpt-6.1-sol (medium) | Default deep lane: 3D graphics, computer use, browser use, backend, logic, algorithms, CAPTCHA solving, multimodal, autonomous multi-step work settleable from evidence; gpt-6.1-sol-fast / gpt-5.6-sol / gpt-5.6-sol-fast medium fallback rungs gated on any GPT-6.1 Sol or GPT-5.6 Sol tier |
-| `deep-high` | openai/gpt-6-astra (high) | Escalation deep lane: the goal's central decision cannot be settled from evidence (trade-off, cross-boundary contract, no in-repo pattern, correctness argued from invariants); single rung, gated on gpt-6-astra |
+| `ultrabrain` | openai/gpt-6.2-astra (max) | Hard logic / heavy reasoning; GPT-6 Astra-specific prompt append; single exact rung, gated on gpt-6.2-astra |
+| `deep-low` | openai/gpt-6.2-sol (medium) | Default deep lane: 3D graphics, computer use, browser use, backend, logic, algorithms, CAPTCHA solving, multimodal, autonomous multi-step work settleable from evidence; single exact rung, gated on gpt-6.2-sol (no Fast or older Sol) |
+| `deep-high` | openai/gpt-6.2-astra (high) | Escalation deep lane: the goal's central decision cannot be settled from evidence (trade-off, cross-boundary contract, no in-repo pattern, correctness argued from invariants); single rung, gated on gpt-6.2-astra |
 | `artistry` | anthropic/claude-fable-5-2 (max) | Creative / unconventional approaches |
 | `quick` | openai/gpt-6-luna-fast (low) | Trivial single-file changes |
 | `unspecified-low` | anthropic/claude-sonnet-5-5 (medium) | Moderate effort fallback |

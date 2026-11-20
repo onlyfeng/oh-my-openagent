@@ -15,7 +15,7 @@ Harness-neutral model resolution core (`@oh-my-opencode/model-core`). Resolves w
 | `provider-cache.ts` | `ProviderCache` DI interface: `readConnectedProvidersCache()`, `findProviderModelMetadata()` |
 | `model-availability.ts` | `fuzzyMatchModel()` - exact, then exact model-ID, then shortest **substring** match against `availableModels` (not prefix) |
 | `agent-model-requirements.ts` | Hardcoded `AGENT_MODEL_REQUIREMENTS` fallback chains (11 agents) |
-| `category-model-requirements.ts` | Hardcoded `CATEGORY_MODEL_REQUIREMENTS` fallback chains (9 categories); GPT-6.2 Astra leads high lanes with GPT-6 Astra retained, while deep-low starts with GPT-6.2 Sol/plain and Fast before GPT-6.1 Sol and GPT-5.6 Sol |
+| `category-model-requirements.ts` | Hardcoded `CATEGORY_MODEL_REQUIREMENTS` fallback chains (9 categories); `ultrabrain` (max) and `deep-high` (high) use exactly GPT-6.2 Astra, while `deep-low` (medium) uses exactly GPT-6.2 Sol; these three lanes have no fallback model |
 | `latest-models.ts` | `LATEST_MODEL_BY_FAMILY` is the single source for current family members; GPT Astra/Sol/Sol Fast point to GPT-6.2, while deliberate older fallback rungs remain literal |
 | `provider-model-id-transform.ts` | Provider-specific ID transforms (Vercel sub-provider inference, Claude version dots, Gemini preview suffixes) |
 | `model-capabilities/index.ts` | `getModelCapabilities()` - 4-source priority: runtime metadata -> runtime snapshot -> bundled snapshot -> heuristic family; alias canonicalization, suffix/prefix-tolerant lookup candidates, `resolutionMode` diagnostics |
